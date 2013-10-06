@@ -64,7 +64,7 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
 
 for file in *.org (ref:for)
 do
-    DATEI=`echo $file | sed 's/\(.*\\).org/\1/'` ;
+    DATEI= $(echo $file | sed 's/\(.*\).org/\1/') ;
     test -e $DATEI.html &&
     grep -B 20 -m 1 END $DATEI.org |   (ref:head)
         head -n -1 |                   (ref:head) 

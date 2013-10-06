@@ -215,7 +215,7 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
 
 <span id="coderef-for" class="coderef-off"><span style="color: #00bfff;">for</span> file<span style="color: #00bfff;"> in</span> *.org</span>
 <span style="color: #00bfff;">do</span>
-    <span style="color: #4eee94;">DATEI</span>=<span style="color: #fa8072;">`echo $file | sed 's/\(.*\\).org/\1/'`</span> ;
+    <span style="color: #4eee94;">DATEI</span>= $(<span style="color: #fa8072;">echo</span> $<span style="color: #4eee94;">file</span> | sed <span style="color: #deb887;">'s/\(.*\).org/\1/'</span>) ;
     <span style="color: #f08080;">test</span> -e $<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
 <span id="coderef-head" class="coderef-off">    grep -B 20 -m 1 END $<span style="color: #4eee94;">DATEI</span>.org |</span>
 <span id="coderef-head" class="coderef-off">        head -n -1 |</span>

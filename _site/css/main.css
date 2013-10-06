@@ -39,11 +39,11 @@ body {
   p.verse { margin-left: 3%; }
   pre {
     border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    box-shadow: 2px 2px 2px #ccc;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
-    margin: 1.2em;
+    margin: 0em;
   }
   pre.src {
     position: relative;
@@ -222,7 +222,7 @@ ul.posts span {
 .post pre {
   border: 1px solid #DDD;
   color: #DDD;
-  background-color: #111;
+  background-color: #222;
   padding: .7em 1.0em;
 }
 
