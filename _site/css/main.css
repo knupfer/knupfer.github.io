@@ -19,15 +19,25 @@ body {
   text-align: center;
 }
 
+.code-highlighted { background-color: #777; color: #111; }
+
+
+
+
 h1, h2, h3, h4, h5, h6 {
   font-size: 100%; }
 
 h1 { margin-bottom: 1em; }
 p { margin: 1em 0; }
 
-a         { color: #00a; }
-a:hover   { color: #000; }
-a:visited { color: #a0a; }
+
+
+
+a         { color: #555; }
+a:hover   { color: #5FF; }
+a:visited { color: #555; }
+
+
 
 /*****************************************************************************/
 /*
@@ -130,7 +140,8 @@ ul.posts span {
 /* standard */
 .post pre {
   border: 1px solid #DDD;
-  background-color: #EEE;
+  color: #DDD;
+  background-color: #111;
   padding: .7em 1.0em;
 }
 
