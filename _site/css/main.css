@@ -12,12 +12,53 @@
 
 html, body { height: 100%; }
 
+
+@font-face {
+  font-family: SourceCode;
+  src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Regular.otf.woff') format('woff');
+} 
+
+@font-face {
+  font-family: SourceCode;
+  src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Black.otf.woff') format('woff');
+  font-weight: bold;
+    }
+
+
+@font-face {
+  font-family: LinLib;
+  src: url('/fonts/LinuxLibertine/LinLibertine_R.woff') format('woff');
+} 
+@font-face {
+  font-family: LinLib;
+  src: url('/fonts/LinuxLibertine/LinLibertine_RB.woff') format('woff');
+  font-weight: bold;
+} 
+@font-face {
+  font-family: LinLibDR;
+  src: url('/fonts/LinuxLibertine/LinLibertine_DR.woff') format('woff');
+} 
+@font-face {
+  font-family: LinBio;
+  src: url('/fonts/LinuxLibertine/LinBiolinum_R.woff') format('woff');
+} 
+@font-face {
+  font-family: LinBio;
+  src: url('/fonts/LinuxLibertine/LinBiolinum_RB.woff') format('woff');
+  font-weight: bold;
+} 
+
+
+
+
 body {
   background-color: #FFF;
-  font: 13.34px Helvetica, Arial, sans-serif;
+  font: 13.34px LinBio, Arial, sans-serif;
   font-size: small;
   text-align: center;
 }
+
+
 
 
 
@@ -41,7 +82,8 @@ body {
     border: 1px solid #ccc;
     box-shadow: 2px 2px 2px #ccc;
     padding: 8pt;
-    font-family: monospace;
+    font-family: SourceCode;
+    font-size: small;
     overflow: auto;
     margin: 0em;
   }
@@ -102,11 +144,21 @@ body {
 
 
 
+h1 {
+  font-size: 100%; font-family: LinBio;}
 
 
+h2 {
+  font-size: 150%; font-family: LinLibDR;}
 
-h1, h2, h3, h4, h5, h6 {
-  font-size: 100%; }
+h3 {
+    font-size: 130%; font-family: LinLibDR;}
+
+h4 {
+    font-size: 110%; font-family: LinBio;}
+
+h5, h6 {
+  font-size: 100%; font-family: LinLib;}
 
 h1 { margin-bottom: 1em; }
 p { margin: 1em 0; }
@@ -136,7 +188,7 @@ ul.posts li {
 
 ul.posts span {
   color: #aaa;
-  font-family: Monaco, "Courier New", monospace;
+  font-family: arial, "Times New Roman", monospace;
   font-size: 80%;
 }
 
