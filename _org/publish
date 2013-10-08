@@ -1,20 +1,16 @@
 #!/bin/sh
 
-
 for file in *.org
 do
-
-
     DATEI=$(echo $file | sed 's/\(.*\).org/\1/') ;
-
     test -e $DATEI.html &&
     grep -B 20 -m 1 END $DATEI.org | head -n -1 | tail -n +2 > $DATEI.org.publish &&
-    cat _script $DATEI.html >> $DATEI.org.publish &&
+    cat _script >> $DATEI.org.publish &&
+    sed 'N; s/<\/ul>\n<\/div>/&<p><\/p>/; P; s/<h2>Table of Contents<\/h2>/<h3>Inhaltsverzeichnis<\/h3>/ ; D' $DATEI.html >> $DATEI.org.publish &&
     cat $DATEI.org.publish > ../_posts/$DATEI.html &&
-    rm $DATEI.html &&
-    rm $DATEI.org.publish;
+    rm $DATEI.html $DATEI.org.publish;
 done
-# git add .;
-# git commit -m 'update';
+git add ..;
+git commit -m 'update';
 # git push origin master;
 

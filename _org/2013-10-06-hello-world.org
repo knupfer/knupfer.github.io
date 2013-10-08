@@ -49,9 +49,10 @@ Emacs ist wohl einer der ältesten und umfangreichesten Texteditoren. Dass ein T
 **** Exportfunktionen
 Eine große Stärke von Org Mode sind die Exportfunktionen. Es kann u. a. nach LaTeX, Html, Docbook und Ascii exportiert werden. Dieses Feature ist so sehr ausgereift, dass die resultierenden Dokumente oft sehr gut aussehen. Automatisch wird ein Inhaltsverzeichnis generiert, ausgezeichnet, ggf. code compiliert uvm. Aller Text dieser Homepage ist ausschließlich in Org Mode verfasst, in ein Html exportiert und danach mit einem Shellscript den Anforderungen von Jekyll angepasst.
 
-**** Syntaxhighlighting
+***** Syntaxhighlighting
 Der Export von Syntaxhighlighting von Html ist ein wenig aufwendig. Man könnte zwar auf das Syntaxhighlighting von Jekyll zurückgreifen, dies ist aber für helle Codeboxen optimiert, was nicht meiner Designvorstellung entsprach. Eine Änderung dieses Highlightings würde mit mühevollem ändern und testen jedes einzelnen Codeschlüsselwortes in einer css-Datei einhergehen, worauf ich keine Lust habe, da es auch möglich ist, dass diese Homepage ihr Äußeres noch mehrfach verändert etc.
 
+****** Test
 Mithilfe des Zusatzpakete htmlize.el für Emacs ist es mir gelungen, Emacs so einzurichten, dass er automatisch das gleiche Syntaxhighlighting, welches derzeit im Editor aktiv ist, in den Html-export übernimmt. Über ein in Org Mode implementiertes Javascript ist es sogar möglich, über links Referenzcodezeilen zu manipulieren. Die Standardeinstellung war, die ganze Zeile gelb zu färben, was sehr direkt war. Ich habe mich für eine dezente Version entschieden und habe den Sourcecode so geändert, dass wenn der Cursor über dem link ist, die entsprechende Codezeile fett dargestellt wird.
 
 ** Das Shellscript
@@ -64,15 +65,18 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
 
 for file in *.org (ref:for)
 do
-    DATEI= $(echo $file | sed 's/\(.*\).org/\1/') ;
+    DATEI=$(echo $file | sed 's/\(.*\).org/\1/') ;
     test -e $DATEI.html &&
-    grep -B 20 -m 1 END $DATEI.org |   (ref:head)
-        head -n -1 |                   (ref:head) 
-        tail -n +2 > $DATEI.org.publish &&  (ref:head)
-    cat _script $DATEI.html >> $DATEI.org.publish && (ref:java)
-    cat $DATEI.org.publish > ../_posts/$DATEI.html &&  (ref:move)
-    rm $DATEI.html &&
-    rm $DATEI.org.publish;
+    grep -B 20 -m 1 END $DATEI.org | head -n -1 |  (ref:head)
+  tail -n +2 > $DATEI.org.publish &&
+    cat _script >> $DATEI.org.publish && (ref:java)
+    sed 'N; s/<\/ul>\n<\/div>/&<p><\/p>/; P; 
+  s/<h2>Table of Contents<\/h2>/<h3>Inhaltsverzeichnis<\/h3>/; D'
+  $DATEI.html >> $DATEI.org.publish &&
+    cat $DATEI.org.publish > ../_posts/$DATEI.html && (ref:move)
+    rm $DATEI.html $DATEI.org.publish;
 done
+git add ..;
+git commit -m 'update';
 #+END_SRC
 
