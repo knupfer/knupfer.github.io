@@ -183,20 +183,16 @@ Emacs ist wohl einer der ältesten und umfangreichesten Texteditoren. Dass ein T
 Eine große Stärke von Org Mode sind die Exportfunktionen. Es kann u. a. nach LaTeX, Html, Docbook und Ascii exportiert werden. Dieses Feature ist so sehr ausgereift, dass die resultierenden Dokumente oft sehr gut aussehen. Automatisch wird ein Inhaltsverzeichnis generiert, ausgezeichnet, ggf. code compiliert uvm. Aller Text dieser Homepage ist ausschließlich in Org Mode verfasst, in ein Html exportiert und danach mit einem Shellscript den Anforderungen von Jekyll angepasst.
 </p>
 </div><p></p>
-
-<ol class="org-ol"><li>Syntaxhighlighting<br  /><div class="outline-text-6" id="text-2-2-1-1-1">
+</li>
+<li>Syntaxhighlighting<br  /><div class="outline-text-5" id="text-2-2-1-2">
 <p>
 Der Export von Syntaxhighlighting von Html ist ein wenig aufwendig. Man könnte zwar auf das Syntaxhighlighting von Jekyll zurückgreifen, dies ist aber für helle Codeboxen optimiert, was nicht meiner Designvorstellung entsprach. Eine Änderung dieses Highlightings würde mit mühevollem ändern und testen jedes einzelnen Codeschlüsselwortes in einer css-Datei einhergehen, worauf ich keine Lust habe, da es auch möglich ist, dass diese Homepage ihr Äußeres noch mehrfach verändert etc.
 </p>
-</div><p></p>
 
-<ol class="org-ol"><li>Test<br  /><div class="outline-text-7" id="text-2-2-1-1-1-1">
 <p>
 Mithilfe des Zusatzpakete htmlize.el für Emacs ist es mir gelungen, Emacs so einzurichten, dass er automatisch das gleiche Syntaxhighlighting, welches derzeit im Editor aktiv ist, in den Html-export übernimmt. Über ein in Org Mode implementiertes Javascript ist es sogar möglich, über links Referenzcodezeilen zu manipulieren. Die Standardeinstellung war, die ganze Zeile gelb zu färben, was sehr direkt war. Ich habe mich für eine dezente Version entschieden und habe den Sourcecode so geändert, dass wenn der Cursor über dem link ist, die entsprechende Codezeile fett dargestellt wird.
 </p>
 </div><p></p>
-</li></ol>
-</li></ol>
 </li></ol>
 </div><p></p>
 </div><p></p>
