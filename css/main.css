@@ -82,7 +82,7 @@ body {
     border: 1px solid #ccc;
     box-shadow: 2px 2px 2px #ccc;
     padding: 8pt;
-    font-family: SourceCode;
+    font-family: monospace;
     font-size: small;
     overflow: auto;
     margin: 0em;
