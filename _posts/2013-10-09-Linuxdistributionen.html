@@ -1,0 +1,237 @@
+---
+layout: post
+title: Linuxdistributionen
+---
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script><div id="table-of-contents">
+<h3>Inhaltsverzeichnis</h3>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Distributionen</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Nonrolling-release</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1. Debian</a></li>
+<li><a href="#sec-1-1-2">1.1.2. Fedora</a></li>
+<li><a href="#sec-1-1-3">1.1.3. OpenSuse</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2. Rolling-release</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1. Arch</a></li>
+<li><a href="#sec-1-2-2">1.2.2. Debian</a></li>
+<li><a href="#sec-1-2-3">1.2.3. Sourcemage</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-3">1.3. **</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. Desktopumgebungen</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Openbox</a></li>
+<li><a href="#sec-2-2">2.2. LXde</a></li>
+<li><a href="#sec-2-3">2.3. Xfce</a></li>
+<li><a href="#sec-2-4">2.4. Kde</a></li>
+<li><a href="#sec-2-5">2.5. Gnome</a>
+<ul>
+<li><a href="#sec-2-5-1">2.5.1. Mate</a></li>
+<li><a href="#sec-2-5-2">2.5.2. Cinnamon</a></li>
+<li><a href="#sec-2-5-3">2.5.3. Unity</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><p></p>
+</div><p></p>
+<p>
+Als ich vor ungefähr 2 Jahren auf Linux umgestiegen bin, stellte ich mir die Frage welche Distribution ich nehmen sollte. Überwältigt von der Vielfalt und zunächst nicht im Stande Desktopumgebungen (Xcfe, Lxde, Gnome …) von Distributionen zu unterscheiden entschied ich mich für Ubuntu.
+</p>
+
+<p>
+Nach einer Eingewöhnungszeit wurde mir klar, dass Cannonical (die Firma hinter Ubuntu) Interessen hatte, die mit den meinigen unvereinbar waren. So wechselte ich zu Debian und stellte nach kurzer Zeit die Repository auf Testing. Hier hatte ich mich nun auch an verschiedene Desktopumgebungen rangemacht.
+</p>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Distributionen</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Distributionen kann man durch mehrere Elemente charakterisieren:
+</p>
+
+<dl class="org-dl">
+<dt> Packetmanager </dt><dd>Sie sind für Update- und Installationsprozesse verantwortlich. 
+</dd>
+<dt> Desktopumgebung </dt><dd>Diese stellt eine grafische Oberfläche und verschiedene Standardprogramme bereit, da diese besonders wichtig für die Usability sind, wird hier auch noch detailiert darauf eingegangen. 
+</dd>
+<dt> Free vs. Nonfree </dt><dd>Manche Distributionen enthalten (fast) nur freie Software (z.B. Debian) was zur Konsequenz hat, dass diese von Haus aus die meisten Videocodecs nicht unterstützen. Andere Distribution sind komfortabler (z.B. Mint), da sie alles Notwendige enthalten, um beispielsweise eine DVD oder Youtube-Videos zu sehen. 
+</dd>
+<dt> Zielgruppe </dt><dd>Hier gibt es große Unterschiede, vor allem Ubuntu wird immer Anfängern empfohlen, da vieles ohne Konfiguration funktioniert und technisches unter grafischen Elementen versteckt wird. Arch hingegen hat vor allem erfahrene Nutzer im Blick. Auf ein grafisches Verstecken wird bewusst verzichtet, um maximal präzise Konfiguartionen zu ermöglichen. Erfahrene Nutzer können terminalbasiert schneller arbeiten, ferner wird die CPU durch die fehlenden Extravaganzen geschont. 
+</dd>
+<dt> Entwicklungsstrategie </dt><dd>Hier wird zwischen Rolling- und Nonrolling-release unterschieden. Da dieses Thema für mich besonders interessant ist, wird im Folgenden darauf genauer eingegangen. 
+</dd>
+</dl>
+</div><p></p>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Nonrolling-release</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Die meiste Software hat eine Nonrolling-release-Entwicklung. Sprich es werden stabile Versionen eines Programmes publiziert, von denen man dann Updates zur nächsten stabilen Version machen kann. Bei mancher Software, wie z.B. bei vielen Distributionen ist hierfür eine Neuinstallation notwendig.
+</p>
+</div><p></p>
+
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Debian</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+Debian ist eine sehr alte Distribution mit sehr vielen Entwicklern. Der Entwicklungsprozess ist sehr konservativ; es werden ungefähr alle zwei Jahre neue Versionen publiziert, welche in der gesamten Zwischenzeit keinen neuen Features, sondern nur Sicherheitsupdates bekommen. Da diese Versionen außerordentlich stabil sind werden diese meist für Server verwendet.
+</p>
+</div><p></p>
+
+<ol class="org-ol"><li>Repositorys<br  /><div class="outline-text-5" id="text-1-1-1-1">
+<p>
+Die Repositorys von Debian sind weiterhin in Experimental, Unstable und Testing unterteilt.
+</p>
+</div><p></p>
+
+<ol class="org-ol"><li>Experimental<br  /><div class="outline-text-6" id="text-1-1-1-1-1">
+<p>
+Hier befinden sich Programme, die große Systemveränderungen benötigen oder noch sehr unstabil laufen. Experimental ist kein vollständiges Repository, sondern kann nur zusammen mit Unstable verwendet werden. Generell sollte man dieses Repository meiden, außer man möchte explizit bei der Debianentwicklung mitarbeiten.
+</p>
+</div><p></p>
+</li>
+<li>Unstable<br  /><div class="outline-text-6" id="text-1-1-1-1-2">
+<p>
+Unstable ist ein vollständiges Repository, welches verwendet werden kann um sehr aktuelle Software zu installieren. Unstable ist ein Rolling-release, Neuinstallationen sind also nurnoch notwendig, falls einem die unstabile Software zu viele Probleme bereitet. Auch von diesem Repository wird i.d.R. abgeraten.
+</p>
+</div><p></p>
+</li>
+<li>Testing<br  /><div class="outline-text-6" id="text-1-1-1-1-3">
+<p>
+Dieses Repository hat schon eine gewisse Stabilität erreicht, da hier nur Software gelagert wird, die eine Zeit lang ohne Probleme in Unstable war. Jedoch benutzt Testing kein volles Rolling-release-Modell mehr, da immer ein halbes Jahr vor einer neuen stabilen Debianversion es einen Featuerfreeze gibt, in dem die Entwickler sich auf Fehlerbehandlung fokussieren.
+</p>
+</div><p></p>
+</li></ol>
+</li>
+<li>Derivate<br  /><ol class="org-ol"><li>Ubuntu<br  /><ol class="org-ol"><li>Mint<br  /></li></ol>
+</li></ol>
+</li></ol>
+</div><p></p>
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Fedora</h4>
+</div><p></p>
+
+<div id="outline-container-sec-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> OpenSuse</h4>
+</div><p></p>
+</div><p></p>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Rolling-release</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Bei Rolling-release-software hat der Anwender stets eine aktuelle Version der Software und kann jederzeit auf den derzeitigen Entwicklungsstand updaten. In aller Regel geschieht dies ohne Neuinstallation. Da es hier aber keine klar definierten Versionen gibt, sondern nur Snapshots, sind evtl. auch mehr Fehler oder Probleme zu finden. Dementsprechend sind die meisten Rolling-release-distributionen für erfahrene Nutzer konzipiert.
+</p>
+</div><p></p>
+
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> Arch</h4>
+<div class="outline-text-4" id="text-1-2-1">
+</div><p></p><ol class="org-ol"><li>Manjaro<br  /></li></ol>
+</div><p></p>
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> Debian</h4>
+<div class="outline-text-4" id="text-1-2-2">
+</div><p></p><ol class="org-ol"><li>Aptosid<br  /></li>
+
+<li>Crunchbang<br  /></li>
+
+<li>Mint LMDE<br  /></li></ol>
+</div><p></p>
+<div id="outline-container-sec-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> Sourcemage</h4>
+</div><p></p>
+</div><p></p>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> **</h3>
+</div><p></p>
+</div><p></p>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Desktopumgebungen</h2>
+<div class="outline-text-2" id="text-2">
+</div><p></p><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Openbox</h3>
+</div><p></p>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> LXde</h3>
+</div><p></p>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Xfce</h3>
+</div><p></p>
+
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Kde</h3>
+</div><p></p>
+
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Gnome</h3>
+<div class="outline-text-3" id="text-2-5">
+</div><p></p><div id="outline-container-sec-2-5-1" class="outline-4">
+<h4 id="sec-2-5-1"><span class="section-number-4">2.5.1</span> Mate</h4>
+</div><p></p>
+
+<div id="outline-container-sec-2-5-2" class="outline-4">
+<h4 id="sec-2-5-2"><span class="section-number-4">2.5.2</span> Cinnamon</h4>
+</div><p></p>
+
+<div id="outline-container-sec-2-5-3" class="outline-4">
+<h4 id="sec-2-5-3"><span class="section-number-4">2.5.3</span> Unity</h4>
+</div><p></p>
+</div><p></p>
+</div><p></p>

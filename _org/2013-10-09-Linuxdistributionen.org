@@ -1,0 +1,90 @@
+#+BEGIN_COMMENT
+---
+layout: post
+title: Linuxdistributionen
+---
+#+END_COMMENT
+
+Als ich vor ungefähr 2 Jahren auf Linux umgestiegen bin, stellte ich mir die Frage welche Distribution ich nehmen sollte. Überwältigt von der Vielfalt und zunächst nicht im Stande Desktopumgebungen (Xcfe, Lxde, Gnome …) von Distributionen zu unterscheiden entschied ich mich für Ubuntu.
+
+Nach einer Eingewöhnungszeit wurde mir klar, dass Cannonical (die Firma hinter Ubuntu) Interessen hatte, die mit den meinigen unvereinbar waren. So wechselte ich zu Debian und stellte nach kurzer Zeit die Repository auf Testing. Hier hatte ich mich nun auch an verschiedene Desktopumgebungen rangemacht.
+* Distributionen
+
+Distributionen kann man durch mehrere Elemente charakterisieren:
+
+- Packetmanager :: Sie sind für Update- und Installationsprozesse verantwortlich. 
+- Desktopumgebung :: Diese stellt eine grafische Oberfläche und verschiedene Standardprogramme bereit, da diese besonders wichtig für die Usability sind, wird hier auch noch detailiert darauf eingegangen. 
+- Free vs. Nonfree :: Manche Distributionen enthalten (fast) nur freie Software (z.B. Debian) was zur Konsequenz hat, dass diese von Haus aus die meisten Videocodecs nicht unterstützen. Andere Distribution sind komfortabler (z.B. Mint), da sie alles Notwendige enthalten, um beispielsweise eine DVD oder Youtube-Videos zu sehen. 
+- Zielgruppe :: Hier gibt es große Unterschiede, vor allem Ubuntu wird immer Anfängern empfohlen, da vieles ohne Konfiguration funktioniert und technisches unter grafischen Elementen versteckt wird. Arch hingegen hat vor allem erfahrene Nutzer im Blick. Auf ein grafisches Verstecken wird bewusst verzichtet, um maximal präzise Konfiguartionen zu ermöglichen. Erfahrene Nutzer können terminalbasiert schneller arbeiten, ferner wird die CPU durch die fehlenden Extravaganzen geschont. 
+- Entwicklungsstrategie :: Hier wird zwischen Rolling- und Nonrolling-release unterschieden. Da dieses Thema für mich besonders interessant ist, wird im Folgenden darauf genauer eingegangen. 
+
+** Nonrolling-release
+
+Die meiste Software hat eine Nonrolling-release-Entwicklung. Sprich es werden stabile Versionen eines Programmes publiziert, von denen man dann Updates zur nächsten stabilen Version machen kann. Bei mancher Software, wie z.B. bei vielen Distributionen ist hierfür eine Neuinstallation notwendig.
+
+*** Debian
+
+Debian ist eine sehr alte Distribution mit sehr vielen Entwicklern. Der Entwicklungsprozess ist sehr konservativ; es werden ungefähr alle zwei Jahre neue Versionen publiziert, welche in der gesamten Zwischenzeit keinen neuen Features, sondern nur Sicherheitsupdates bekommen. Da diese Versionen außerordentlich stabil sind werden diese meist für Server verwendet.
+
+**** Repositorys
+
+Die Repositorys von Debian sind weiterhin in Experimental, Unstable und Testing unterteilt.
+
+***** Experimental
+
+Hier befinden sich Programme, die große Systemveränderungen benötigen oder noch sehr unstabil laufen. Experimental ist kein vollständiges Repository, sondern kann nur zusammen mit Unstable verwendet werden. Generell sollte man dieses Repository meiden, außer man möchte explizit bei der Debianentwicklung mitarbeiten.
+
+***** Unstable
+
+Unstable ist ein vollständiges Repository, welches verwendet werden kann um sehr aktuelle Software zu installieren. Unstable ist ein Rolling-release, Neuinstallationen sind also nurnoch notwendig, falls einem die unstabile Software zu viele Probleme bereitet. Auch von diesem Repository wird i.d.R. abgeraten.
+
+***** Testing
+
+Dieses Repository hat schon eine gewisse Stabilität erreicht, da hier nur Software gelagert wird, die eine Zeit lang ohne Probleme in Unstable war. Jedoch benutzt Testing kein volles Rolling-release-Modell mehr, da immer ein halbes Jahr vor einer neuen stabilen Debianversion es einen Featuerfreeze gibt, in dem die Entwickler sich auf Fehlerbehandlung fokussieren.
+
+**** Derivate
+
+***** Ubuntu
+
+****** Mint
+
+*** Fedora
+
+*** OpenSuse
+** Rolling-release
+
+Bei Rolling-release-software hat der Anwender stets eine aktuelle Version der Software und kann jederzeit auf den derzeitigen Entwicklungsstand updaten. In aller Regel geschieht dies ohne Neuinstallation. Da es hier aber keine klar definierten Versionen gibt, sondern nur Snapshots, sind evtl. auch mehr Fehler oder Probleme zu finden. Dementsprechend sind die meisten Rolling-release-distributionen für erfahrene Nutzer konzipiert.
+
+*** Arch
+
+**** Manjaro
+
+*** Debian
+
+**** Aptosid
+
+**** Crunchbang
+
+**** Mint LMDE
+
+*** Sourcemage
+
+** **
+
+* Desktopumgebungen
+
+** Openbox
+
+** LXde
+
+** Xfce
+
+** Kde
+
+** Gnome
+
+*** Mate
+
+*** Cinnamon
+
+*** Unity
