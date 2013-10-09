@@ -1,8 +1,6 @@
 ---
 layout: post
 title:  "Hello World!"
-date:   2013-10-06 16:30:53
-categories: jekyll linux emacs
 ---
 <script type="text/javascript">
 /*
@@ -68,7 +66,12 @@ for the JavaScript code in this tag.
 </li>
 <li><a href="#sec-2-2">2.2. Emacs</a>
 <ul>
-<li><a href="#sec-2-2-1">2.2.1. Org Mode</a></li>
+<li><a href="#sec-2-2-1">2.2.1. Org Mode</a>
+<ul>
+<li><a href="#sec-2-2-1-1">2.2.1.1. Exportfunktionen</a></li>
+<li><a href="#sec-2-2-1-2">2.2.1.2. Syntaxhighlighting</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#sec-2-3">2.3. Das Shellscript</a></li>
@@ -180,26 +183,26 @@ Emacs ist wohl einer der ältesten und umfangreichesten Texteditoren. Dass ein T
 </p>
 </div>
 
-<ol class="org-ol"><li>Exportfunktionen<br  /><div class="outline-text-5" id="text-2-2-1-1">
+<div id="outline-container-sec-2-2-1-1" class="outline-5">
+<h5 id="sec-2-2-1-1"><span class="section-number-5">2.2.1.1</span> Exportfunktionen</h5>
+<div class="outline-text-5" id="text-2-2-1-1">
 <p>
 Eine große Stärke von Org Mode sind die Exportfunktionen. Es kann u. a. nach LaTeX, Html, Docbook und Ascii exportiert werden. Dieses Feature ist so sehr ausgereift, dass die resultierenden Dokumente oft sehr gut aussehen. Automatisch wird ein Inhaltsverzeichnis generiert, ausgezeichnet, ggf. code compiliert uvm. Aller Text dieser Homepage ist ausschließlich in Org Mode verfasst, in ein Html exportiert und danach mit einem Shellscript den Anforderungen von Jekyll angepasst.
 </p>
 </div>
-
-<ol class="org-ol"><li>Syntaxhighlighting<br  /><div class="outline-text-6" id="text-2-2-1-1-1">
+</div>
+<div id="outline-container-sec-2-2-1-2" class="outline-5">
+<h5 id="sec-2-2-1-2"><span class="section-number-5">2.2.1.2</span> Syntaxhighlighting</h5>
+<div class="outline-text-5" id="text-2-2-1-2">
 <p>
 Der Export von Syntaxhighlighting von Html ist ein wenig aufwendig. Man könnte zwar auf das Syntaxhighlighting von Jekyll zurückgreifen, dies ist aber für helle Codeboxen optimiert, was nicht meiner Designvorstellung entsprach. Eine Änderung dieses Highlightings würde mit mühevollem ändern und testen jedes einzelnen Codeschlüsselwortes in einer css-Datei einhergehen, worauf ich keine Lust habe, da es auch möglich ist, dass diese Homepage ihr Äußeres noch mehrfach verändert etc.
 </p>
-</div>
 
-<ol class="org-ol"><li>Test<br  /><div class="outline-text-7" id="text-2-2-1-1-1-1">
 <p>
 Mithilfe des Zusatzpakete htmlize.el für Emacs ist es mir gelungen, Emacs so einzurichten, dass er automatisch das gleiche Syntaxhighlighting, welches derzeit im Editor aktiv ist, in den Html-export übernimmt. Über ein in Org Mode implementiertes Javascript ist es sogar möglich, über links Referenzcodezeilen zu manipulieren. Die Standardeinstellung war, die ganze Zeile gelb zu färben, was sehr direkt war. Ich habe mich für eine dezente Version entschieden und habe den Sourcecode so geändert, dass wenn der Cursor über dem link ist, die entsprechende Codezeile fett dargestellt wird.
 </p>
 </div>
-</li></ol>
-</li></ol>
-</li></ol>
+</div>
 </div>
 </div>
 <div id="outline-container-sec-2-3" class="outline-3">
@@ -215,7 +218,7 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">!/bin/</span><span style="color: #00bfff;">sh</span>
+<pre class="src src-sh">0#!/bin/sh
 
 <span id="coderef-for" class="coderef-off"><span style="color: #00bfff;">for</span> file<span style="color: #00bfff;"> in</span> *.org</span>
 <span style="color: #00bfff;">do</span>

@@ -49,8 +49,6 @@ html, body { height: 100%; }
 } 
 
 
-
-
 body {
   background-color: #FFF;
   font: 13.34px Helvetica, Arial, sans-serif;
@@ -217,7 +215,7 @@ ul.posts span {
 }
 
 .site .header h1.title a {
-  color: #a00;
+  color: #088;
 }
 
 .site .header h1.title a:hover {
@@ -251,7 +249,7 @@ ul.posts span {
 }
 
 .site .footer .contact a {
-  color: #BB0000;
+  color: #099;
 }
 
 .site .footer .rss {
