@@ -16,12 +16,12 @@ html, body { height: 100%; }
 
 
 @font-face {
-  font-family: SourceCode;
+  font-family: "SourceCode";
   src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Regular.otf.woff') format('woff');
 } 
 
 @font-face {
-  font-family: SourceCode;
+  font-family: "SourceCode";
   src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Black.otf.woff') format('woff');
   font-weight: bold;
     }
@@ -82,7 +82,7 @@ body {
     border: 1px solid #ccc;
     box-shadow: 2px 2px 2px #ccc;
     padding: 8pt;
-    font-family: monospace;
+    font-family: "SourceCode";
     font-size: small;
     overflow: auto;
     margin: 0em;
