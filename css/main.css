@@ -134,7 +134,7 @@ body {
    { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
   .linenr { font-size: smaller }
-.code-highlighted {  font-weight: bolder; }
+.code-highlighted {  font-weight: bold; }
   .org-info-js_info-navigation { border-style: none; }
   #org-info-js_console-label
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
