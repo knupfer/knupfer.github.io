@@ -16,12 +16,12 @@ html, body { height: 100%; }
 
 
 @font-face {
-  font-family: SourceCode;
+  font-family: "SourceCode";
   src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Regular.otf.woff') format('woff');
 } 
 
 @font-face {
-  font-family: SourceCode;
+  font-family: "SourceCode";
   src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Black.otf.woff') format('woff');
   font-weight: bold;
     }
@@ -82,14 +82,14 @@ body {
     border: 1px solid #ccc;
     box-shadow: 2px 2px 2px #ccc;
     padding: 8pt;
-    font-family: SourceCode;
+    font-family: Consolas, monospace;
     font-size: small;
     overflow: auto;
     margin: 0em;
   }
   pre.src {
     position: relative;
-    overflow: visible;
+    overflow: auto;
     padding-top: 1.2em;
   }
   pre.src:before {
@@ -134,7 +134,7 @@ body {
    { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
   .linenr { font-size: smaller }
-.code-highlighted {  font-weight: bolder; }
+.code-highlighted {  font-weight: bold; }
   .org-info-js_info-navigation { border-style: none; }
   #org-info-js_console-label
     { font-size: 10px; font-weight: bold; white-space: nowrap; }

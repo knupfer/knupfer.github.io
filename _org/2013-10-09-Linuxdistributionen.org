@@ -2,6 +2,8 @@
 ---
 layout: post
 title: Linuxdistributionen
+categories: linux
+test: lin
 ---
 #+END_COMMENT
 
