@@ -25,7 +25,7 @@ Jekyll ist ein statischer Homepage generierer der vor allem bei Programmieren se
 Der große Vorteil an statischen Homepages ist, dass diese keine Datenbank wie MySQL benötigen. Zudem benötigen sie kein PHP und sind somit nicht nur sehr sicher, sondern auch auf jedem Web-Server funktionsfähig. Weiterhin sind statische Homepages sehr performant.
 
 *** GitHub
-Ein weiterer fantastischer Vorteil 0ist, dass die Open-Soure-Entwicklungsplattform [[http://www.github.com][GitHub]] Jekyll-Seiten kostenlos ohne Werbung publizieren lässt. So ist diese Seite kostenfrei unter [[https://knupfer.github.io]] gehostet. Dieser Service ist aber nicht alles, GitHub kompiliert für einen sogar den Sourcecode der Homepage. Jedoch gibt es hier auch kleine Einschränkungen, so werden zusätzliche Plugins beispielsweise aus Sicherheitsgründen nicht unterstützt.
+Ein weiterer fantastischer Vorteil 0ist, dass die Open-Soure-Entwicklungsplattform [[http://www.github.com][GitHub]] Jekyll-Seiten kostenlos ohne Werbung publizieren lässt. So ist diese Seite kostenfrei unter [[http://knupfer.github.io]] gehostet. Dieser Service ist aber nicht alles, GitHub kompiliert für einen sogar den Sourcecode der Homepage. Jedoch gibt es hier auch kleine Einschränkungen, so werden zusätzliche Plugins beispielsweise aus Sicherheitsgründen nicht unterstützt.
 
 ** Emacs
 Emacs ist wohl einer der ältesten und umfangreichesten Texteditoren. Dass ein Texteditor umfangreich oder gar komplex sein kann, mag zunächst überraschen, jedoch kann Emacs äußerst erstaunlich Dinge:

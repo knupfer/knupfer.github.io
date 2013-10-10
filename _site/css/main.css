@@ -141,6 +141,11 @@ body {
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
 
+
+ol {color: #066;}
+ol div {color: #000;}
+
+
 .org-ol {list-style-type:lower-roman;}
 .org-ol ol {list-style-type:lower-greek;}
 .org-ol ol ol {list-style-type:hebrew;}
@@ -148,6 +153,8 @@ ul {list-style-type:disc;}
 ul ul {list-style-type:circle;}
 ul ul ul {list-style-type:disc;}
 ul ul ul ul {list-style-type:circle;}
+
+
 
 
 h1 {

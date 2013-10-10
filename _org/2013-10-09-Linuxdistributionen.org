@@ -3,7 +3,6 @@
 layout: post
 title: Linuxdistributionen
 categories: linux
-test: lin
 ---
 #+END_COMMENT
 
@@ -56,7 +55,7 @@ Diese Distro ist ein Fork von Ubuntu. Sie hat auch eher unerfahrene Benutzer im 
 
 ****** Kritik
 ******* Codebase
-Problematisch dürfte die Basis Ubuntu sein, da dieses immer inkompatibler wird. Somit dürften die Modifikationen, die Mint vornimmt immer schwieriger und monolithischer werden, was den UNIX-Prinzipien widerspricht. Um dem entgegenzutreten wurde eine Version von Mint erstellt, welche direkt auf Debian aufbaut ([[(LMDE)][LMDE]]).
+Problematisch dürfte die Basis Ubuntu sein, da dieses immer inkompatibler wird. Somit dürften die Modifikationen, die Mint vornimmt immer schwieriger und monolithischer werden, was den UNIX-Prinzipien widerspricht. Um dem entgegenzutreten wurde eine Version von Mint erstellt, welche direkt auf Debian aufbaut ([[Mint LMDE][LMDE]]).
 
 ******* Unfrei
 Ferner wird kritisiert, dass Mint standardmäßig eine Vielzahl an unfreier Software installiert (was andererseits zu einer komfortablen Nutzungserfahrung führt).
