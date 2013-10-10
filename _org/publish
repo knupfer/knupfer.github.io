@@ -5,7 +5,6 @@ do
     DATEI=$(echo $file | sed 's/\(.*\).org/\1/') ;
     test -e $DATEI.html &&
     grep -B 20 -m 1 END $DATEI.org | head -n -1 | tail -n +2 > $DATEI.org.publish &&
-    cat _script >> $DATEI.org.publish &&
     sed 'N;
         s/[(<\/ul>)(<\/dl>)]\n<\/div>/&<p><\/p>/;
         P;

@@ -15,6 +15,125 @@ html, body { height: 100%; }
 #navbar{height:40px!important;padding:10px 15px!important;background:#333!important;border-bottom:5px #0bb solid!important}#navbarlogo{float:left!important;margin:0!important;padding:0!important;height:40px!important;width:250px!important;background:url(/images/name.png) no-repeat!important}#navbarlogo h1{margin:0!important;padding:0!important;text-indent:-9999px!important}#navbarlogo a{display:block!important;height:40px!important;width:250px!important}#navbarlist{display:inline!important;float:right!important;list-style:none!important;margin:0!important;padding:0!important}#navbarlist li{float:left!important;font-size:14px!important;font-family:sans-serif!important;line-height:45px!important;padding-right:15px!important;padding-left:15px!important}#navbarlist li a{color:#999;font-weight:bold!important;text-decoration:none!important}#navbarlist li a:hover{color:white!important;text-decoration:none!important}*
 
 
+
+
+#table-of-contents {
+    font-size: 9pt;
+    position: fixed;
+    left: 0px;
+    top: 57px;
+    text-indent: 10px;
+    padding: 0.5em;
+    color: #BBB;
+    background: white;
+    -webkit-box-shadow: 0 0 1em #777777;
+    -moz-box-shadow: 0 0 1em #777777;
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    text-align: left;
+    /* ensure doesn't flow off the screen when expanded */
+    max-height: 80%;
+    overflow: auto; 
+    z-index: 200;
+    display: block;
+}
+
+
+#table-of-contents:before {
+      /* For a round bullet */
+      content:'\2022';
+      /* For a square bullet */
+      /*content:'\25A0';*/
+      display: block;
+      position: fixed;
+      width: 17px;
+      max-height: 0px;
+      left: 0px;
+      top: 73px;
+      color: white;
+border-bottom:5px #ddd solid;
+
+      font-size: 20px;}
+#table-of-contents:hover:before {
+      /* For a round bullet */
+      content:'\2022';
+      /* For a square bullet */
+      /*content:'\25A0';*/
+      display: block;
+      position: fixed;
+      width: 17px;
+      max-height: 0px;
+      left: 0px;
+      top: 73px;
+      color: white;
+border-bottom:5px #add solid;
+
+      font-size: 20px;}
+
+#table-of-contents h3 {
+    font-size: 1.5em;
+    max-width: 25em;
+    font-weight: normal;
+    padding-left: 0.5em;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em; 
+}
+
+#table-of-contents:hover h3 {
+
+    max-width: 25em;
+    color: #333;
+    font-weight: normal;
+    padding-left: 0.5em;
+    padding-top: 0.05em;
+    padding-bottom: 0.05em; 
+}
+
+#table-of-contents ul {
+    margin-left: 14pt; 
+    margin-bottom: 10pt;
+    padding: 0
+}
+
+#table-of-contents li {
+    padding: 0em;
+    margin: 1px;
+    list-style: none;
+}
+
+#table-of-contents ul>:first-child {
+    color: blue;
+}
+
+#table-of-contents #text-table-of-contents {
+    display: none;
+    text-align: left;
+}
+
+#table-of-contents:hover #text-table-of-contents {
+    display: block;
+    padding: 0.5em;
+    margin-top: 1.5em; 
+}
+
+img.random {
+    max-width: 750px;
+    max-height: 380px;
+    margin-bottom: 10pt;
+    border: 1px solid black;
+}
+
+@media screen
+{
+  #table-of-contents {
+    float: left;
+  /*  border: 5px solid #0bb; */
+    max-width: 50%;
+    overflow: auto;
+  }
+} /* END OF @media screen */
+
+
 @font-face {
   font-family: "SourceCode";
   src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Regular.otf.woff') format('woff');
