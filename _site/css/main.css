@@ -31,7 +31,6 @@ html, body { height: 100%; }
     text-indent: 10px;
     padding: 0.5em;
     color: #BBB;
-    background: white;
 /*    -webkit-box-shadow: 0 0 1em #777777;
     -moz-box-shadow: 0 0 1em #777777;
     -webkit-border-bottom-left-radius: 5px;
@@ -78,7 +77,7 @@ border-bottom:5px #add solid;
       font-size: 20px;}
 
 #table-of-contents h3 {
-    font-size: 20px;
+    font-size: 24px;
     max-width: 25em;
     font-weight: normal;
     padding-left: 10px;

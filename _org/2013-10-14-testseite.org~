@@ -20,7 +20,6 @@ Org-Mode bietet sehr elaborierte Outlinefähigkeiten. Hierarchien werden mit ein
  
  *** Unterunterüberschrift
  Text
-
  * Zweite Überschrift
 #+END_SRC
 
@@ -34,7 +33,6 @@ Um sich einen Überblick zu verschaffen und in seinem Dokument effizient zu navi
 #+END_SRC
 
 Zudem kann man ganze Hierarchiebäume verschieben und auch befördern bzw. degradieren.
-
 * Todo-Listen
 Es können Todo-Listen einfach erstellt werden und mit Tastenkürzel verändert werden, beispielsweise als erledigt markiert werden und automatisch einen Zeitstempel hinzufügen.
 
@@ -50,7 +48,6 @@ Und folgendermaßen sehen die beiden Punkte im Quelltext aus:
     CLOSED: [2013-10-13 Sun 12:31]
 #+END_SRC
 
-** Agendas
 Mit Hilfe dieser Todo-Listen können sich Projektpläne erstellen lassen, ferner können die Todos mit einer Frist versehen werden und die ganze Liste an Fristen dann in einen Terminkalender exportieren. Erledigte Punkte können per Tastenkürzel in eine andere Datei archiviert werden.
 
 Ferner lassen sich per Befehl auch alle Todos eines Projektes, welches aus mehreren .org Dateien bestehen kann anzeigen und exportieren.
@@ -69,7 +66,6 @@ Dementsprechend kann man in gängige, ästhetischere Formate exportieren:
 
 Der Export ist so hervorragend, dass die resultierenden Pdfs direkt gedruckt werden können. Nach bedarf können einzelne Exportoptionen über Variablen verändert werden.
 
-** LaTeX
 LaTeX-Formeln können direkt in das Html exportiert werden. Hierfür muss keine besondere Notation bedacht werden, es ist die gleiche. Nur die $-Zeichen der LaTeX-Formelumgebung müssen mit der Formel anliegend notiert werden, um Verwechslungen mit dem Währungssymbol zu vermeiden. Als Beispiel der Laplace-Operator für multidimensionale Differentialrechnung: $$ \Delta=\sum_{k=1}^n \frac{\partial^2}{\partial x_k^2} $$
 
 Im Quelltext sieht dies folgendermaßen aus:
@@ -89,6 +85,10 @@ Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden, sondern auch na
 ,* Testüberschrift
 ,#+END_SRC
 #+END_SRC
+
+#+BEGIN_HTML
+<button> cliiick </button>
+#+END_HTML
 
 Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt ausgeführt wird und das Ergebnis automatisch in eine Tabelle überführt wird. Es wurde keine Zahl händisch in die Tabelle eingetragen.
 
@@ -110,9 +110,11 @@ return x
 | 3 | 34 | 377 | 4181 | 46368 |
 | 5 | 55 | 610 | 6765 | 75025 |
 
+
 Ferner ist es möglich, die Ergebnisse eines Sourceblocks für den Input eines anderen Sourceblocks zu verwenden. Dementsprechend können, ähnlich zu Shellscripten, Pipes zwischen verschiedenen Programmiersprachen gebaut werden. Das Ergebnis kann an jeder beliebigen Stelle im Dokument durch einen Platzhalter eingefügt werden, wodurch es möglich ist, Tabellen und Grafiken automatisch immer auf den aktuellen Datenstand darzustellen.
 
 Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jedem Export sichert, oder aber für eine Website nachbereitet. Es ist vor allem Erfreulich, dass man sich dadurch das mühselige übertragen von Daten in Tabellen (beispielsweise in LaTeX) ersparen kann.
+
 
 #+BEGIN_SRC python :exports both
 

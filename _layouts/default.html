@@ -12,6 +12,17 @@
               type="image/png" 
               href="/images/icon.png">
 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+</script>
+<script>
+$(document).ready(function(){
+  $("button").click(function(){
+    $("#outline-container-sec-1").fadeToggle();
+    $("#outline-container-sec-2").fadeToggle("slow");
+    $("#outline-container-sec-3").fadeToggle(3000);
+  });
+});
+</script>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
