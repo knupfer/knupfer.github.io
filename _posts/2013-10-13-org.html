@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Emacs Org-Mode"
+categories: linux
 ---
 <div id="table-of-contents">
 <h3>Inhaltsverzeichnis</h3>
@@ -188,11 +189,11 @@ Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt 
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #7f7f7f;"># Fibonacci-Reihe</span>
-<span style="color: #4eee94;">x</span> = [[0]*5 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(5)]
+<span style="color: #4eee94;">x</span> = [[0] * 5 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(5)]
 x[0][0] = 1
 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(25):
-    x[i % 5][i // 5] += x[(i-1) % 5][(i-1) // 5]
-    x[i % 5][i // 5] += x[(i-2) % 5][(i-2) // 5]
+    x[i % 5][i // 5] += x[(i - 1) % 5][(i - 1) // 5]
+    x[i % 5][i // 5] += x[(i - 2) % 5][(i - 2) // 5]
 <span style="color: #00bfff;">return</span> x
 </pre>
 </div><p></p>
