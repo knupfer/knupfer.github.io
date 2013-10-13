@@ -236,10 +236,12 @@ body {
   pre.src-java:before  { content: 'Java'; }
   pre.src-sql:before   { content: 'SQL'; }
 */
-  table { border-collapse:collapse; }
-  td, th { vertical-align:top;  }
+
+  table {border-collapse:collapse; margin-left: auto; margin-right: auto; } */
+  tr {border: 1px solid #eee;}
+  td, th { vertical-align:top; padding:0px 10px;  }
   th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
+  th.left   { text-align: left;   }
   th.center { text-align: center; }
   td.right  { text-align: right;  }
   td.left   { text-align: left;   }
@@ -256,6 +258,18 @@ body {
     margin: 10px;
     background: #ffffcc;
   }
+
+tr:hover
+{ 
+  background-color: #eee;
+} 
+
+colgroup col:hover
+{ 
+  background-color: #aee;
+} 
+
+
   #org-div-home-and-up
    { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }

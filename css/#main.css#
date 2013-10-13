@@ -264,11 +264,6 @@ tr:hover
   background-color: #eee;
 } 
 
-colgroup col:hover
-{ 
-  background-color: #aee;
-} 
-
 
   #org-div-home-and-up
    { text-align: right; font-size: 70%; white-space: nowrap; }
