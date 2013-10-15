@@ -8,6 +8,7 @@ do
     sed 'N;
         s/[(<\/ul>)(<\/dl>)]\n<\/div>/&<p><\/p>/;
         P;
+        s/file:\/\///;
         s/<h2>Table of Contents<\/h2>/<h3>Inhaltsverzeichnis<\/h3>/;
         D' $DATEI.html >> $DATEI.org.publish &&
     cat $DATEI.org.publish > ../_posts/$DATEI.html &&
