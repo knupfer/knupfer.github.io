@@ -35,6 +35,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus porta ipsum a
 }
 #+end_src
 
+#+RESULTS:
+[[file:/images/ionian.png]]
+
 
 Org-Mode stellt eine der interessantesten Entdeckungen dar, die ich die letzten Monate gemacht habe. Org-Mode ist ein Modus, also eine Erweiterung, für den Texteditor Emacs. Org-Mode dient, wie der Name bereits impliziert, der Organisation.
 
@@ -194,7 +197,7 @@ return Resultat
 
 *** Lilypond
 
-#+BEGIN_SRC lilypond :file Mixolydian.png :export both
+#+BEGIN_SRC lilypond :file /images/Mixolydian.png :export both
 
   \relative c' { 
     g a b c d e f g f e d c b a g a b c d e f g f e d c b a g1 
