@@ -426,27 +426,26 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
 <span style="color: #00bfff;">\language</span> <span style="color: #deb887;">"deutsch"</span>
 
 <span style="color: #00bfff;">\score</span> <span style="color: #a2cd5a;">{</span>
-
-<span style="color: #daa520;">&lt;&lt;</span>
-<span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Voice</span> = <span style="color: #4eee94;">mel</span> <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span> 
+  <span style="color: #daa520;">&lt;&lt;</span>
+  <span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Voice</span> = <span style="color: #4eee94;">mel</span> <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span> 
     <span style="color: #00bfff;">\set</span> <span style="color: #4eee94;">Score.defaultBarType</span> = <span style="color: #deb887;">"-"</span>
-    <span style="color: #00bfff;">\time</span> 2/2
     <span style="color: #00bfff;">\clef</span> <span style="color: #deb887;">"petrucci-c3"</span>
-    <span style="color: #00bfff;">\set</span> <span style="color: #4eee94;">Score.skipBars</span> = <span style="color: #deb887;">##t</span>
     <span style="color: #daa520;">\autoBeamOff</span>
     <span style="color: #00bfff;">\override</span> NoteHead <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'petrucci</span>
     <span style="color: #00bfff;">\override</span> <span style="color: #4eee94;">Staff</span>.TimeSignature <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'neomensural</span>
+
+    <span style="color: #00bfff;">\time</span> 2/2
 
     <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
     <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
     <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
     <span style="color: #98f5ff;">d2</span> 
-<span style="color: #a2cd5a;">}</span>
-
-<span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Lyrics</span> <span style="color: #00bfff;">\lyricsto</span> mel <span style="color: #a2cd5a;">{</span><span style="color: #deb887;"> </span>
+  <span style="color: #a2cd5a;">}</span>
+  <span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Lyrics</span> <span style="color: #00bfff;">\lyricsto</span> mel <span style="color: #a2cd5a;">{</span><span style="color: #deb887;"> </span>
 <span style="color: #deb887;">    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum, </span>
-<span style="color: #a2cd5a;">}</span>
-<span style="color: #daa520;">&gt;&gt;</span>
+<span style="color: #deb887;">  </span><span style="color: #a2cd5a;">}</span>
+  <span style="color: #daa520;">&gt;&gt;</span>
+
   <span style="color: #00bfff;">\layout</span> <span style="color: #a2cd5a;">{</span>
     <span style="color: #00bfff;">\context</span> <span style="color: #a2cd5a;">{</span>
       <span style="color: #a2cd5a;">\Staff</span>

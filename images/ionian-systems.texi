@@ -1,2 +1,0 @@
-@image{ionian-1}
-@c eof
