@@ -6,7 +6,7 @@ categories: linux
 ---
 #+END_COMMENT
 #+name: paper
-#+begin_comment
+#+begin_src lilypond :exports none
 \version "2.16.0"
 #(ly:set-option 'resolution 140)
 \paper{
@@ -17,7 +17,7 @@ oddHeaderMarkup=##f
 bookTitleMarkup=##f
 scoreTitleMarkup=##f
 }
-#+end_comment
+#+end_src
 
 
 Org-Mode stellt eine der interessantesten Entdeckungen dar, die ich die letzten Monate gemacht habe. Org-Mode ist ein Modus, also eine Erweiterung, für den Texteditor Emacs. Org-Mode dient, wie der Name bereits impliziert, der Organisation.
@@ -179,20 +179,43 @@ return Resultat
 *** Lilypond
 
 
-#+begin_src lilypond :file /images/lily-beispiel.png :noweb yes
-  <<paper()>>
-  \relative c' { 
-    c d e f |
-    g a b2 |
-    a b | 
-    c d | 
-    e f |
-    a g |
-    e b |
-    c1 \bar "|."
+#+begin_src lilypond :file /images/lily-beispiel.png :noweb yes :exports both
+ <<paper>>
+ 
+\language "deutsch"
+
+\score {
+
+<<
+\new Voice = mel \relative c' { 
+    \set Score.defaultBarType = "-"
+    \time 2/2
+    \clef "petrucci-c3"
+    \set Score.skipBars = ##t
+    \autoBeamOff
+    \override NoteHead #'style = #'petrucci
+    \override Staff.TimeSignature #'style = #'neomensural
+
+    r2 e |
+    e f2. e8 d c2 |
+    c4 e f g2 f4 d e4. d8 d2 c4 |
+    d2 
 }
+
+\new Lyrics \lyricsto mel { 
+    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum, 
+}
+>>
+  \layout {
+    \context {
+      \Staff
+      \consists "Custos_engraver"
+      \override Custos #'style = #'mensural
+    }
+  }
+}
+
 #+end_src
 
 #+RESULTS:
 [[file:/images/lily-beispiel.png]]
-
