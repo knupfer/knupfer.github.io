@@ -5,22 +5,19 @@ title:  "Emacs Org-Mode"
 categories: linux
 ---
 #+END_COMMENT
-
-
-
-
-#+end_src
 #+name: paper
-#+begin_src emacs-lisp :exports none :results silent
-"\\paper{
-indent=0\\mm
-line-width=100\\mm
+#+begin_comment
+\version "2.16.0"
+#(ly:set-option 'resolution 140)
+\paper{
+indent=0\mm
+line-width=90\mm
 oddFooterMarkup=##f
 oddHeaderMarkup=##f
 bookTitleMarkup=##f
 scoreTitleMarkup=##f
-}"
-#+end_src
+}
+#+end_comment
 
 
 Org-Mode stellt eine der interessantesten Entdeckungen dar, die ich die letzten Monate gemacht habe. Org-Mode ist ein Modus, also eine Erweiterung, für den Texteditor Emacs. Org-Mode dient, wie der Name bereits impliziert, der Organisation.
@@ -182,12 +179,16 @@ return Resultat
 *** Lilypond
 
 
-#+begin_src lilypond :file /images/lily-beispiel.png :noweb yesyes
-
+#+begin_src lilypond :file /images/lily-beispiel.png :noweb yes
   <<paper()>>
   \relative c' { 
     c d e f |
     g a b2 |
+    a b | 
+    c d | 
+    e f |
+    a g |
+    e b |
     c1 \bar "|."
 }
 #+end_src
