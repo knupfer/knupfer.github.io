@@ -24,7 +24,8 @@ categories: linux
 <li><a href="#sec-3-1">3.1. LaTeX</a></li>
 <li><a href="#sec-3-2">3.2. Sourceblöcke</a>
 <ul>
-<li><a href="#sec-3-2-1">3.2.1. Lilypond</a></li>
+<li><a href="#sec-3-2-1">3.2.1. Python</a></li>
+<li><a href="#sec-3-2-2">3.2.2. Lilypond</a></li>
 </ul>
 </li>
 </ul>
@@ -191,7 +192,12 @@ Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden, sondern auch na
 </span><span style="color: #7f7f7f;">#+END_SRC</span>
 </pre>
 </div><p></p>
+</div><p></p>
 
+<div id="outline-container-sec-3-2-1" class="outline-4">
+<h4 id="sec-3-2-1"><span class="section-number-4">3.2.1</span> Python</h4>
+<div class="outline-text-4" id="text-3-2-1">
+</div><p></p><ol class="org-ol"><li>Fibonacci<br ><div class="outline-text-5" id="text-3-2-1-1">
 <p>
 Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt ausgeführt wird und das Ergebnis automatisch in eine Tabelle überführt wird. Es wurde keine Zahl händisch in die Tabelle eingetragen.
 </p>
@@ -272,7 +278,9 @@ Ferner ist es möglich, die Ergebnisse eines Sourceblocks für den Input eines a
 <p>
 Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jedem Export sichert, oder aber für eine Website nachbereitet. Es ist vor allem Erfreulich, dass man sich dadurch das mühselige übertragen von Daten in Tabellen (beispielsweise in LaTeX) ersparen kann.
 </p>
-
+</div><p></p>
+</li>
+<li>Zahlensystemkonverter<br ><div class="outline-text-5" id="text-3-2-1-2">
 <div class="org-src-container">
 
 <pre class="src src-python"><span style="color: #7f7f7f;"># Zahlensystemkonverter</span>
@@ -406,10 +414,55 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
 </tbody>
 </table>
 </div><p></p>
+</li></ol>
+</div><p></p>
+<div id="outline-container-sec-3-2-2" class="outline-4">
+<h4 id="sec-3-2-2"><span class="section-number-4">3.2.2</span> Lilypond</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<p>
+Ferner kann direkt Sourcecode von Lilypond verwendet werden. Somit können musikwissenschaftliche oder -pädagogische Bücher mit gemischtem Anteil an Noten und Text ohne Probleme erstellt werden. Ferner aus den gleichen Quellen Html-Seiten exportiert werden.
+</p>
 
-<div id="outline-container-sec-3-2-1" class="outline-4">
-<h4 id="sec-3-2-1"><span class="section-number-4">3.2.1</span> Lilypond</h4>
-<div class="outline-text-4" id="text-3-2-1">
+<p>
+Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschiedenen Sourcecodeblöcken ergeben &#x2013; das Ergebnis des einen Sourcecodeblocks kann direkt für die Verwendung eines anderen Sourcecodeblocks verwendet werden &#x2013; lassen sich viele Dinge automatisieren, oder als Variable verwenden. So bietet es sich an, den Header und das Layout von Lilypond als Variable zu speichern, welche dann stets, bei gleichem Layout, verwendet werden kann.
+</p>
+</div><p></p>
+
+<ol class="org-ol"><li>Moderne Notation<br ><div class="outline-text-5" id="text-3-2-2-1">
+<div class="org-src-container">
+
+<pre class="src src-lilypond"><span style="color: #00bfff;">\version</span> <span style="color: #deb887;">"2.16.0"</span>
+<span style="color: #deb887;">#(ly:set-option 'resolution 140)</span>
+<span style="color: #00bfff;">\paper</span><span style="color: #a2cd5a;">{</span>
+<span style="color: #4eee94;">indent</span>=<span style="color: #4eee94;">0</span><span style="color: #00bfff;">\mm</span>
+<span style="color: #4eee94;">line-width</span>=<span style="color: #4eee94;">90</span><span style="color: #00bfff;">\mm</span>
+<span style="color: #4eee94;">oddFooterMarkup</span>=<span style="color: #deb887;">##f</span>
+<span style="color: #4eee94;">oddHeaderMarkup</span>=<span style="color: #deb887;">##f</span>
+<span style="color: #4eee94;">bookTitleMarkup</span>=<span style="color: #deb887;">##f</span>
+<span style="color: #4eee94;">scoreTitleMarkup</span>=<span style="color: #deb887;">##f</span>
+<span style="color: #a2cd5a;">}</span>
+
+<span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span>
+  <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
+  <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
+  <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
+  <span style="color: #98f5ff;">d2</span> 
+<span style="color: #a2cd5a;">}</span>
+
+<span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span>
+  Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
+<span style="color: #a2cd5a;">}</span>
+</pre>
+</div><p></p>
+
+
+<div class="figure">
+<p><img src="/images/ly-einfach.png" alt="ly-einfach.png">
+</p>
+</div><p></p>
+</div><p></p>
+</li>
+<li>Historische Notation<br ><div class="outline-text-5" id="text-3-2-2-2">
 <div class="org-src-container">
 
 <pre class="src src-lilypond"> <span style="color: #00bfff;">\version</span> <span style="color: #deb887;">"2.16.0"</span>
@@ -441,9 +494,9 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
     <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
     <span style="color: #98f5ff;">d2</span> 
   <span style="color: #a2cd5a;">}</span>
-  <span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Lyrics</span> <span style="color: #00bfff;">\lyricsto</span> mel <span style="color: #a2cd5a;">{</span><span style="color: #deb887;"> </span>
-<span style="color: #deb887;">    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum, </span>
-<span style="color: #deb887;">  </span><span style="color: #a2cd5a;">}</span>
+  <span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span> 
+    Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
+  <span style="color: #a2cd5a;">}</span>
   <span style="color: #daa520;">&gt;&gt;</span>
 
   <span style="color: #00bfff;">\layout</span> <span style="color: #a2cd5a;">{</span>
@@ -463,6 +516,16 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
 </p>
 </div><p></p>
 </div><p></p>
+</li>
+
+<li>Mensuralnotation<br ><div class="outline-text-5" id="text-3-2-2-3">
+
+<div class="figure">
+<p><img src="/images/ly-altemus.png" alt="ly-altemus.png">
+</p>
+</div><p></p>
+</div><p></p>
+</li></ol>
 </div><p></p>
 </div><p></p>
 </div><p></p>

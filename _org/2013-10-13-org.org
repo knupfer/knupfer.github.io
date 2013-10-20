@@ -104,6 +104,8 @@ Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden, sondern auch na
 ,#+END_SRC
 #+END_SRC
 
+*** Python
+**** Fibonacci
 Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt ausgeführt wird und das Ergebnis automatisch in eine Tabelle überführt wird. Es wurde keine Zahl händisch in die Tabelle eingetragen.
 
 #+BEGIN_SRC python :exports both
@@ -128,6 +130,7 @@ Ferner ist es möglich, die Ergebnisse eines Sourceblocks für den Input eines a
 
 Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jedem Export sichert, oder aber für eine Website nachbereitet. Es ist vor allem Erfreulich, dass man sich dadurch das mühselige übertragen von Daten in Tabellen (beispielsweise in LaTeX) ersparen kann.
 
+**** Zahlensystemkonverter
 #+BEGIN_SRC python :exports both
 
 # Zahlensystemkonverter
@@ -177,35 +180,56 @@ return Resultat
 | 20 |        2:0 |
 
 *** Lilypond
+Ferner kann direkt Sourcecode von Lilypond verwendet werden. Somit können musikwissenschaftliche oder -pädagogische Bücher mit gemischtem Anteil an Noten und Text ohne Probleme erstellt werden. Ferner aus den gleichen Quellen Html-Seiten exportiert werden.
 
+Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschiedenen Sourcecodeblöcken ergeben -- das Ergebnis des einen Sourcecodeblocks kann direkt für die Verwendung eines anderen Sourcecodeblocks verwendet werden -- lassen sich viele Dinge automatisieren, oder als Variable verwenden. So bietet es sich an, den Header und das Layout von Lilypond als Variable zu speichern, welche dann stets, bei gleichem Layout, verwendet werden kann.
 
+**** Moderne Notation
+#+begin_src lilypond :file /images/ly-einfach.png :noweb yes :exports both
+<<paper>>
+
+\relative c' {
+  r2 e |
+  e f2. e8 d c2 |
+  c4 e f g2 f4 d e4. d8 d2 c4 |
+  d2 
+}
+
+\addlyrics {
+  Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum. 
+}
+#+end_src
+
+#+RESULTS:
+[[file:/images/ly-einfach.png]]
+
+**** Historische Notation
 #+begin_src lilypond :file /images/lily-beispiel.png :noweb yes :exports both
  <<paper>>
  
 \language "deutsch"
 
 \score {
-
-<<
-\new Voice = mel \relative c' { 
+  <<
+  \new Voice = mel \relative c' { 
     \set Score.defaultBarType = "-"
-    \time 2/2
     \clef "petrucci-c3"
-    \set Score.skipBars = ##t
     \autoBeamOff
     \override NoteHead #'style = #'petrucci
     \override Staff.TimeSignature #'style = #'neomensural
+
+    \time 2/2
 
     r2 e |
     e f2. e8 d c2 |
     c4 e f g2 f4 d e4. d8 d2 c4 |
     d2 
-}
+  }
+  \addlyrics { 
+    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum. 
+  }
+  >>
 
-\new Lyrics \lyricsto mel { 
-    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum, 
-}
->>
   \layout {
     \context {
       \Staff
@@ -219,3 +243,28 @@ return Resultat
 
 #+RESULTS:
 [[file:/images/lily-beispiel.png]]
+
+
+**** Mensuralnotation
+#+begin_src lilypond :file /images/ly-altemus.png :noweb yes :export both
+
+<<paper>>
+
+\score {
+  <<
+    \new MensuralVoice = "discantus" \relative c'' {
+        e\breve 
+        e \[ f\breve  \melisma e d c\breve\melismaEnd \]
+        c1 e \[  f\breve \melisma g f d e  d c\melismaEnd \]
+        d\longa^\signumcongruentiae
+    }
+    \new Lyrics \lyricsto "discantus" {
+        Et a -- scen -- dit in coe -- lum. 
+    }
+  >>
+}
+#+end_src
+
+#+RESULTS:
+[[file:/images/ly-altemus.png]]
+

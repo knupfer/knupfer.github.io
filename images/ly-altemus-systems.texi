@@ -1,0 +1,2 @@
+@image{ly-altemus-1}
+@c eof
