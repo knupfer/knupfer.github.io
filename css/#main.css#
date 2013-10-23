@@ -12,14 +12,39 @@
 
 html, body { height: 100%; }
 
-#navbar{height:40px!important;padding:10px 15px!important;background:#333!important;border-bottom:5px #0bb solid!important}#navbarlogo{float:left!important;margin:0!important;padding:0!important;height:40px!important;width:250px!important;background:url(/images/name.png) no-repeat!important}
-#navbarlogo h1{margin:0!important;padding:0!important;text-indent:-9999px!important}
-#navbarlogo a{display:block!important;height:40px!important;width:250px!important}
-#navbarlist{display:inline!important;float:right!important;list-style:none!important;margin:0!important;padding:0!important}
-#navbarlist li{float:left!important;font-size:14px!important;font-family:sans-serif!important;line-height:45px!important;padding-right:15px!important;padding-left:15px!important}
-#navbarlist li a{color:#999;font-weight:bold!important;text-decoration:none!important}
-#navbarlist li a:hover{color:white!important;text-decoration:none!important}
+#navbar{height:40px!important;position:relative;z-index:20;padding:10px 15px!important;background:#333!important;border-bottom:5px #0bb solid!important}
+#navbarlogo{float:left!important;z-index: 200;margin:0!important;padding:0!important;height:40px!important;width:250px!important;background:url(/images/name.png) no-repeat!important}
+#navbarlogo h1{margin:0!important;z-index: 200;padding:0!important;text-indent:-9999px!important}
+#navbarlogo a{display:block!important;z-index: 200;height:40px!important;width:250px!important}
+#navbarlist{display:inline!important;z-index: 200;float:right!important;list-style:none!important;margin:0!important;padding:0!important}
+#navbarlist li{float:left!important;font-size:14px!important;z-index: 200;font-family:sans-serif!important;line-height:45px!important;padding-right:15px!important;padding-left:15px!important}
+#navbarlist li a{color:#999;z-index: 200;font-weight:bold!important;text-decoration:none!important}
+#navbarlist li a:hover{color:white!important;z-index: 200;text-decoration:none!important}
 
+
+#navbarr{
+    height:0px!important;
+    z-index: 10;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    padding:0px 15px!important;
+    background:#333!important;
+    border-bottom:5px #0bb solid!important
+}
+
+#navbarr:hover{
+    height:40px!important;
+    z-index: 250;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    padding:10px 15px!important;
+    background:#333!important;
+    border-bottom:5px #0bb solid!important
+}
 
 
 
@@ -27,27 +52,29 @@ html, body { height: 100%; }
     font-size: 9pt;
     position: fixed;
     left: 0px;
-    top: 57px;
+    top: 0px;
     text-indent: 10px;
     padding: 0.5em;
+    padding-right: 30px;
+
     color: #BBB;
-    background: white;
+    background: #fefefe;
 /*    -webkit-box-shadow: 0 0 1em #777777;
     -moz-box-shadow: 0 0 1em #777777;
     -webkit-border-bottom-left-radius: 5px;
     -moz-border-radius-bottomleft: 5px; */
     text-align: left;
     /* ensure doesn't flow off the screen when expanded */
-    max-height: 80%;
+    max-height: 100%;
     overflow: auto; 
-    z-index: 200;
+    z-index: 2;
     display: block;
 }
 
 
 #table-of-contents:before {
       /* For a round bullet */
-      content:'\2022';
+      content:' ';
       /* For a square bullet */
       /*content:'\25A0';*/
       display: block;
@@ -55,15 +82,16 @@ html, body { height: 100%; }
       width: 17px;
       max-height: 0px;
       left: 0px;
-      top: 73px;
+      top: 88px;
       color: white;
 border-bottom:5px #ddd solid;
 
       font-size: 20px;}
 
+
 #table-of-contents:hover:before {
       /* For a round bullet */
-      content:'\2022';
+      content:' ';
       /* For a square bullet */
       /*content:'\25A0';*/
       display: block;
@@ -71,35 +99,36 @@ border-bottom:5px #ddd solid;
       width: 17px;
       max-height: 0px;
       left: 0px;
-      top: 73px;
+      top: 88px;
       color: white;
 border-bottom:5px #add solid;
 
       font-size: 20px;}
 
 #table-of-contents h3 {
-    font-size: 20px;
+    font-size: 24px;
     max-width: 25em;
     font-weight: normal;
     padding-left: 10px;
-    padding-top:0px;
-    padding-bottom: 0.05em; 
+    padding-right: 0px;
+    padding-top: 67px;
+    padding-bottom: 20px; 
 }
 
 #table-of-contents:hover h3 {
-
-    max-width: 25em;
     color: #333;
-    font-weight: normal;
-    padding-left: 10px;
-    padding-top: 0px;
-    padding-bottom: 0.05em; 
+    padding-bottom: 0px; 
 }
 
 #table-of-contents ul {
-    margin-left: 14pt; 
+    margin-left: 12pt; 
     margin-bottom: 10pt;
-    padding: 0
+    padding: 0;
+    border-left:5px #bdefe solid;
+}
+
+#table-of-contents ul:hover {
+    border-left:5px #add solid;
 }
 
 #table-of-contents li {
@@ -134,7 +163,13 @@ img.random {
 {
   #table-of-contents {
     float: left;
-  /*  border: 5px solid #0bb; */
+    border: 5px solid #fbfbfb;  
+    max-width: 50%;
+    overflow: auto;
+  }
+  #table-of-contents:hover {
+    float: left;
+    border: 5px solid #f2fafa;  
     max-width: 50%;
     overflow: auto;
   }
@@ -264,6 +299,11 @@ tr:hover
   background-color: #eee;
 } 
 
+colgroup col:hover
+{ 
+  background-color: #aee;
+} 
+
 
   #org-div-home-and-up
    { text-align: right; font-size: 70%; white-space: nowrap; }
@@ -349,8 +389,8 @@ ul.posts span {
 .site {
   font-size: 115%;
   text-align: justify;
-  width: 30em;
-  margin: 3em auto 2em;
+  width: 37em;
+  margin: 2em auto 2em;
   line-height: 1.5em;
 }
 

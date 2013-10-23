@@ -124,7 +124,7 @@ border-bottom:5px #add solid;
     margin-left: 12pt; 
     margin-bottom: 10pt;
     padding: 0;
-    border-left:5px #bee solid;
+    border-left:5px #dee solid;
 }
 
 #table-of-contents ul:hover {
@@ -168,10 +168,8 @@ img.random {
     overflow: auto;
   }
   #table-of-contents:hover {
-    float: left;
     border: 5px solid #f2fafa;  
-    max-width: 50%;
-    overflow: auto;
+ 
   }
 } /* END OF @media screen */
 
@@ -354,9 +352,34 @@ p { margin: 1em 0; }
 
 
 
-a         { color: #AAA; text-decoration: none; font-weight: bold; }
-a:hover   { color: #5DD; }
+a         {
+    color: #AAA; 
+    text-decoration: none;
+    font-weight: bold;
+}
+a:hover   {  
+    color: #5DD;
+    animation:myfirst 5s;
+    -webkit-animation:myfirst 5s;}
 
+ /* Safari and Chrome */
+}
+
+@keyframes myfirst
+{
+0%   {color: red;}
+25%  {color: yellow;}
+50%  {color: blue;}
+100% {color: green;}
+}
+
+@-webkit-keyframes myfirst /* Safari and Chrome */
+{
+0%   {color: red;}
+25%  {color: yellow;}
+50%  {color: blue;}
+100% {color: green;}
+} 
 
 
 
