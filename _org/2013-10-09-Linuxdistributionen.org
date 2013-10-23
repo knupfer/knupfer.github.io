@@ -6,6 +6,7 @@ categories: linux
 ---
 #+END_COMMENT
 
+
 Als ich vor ungefähr 2 Jahren auf Linux umgestiegen bin, stellte ich mir die Frage welche Distribution ich nehmen sollte. Überwältigt von der Vielfalt und zunächst nicht im Stande Desktopumgebungen (Xcfe, Lxde, Gnome …) von Distributionen zu unterscheiden entschied ich mich für Ubuntu.
 
 Nach einer Eingewöhnungszeit wurde mir klar, dass Cannonical (die Firma hinter Ubuntu) Interessen hatte, die mit den meinigen unvereinbar waren. So wechselte ich zu Debian und stellte nach kurzer Zeit die Repository auf Testing. Hier hatte ich mich nun auch an verschiedene Desktopumgebungen rangemacht.

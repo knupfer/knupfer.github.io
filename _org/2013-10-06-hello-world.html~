@@ -1,9 +1,5 @@
----
-layout: post
-title:  "Hello World!"
----
 <div id="table-of-contents">
-<h3>Inhaltsverzeichnis</h3>
+<h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1. Begrüßung</a>
@@ -33,8 +29,8 @@ title:  "Hello World!"
 </ul>
 </li>
 </ul>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Begrüßung</h2>
@@ -42,7 +38,7 @@ title:  "Hello World!"
 <p>
 Hallo, dies ist mein erster Post hier. Ich bin gespannt, ob ich mich für das Bloggen begeistern kann. Gleichzeitig dient diese Homepage dazu, gemeinschaftlich über Probleme nachzudenken. Diese können aus ganz verschiedenen Bereichen kommen. Hier im Speziellen wird es sich um Themen der Musikpädagogik, der Empirie, des Computers und der Typography drehen.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Zu meiner Person</h3>
@@ -58,16 +54,16 @@ Angefangen habe ich mit Python; als pädagogische Programmiersprache erschien mi
 <p>
 Dann bin ich auf die Lernplattform <a href="http://www.edx.org">EdX</a> gestoßen. Diese bietet kostenlose MOOCs an, also Vorlesungen (meist vom MIT oder Harvard), die den regulären Studenten auch angeboten werden. Dort bin ich nun in CS50 eingeschrieben und besuche regelmäßig Vorlesungen zum Programmieren und bearbeite auch die dortigen Aufgaben. So bin ich erst zu C und dann zu PHP gekommen.
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> Programmierung der Homepage</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Die Grundlagen dieser durch <a href="http://www.jekyllrb.com">Jekyll</a> compilierten Homepage haben mich einige Tage gekostet, da ich noch kaum Erfahrung mit Markup-Sprachen hatte. Ferner wollte ich einige Prozesse automatisieren und verbessern, was mir manch einen Nerv geraubt hat.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-2-1" class="outline-3">
 <h3 id="sec-2-1"><span class="section-number-3">2.1</span> Jekyll</h3>
@@ -75,7 +71,7 @@ Die Grundlagen dieser durch <a href="http://www.jekyllrb.com">Jekyll</a> compili
 <p>
 Jekyll ist ein statischer Homepage generierer der vor allem bei Programmieren sehr beliebt ist. Dies liegt an Verschiedenem.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-2-1-1" class="outline-4">
 <h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> Statische Homepages</h4>
@@ -83,17 +79,17 @@ Jekyll ist ein statischer Homepage generierer der vor allem bei Programmieren se
 <p>
 Der große Vorteil an statischen Homepages ist, dass diese keine Datenbank wie MySQL benötigen. Zudem benötigen sie kein PHP und sind somit nicht nur sehr sicher, sondern auch auf jedem Web-Server funktionsfähig. Weiterhin sind statische Homepages sehr performant.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-2-1-2" class="outline-4">
 <h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> GitHub</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
 Ein weiterer fantastischer Vorteil 0ist, dass die Open-Soure-Entwicklungsplattform <a href="http://www.github.com">GitHub</a> Jekyll-Seiten kostenlos ohne Werbung publizieren lässt. So ist diese Seite kostenfrei unter <a href="http://knupfer.github.io">http://knupfer.github.io</a> gehostet. Dieser Service ist aber nicht alles, GitHub kompiliert für einen sogar den Sourcecode der Homepage. Jedoch gibt es hier auch kleine Einschränkungen, so werden zusätzliche Plugins beispielsweise aus Sicherheitsgründen nicht unterstützt.
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2"><span class="section-number-3">2.2</span> Emacs</h3>
 <div class="outline-text-3" id="text-2-2">
@@ -128,7 +124,7 @@ Emacs ist wohl einer der ältesten und umfangreichesten Texteditoren. Dass ein T
 </ul>
 </li>
 </ul>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-2-2-1" class="outline-4">
 <h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> Org Mode</h4>
@@ -136,7 +132,7 @@ Emacs ist wohl einer der ältesten und umfangreichesten Texteditoren. Dass ein T
 <p>
 <a href="http://www.orgmode.org">Org Mode</a> ist eine von vielen möglichen Erweiterungen von Emacs, die selbst so umfangreich ist, dass die Dokumentation ein sehr dickes Buch füllt. Mit Org Mode kann man, wie der Name bereits sugeriert, sich organisieren. Dies fängt von ganz simplen Aufgaben wie Todo-Listen an, geht weiter zu einem sehr guten Outliner und auch zu mehrsprachigem (Computersprachen) literateprogramming.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-2-2-1-1" class="outline-5">
 <h5 id="sec-2-2-1-1"><span class="section-number-5">2.2.1.1</span> Exportfunktionen</h5>
@@ -144,8 +140,8 @@ Emacs ist wohl einer der ältesten und umfangreichesten Texteditoren. Dass ein T
 <p>
 Eine große Stärke von Org Mode sind die Exportfunktionen. Es kann u. a. nach LaTeX, Html, Docbook und Ascii exportiert werden. Dieses Feature ist so sehr ausgereift, dass die resultierenden Dokumente oft sehr gut aussehen. Automatisch wird ein Inhaltsverzeichnis generiert, ausgezeichnet, ggf. code compiliert uvm. Aller Text dieser Homepage ist ausschließlich in Org Mode verfasst, in ein Html exportiert und danach mit einem Shellscript den Anforderungen von Jekyll angepasst.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-2-2-1-2" class="outline-5">
 <h5 id="sec-2-2-1-2"><span class="section-number-5">2.2.1.2</span> Syntaxhighlighting</h5>
 <div class="outline-text-5" id="text-2-2-1-2">
@@ -156,10 +152,10 @@ Der Export von Syntaxhighlighting von Html ist ein wenig aufwendig. Man könnte 
 <p>
 Mithilfe des Zusatzpakete htmlize.el für Emacs ist es mir gelungen, Emacs so einzurichten, dass er automatisch das gleiche Syntaxhighlighting, welches derzeit im Editor aktiv ist, in den Html-export übernimmt. Über ein in Org Mode implementiertes Javascript ist es sogar möglich, über links Referenzcodezeilen zu manipulieren. Die Standardeinstellung war, die ganze Zeile gelb zu färben, was sehr direkt war. Ich habe mich für eine dezente Version entschieden und habe den Sourcecode so geändert, dass wenn der Cursor über dem link ist, die entsprechende Codezeile fett dargestellt wird.
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-2-3" class="outline-3">
 <h3 id="sec-2-3"><span class="section-number-3">2.3</span> Das Shellscript</h3>
 <div class="outline-text-3" id="text-2-3">
@@ -189,7 +185,7 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
     rm $<span style="color: #4eee94;">DATEI</span>.html $<span style="color: #4eee94;">DATEI</span>.org.publish;
 <span style="color: #00bfff;">done</span>;
 </pre>
-</div><p></p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
+</div>

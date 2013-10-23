@@ -110,12 +110,14 @@ Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt 
 
 #+BEGIN_SRC python :exports both
 # Fibonacci-Reihe
-x = [[0] * 5 for i in range(5)]
-x[0][0] = 1
-for i in range(25):
-    x[i % 5][i // 5] += x[(i - 1) % 5][(i - 1) // 5]
-    x[i % 5][i // 5] += x[(i - 2) % 5][(i - 2) // 5]
-return x
+x = 5
+y = 5
+fib = [[0] * x for i in range(y)]
+fib[0][0] = 1
+for i in range(x * y):
+    for j in range (1, 3):
+        fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
+return fib
 
 #+END_SRC
 
@@ -245,26 +247,4 @@ Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschied
 [[file:/images/lily-beispiel.png]]
 
 
-**** Mensuralnotation
-#+begin_src lilypond :file /images/ly-altemus.png :noweb yes :export both
-
-<<paper>>
-
-\score {
-  <<
-    \new MensuralVoice = "discantus" \relative c'' {
-        e\breve 
-        e \[ f\breve  \melisma e d c\breve\melismaEnd \]
-        c1 e \[  f\breve \melisma g f d e  d c\melismaEnd \]
-        d\longa^\signumcongruentiae
-    }
-    \new Lyrics \lyricsto "discantus" {
-        Et a -- scen -- dit in coe -- lum. 
-    }
-  >>
-}
-#+end_src
-
-#+RESULTS:
-[[file:/images/ly-altemus.png]]
 
