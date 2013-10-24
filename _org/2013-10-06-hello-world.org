@@ -10,7 +10,6 @@ Hallo, dies ist mein erster Post hier. Ich bin gespannt, ob ich mich für das Bl
 
 ** Zu meiner Person
 Ich bin derzeit Student der Schul- und Kirchenmusik und der Physik. Ich plane nach dem Studium einen Doktor in empirischer Musikpädagogik zu machen und beschäftige mich deswegen nun seit ein paar Wochen mit dem Programmieren. 
-
 Angefangen habe ich mit Python; als pädagogische Programmiersprache erschien mir dies besonders Sinnvoll in anbetracht meiner mangelnden Erfahrung. Nach ein paar ersten Progrämmchen verlor ich ein wenig die Motivation aufgrund von fehlenden Problemstellungen.
 
 Dann bin ich auf die Lernplattform [[http://www.edx.org][EdX]] gestoßen. Diese bietet kostenlose MOOCs an, also Vorlesungen (meist vom MIT oder Harvard), die den regulären Studenten auch angeboten werden. Dort bin ich nun in CS50 eingeschrieben und besuche regelmäßig Vorlesungen zum Programmieren und bearbeite auch die dortigen Aufgaben. So bin ich erst zu C und dann zu PHP gekommen.

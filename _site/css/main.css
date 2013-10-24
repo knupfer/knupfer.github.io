@@ -22,7 +22,7 @@ html, body { height: 100%; }
 #navbarlist li a:hover{color:white!important;z-index: 200;text-decoration:none!important}
 
 
-#navbarr{
+#navbar2{
     height:0px!important;
     z-index: 10;
     position: fixed;
@@ -34,18 +34,29 @@ html, body { height: 100%; }
     border-bottom:5px #0bb solid!important
 }
 
-#navbarr:hover{
-    height:40px!important;
-    z-index: 250;
+
+
+#navbar3{
+    height:0px!important;
+    z-index: 10;
     position: fixed;
     left: 0px;
-    top: 0px;
+    bottom: 0px;
     width: 100%;
-    padding:10px 15px!important;
+    padding:0px 15px!important;
     background:#333!important;
     border-bottom:5px #0bb solid!important
 }
 
+
+
+#navbar4{margin-top:300px;height:400px!important; position:relative; z-index:20; bottom: 0;padding:10px 15px!important;background:#333!important;border-top:5px #0bb solid!important
+
+
+                   /* added */
+                            /* added */
+
+}
 
 
 #table-of-contents {
@@ -118,17 +129,26 @@ border-bottom:5px #add solid;
 #table-of-contents:hover h3 {
     color: #333;
     padding-bottom: 0px; 
+  
 }
 
 #table-of-contents ul {
     margin-left: 12pt; 
     margin-bottom: 10pt;
     padding: 0;
-    border-left:5px #dee solid;
+    border-left:5px #deefef solid;
+
+
+  -webkit-transition: border-color .8s linear;   
+       -moz-transition: border-color .8s linear; 
+            transition: border-color .8s linear;  
 }
 
+
 #table-of-contents ul:hover {
-    border-left:5px #add solid;
+    border-left:5px #a5dada solid;
+
+
 }
 
 #table-of-contents li {
@@ -245,6 +265,7 @@ body {
     font-size: small;
     overflow: auto;
     margin: 0em;
+    
   }
   pre.src {
     position: relative;
@@ -295,6 +316,7 @@ body {
 tr:hover
 { 
   background-color: #eee;
+  
 } 
 
 colgroup col:hover
@@ -307,7 +329,8 @@ colgroup col:hover
    { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
   .linenr { font-size: smaller }
-.code-highlighted {  font-weight: bold; color: #FFF}
+.code-highlighted {  font-weight: bold; color: #FFF;
+   }
   .org-info-js_info-navigation { border-style: none; }
   #org-info-js_console-label
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
@@ -356,30 +379,15 @@ a         {
     color: #AAA; 
     text-decoration: none;
     font-weight: bold;
+   -webkit-transition: color .3s linear;   
+       -moz-transition: color .3s linear; 
+            transition: color .3s linear;  
 }
 a:hover   {  
     color: #5DD;
-    animation:myfirst 5s;
-    -webkit-animation:myfirst 5s;}
+ }
 
- /* Safari and Chrome */
-}
 
-@keyframes myfirst
-{
-0%   {color: red;}
-25%  {color: yellow;}
-50%  {color: blue;}
-100% {color: green;}
-}
-
-@-webkit-keyframes myfirst /* Safari and Chrome */
-{
-0%   {color: red;}
-25%  {color: yellow;}
-50%  {color: blue;}
-100% {color: green;}
-} 
 
 
 
