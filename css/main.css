@@ -194,6 +194,100 @@ img.random {
 } /* END OF @media screen */
 
 
+
+
+
+
+
+
+
+
+
+#table-of-contents2 {
+    font-size: 9pt;
+
+    text-indent: 10px;
+    padding: 0.3em;
+    padding-right: 30px;
+
+    color: #BBB;
+    background: #fefefe;
+/*    -webkit-box-shadow: 0 0 1em #777777;
+    -moz-box-shadow: 0 0 1em #777777;
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-radius-bottomleft: 5px; */
+    text-align: left;
+    /* ensure doesn't flow off the screen when expanded */
+
+    z-index: 2000;
+   
+}
+
+#table-of-contents2 h3 {
+    font-size: 24px;
+    max-width: 25em;
+    font-weight: normal;
+    padding-left: 10px;
+    padding-right: 0px;
+    padding-top: 67px;
+    padding-bottom: 20px; 
+}
+
+#table-of-contents2:hover h3 {
+    color: #333; 
+  
+}
+
+#table-of-contents2 ul {
+    margin-left: 12pt; 
+    margin-bottom: 8pt;
+    padding: 0;
+    border-left:5px #deefef solid;
+
+
+  -webkit-transition: border-color .8s linear;   
+       -moz-transition: border-color .8s linear; 
+            transition: border-color .8s linear;  
+}
+
+
+#table-of-contents2 ul:hover {
+    border-left:5px #a5dada solid;
+
+
+}
+
+#table-of-contents2 li {
+    padding: 0em;
+    margin: 1px;
+    list-style: none;
+}
+
+#table-of-contents2 ul>:first-child {
+    color: blue;
+}
+
+#table-of-contents2 #text-table-of-contents {
+    display: none;
+    text-align: left;
+}
+
+#table-of-contents2:hover #text-table-of-contents {
+    display: block;
+    padding: 0.5em;
+    margin-top: 1.5em; 
+}
+
+img.random {
+    max-width: 750px;
+    max-height: 380px;
+    margin-bottom: 10pt;
+    border: 1px solid black;
+}
+
+
+
+
 @font-face {
   font-family: "SourceCode";
   src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Regular.otf.woff') format('woff');

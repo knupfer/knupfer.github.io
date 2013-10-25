@@ -1,10 +1,5 @@
----
-layout: post
-title:  "Emacs Org-Mode"
-categories: linux
----
 <div id="table-of-contents">
-<h3>Inhaltsverzeichnis</h3>
+<h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1. Outliner</a></li>
@@ -41,8 +36,8 @@ categories: linux
 </ul>
 </li>
 </ul>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <p>
 Org-Mode stellt eine der interessantesten Entdeckungen dar, die ich die letzten Monate gemacht habe. Org-Mode ist ein Modus, also eine Erweiterung, für den Texteditor Emacs. Org-Mode dient, wie der Name bereits impliziert, der Organisation.
 </p>
@@ -67,7 +62,7 @@ Text
 
 <span style="color: #87ceff;">* Zweite &#220;berschrift</span>
 </pre>
-</div><p></p>
+</div>
 
 <p>
 Jede Unterüberschrift kann nur genau ein Elternteil (Überschrift) haben, jedoch kann jede Überschrift beliebig viele Kinder (Unterüberschriften) haben. Dies verhält sich also genau so, wie man es in einer geschriebenen Arbeit erwarten würde.
@@ -82,24 +77,24 @@ Um sich einen Überblick zu verschaffen und in seinem Dokument effizient zu navi
 <pre class="src src-org"><span style="color: #87ceff;">* Erste &#220;berschrift...</span>
 <span style="color: #87ceff;">* Zweite &#220;berschrift</span>
 </pre>
-</div><p></p>
+</div>
 
 <p>
 Zudem kann man ganze Hierarchiebäume verschieben und auch befördern bzw. degradieren.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> Todo-Listen</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Es können Todo-Listen einfach erstellt werden und mit Tastenkürzel verändert werden, beispielsweise als erledigt markiert werden und automatisch einen Zeitstempel hinzufügen.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-2-0-1" class="outline-4">
 <h4 id="sec-2-0-1"><span class="section-number-4">2.0.1</span> <span class="todo TODO">TODO</span> offener Punkt</h4>
-</div><p></p>
+</div>
 <div id="outline-container-sec-2-0-2" class="outline-4">
 <h4 id="sec-2-0-2"><span class="section-number-4">2.0.2</span> <span class="done DONE">DONE</span> abgeschlossener Punkt.</h4>
 <div class="outline-text-4" id="text-2-0-2">
@@ -113,9 +108,9 @@ Und folgendermaßen sehen die beiden Punkte im Quelltext aus:
 <span style="color: #cae1ff;">*** </span><span style="color: #98fb98; font-weight: bold;">DONE</span><span style="color: #cae1ff;"> abgeschlossener Punkt.</span>
    <span style="color: #00bfff;">CLOSED:</span> <span style="color: #00ffff; text-decoration: underline;">[2013-10-13 Sun 12:31]</span>
 </pre>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-2-1" class="outline-3">
 <h3 id="sec-2-1"><span class="section-number-3">2.1</span> Agendas</h3>
 <div class="outline-text-3" id="text-2-1">
@@ -126,9 +121,9 @@ Mit Hilfe dieser Todo-Listen können sich Projektpläne erstellen lassen, ferner
 <p>
 Ferner lassen sich per Befehl auch alle Todos eines Projektes, welches aus mehreren .org Dateien bestehen kann anzeigen und exportieren.
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3"><span class="section-number-2">3</span> Export</h2>
 <div class="outline-text-2" id="text-3">
@@ -163,7 +158,7 @@ Dementsprechend kann man in gängige, ästhetischere Formate exportieren:
 <p>
 Der Export ist so hervorragend, dass die resultierenden Pdfs direkt gedruckt werden können. Nach bedarf können einzelne Exportoptionen über Variablen verändert werden.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-3-1" class="outline-3">
 <h3 id="sec-3-1"><span class="section-number-3">3.1</span> LaTeX</h3>
@@ -181,13 +176,13 @@ Im Quelltext sieht dies folgendermaßen aus:
 <pre class="src src-latex"><span id="coderef-formel" class="coderef-off"><span style="color: #deb887;">$\Delta=\sum_</span><span style="color: #deb887;">{k=1}</span><span style="color: #deb887;">^</span><span style="color: #deb887;">n</span><span style="color: #deb887;"> \frac{\partial^</span><span style="color: #deb887;">2</span><span style="color: #deb887;">}</span></span>
 <span style="color: #deb887;">                          {\partial x_</span><span style="color: #deb887;">k</span><span style="color: #deb887;">^</span><span style="color: #deb887;">2</span><span style="color: #deb887;">}$</span>
 </pre>
-</div><p></p>
+</div>
 
 <p>
 Diese komplette Homepage ist mit Org-Modes Html-Export gemacht. Ich exportiere nur den Body und lass das resultierende Html durch Jekyll automatisch prozessieren, danach ein push nach GitHub, und fertig!
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-3-2" class="outline-3">
 <h3 id="sec-3-2"><span class="section-number-3">3.2</span> Sourceblöcke</h3>
 <div class="outline-text-3" id="text-3-2">
@@ -201,13 +196,13 @@ Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden, sondern auch na
 <span style="color: #87ceff;">* Test&#252;berschrift
 </span><span style="color: #7f7f7f;">#+END_SRC</span>
 </pre>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 
 <div id="outline-container-sec-3-2-1" class="outline-4">
 <h4 id="sec-3-2-1"><span class="section-number-4">3.2.1</span> Python</h4>
 <div class="outline-text-4" id="text-3-2-1">
-</div><p></p><div id="outline-container-sec-3-2-1-1" class="outline-5">
+</div><div id="outline-container-sec-3-2-1-1" class="outline-5">
 <h5 id="sec-3-2-1-1"><span class="section-number-5">3.2.1.1</span> Fibonacci</h5>
 <div class="outline-text-5" id="text-3-2-1-1">
 <p>
@@ -226,7 +221,7 @@ fib[0][0] = 1
         fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
 <span style="color: #00bfff;">return</span> fib
 </pre>
-</div><p></p>
+</div>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -292,8 +287,8 @@ Ferner ist es möglich, die Ergebnisse eines Sourceblocks für den Input eines a
 <p>
 Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jedem Export sichert, oder aber für eine Website nachbereitet. Es ist vor allem Erfreulich, dass man sich dadurch das mühselige übertragen von Daten in Tabellen (beispielsweise in LaTeX) ersparen kann.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-3-2-1-2" class="outline-5">
 <h5 id="sec-3-2-1-2"><span class="section-number-5">3.2.1.2</span> Zahlensystemkonverter</h5>
 <div class="outline-text-5" id="text-3-2-1-2">
@@ -322,7 +317,7 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
 
 <span style="color: #00bfff;">return</span> Resultat
 </pre>
-</div><p></p>
+</div>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -429,9 +424,9 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
 </tr>
 </tbody>
 </table>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-3-2-2" class="outline-4">
 <h4 id="sec-3-2-2"><span class="section-number-4">3.2.2</span> Lilypond</h4>
 <div class="outline-text-4" id="text-3-2-2">
@@ -442,7 +437,7 @@ Ferner kann direkt Sourcecode von Lilypond verwendet werden. Somit können musik
 <p>
 Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschiedenen Sourcecodeblöcken ergeben &#x2013; das Ergebnis des einen Sourcecodeblocks kann direkt für die Verwendung eines anderen Sourcecodeblocks verwendet werden &#x2013; lassen sich viele Dinge automatisieren, oder als Variable verwenden. So bietet es sich an, den Header und das Layout von Lilypond als Variable zu speichern, welche dann stets, bei gleichem Layout, verwendet werden kann.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-3-2-2-1" class="outline-5">
 <h5 id="sec-3-2-2-1"><span class="section-number-5">3.2.2.1</span> Moderne Notation</h5>
@@ -471,15 +466,15 @@ Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschied
   Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
 <span style="color: #a2cd5a;">}</span>
 </pre>
-</div><p></p>
+</div>
 
 
 <div class="figure">
-<p><img src="/images/ly-einfach.png" alt="ly-einfach.png" />
+<p><img src="file:///images/ly-einfach.png" alt="ly-einfach.png" />
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-3-2-2-2" class="outline-5">
 <h5 id="sec-3-2-2-2"><span class="section-number-5">3.2.2.2</span> Historische Notation</h5>
 <div class="outline-text-5" id="text-3-2-2-2">
@@ -528,15 +523,15 @@ Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschied
   <span style="color: #a2cd5a;">}</span>
 <span style="color: #a2cd5a;">}</span>
 </pre>
-</div><p></p>
+</div>
 
 
 <div class="figure">
-<p><img src="/images/lily-beispiel.png" alt="lily-beispiel.png" />
+<p><img src="file:///images/lily-beispiel.png" alt="lily-beispiel.png" />
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>

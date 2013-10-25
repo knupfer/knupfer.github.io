@@ -1,10 +1,5 @@
----
-layout: post
-title: Linuxdistributionen
-categories: linux
----
 <div id="table-of-contents">
-<h3>Inhaltsverzeichnis</h3>
+<h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1. Distributionen</a>
@@ -53,8 +48,8 @@ categories: linux
 </ul>
 </li>
 </ul>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <p>
 Als ich vor ungefähr 2 Jahren auf Linux umgestiegen bin, stellte ich mir die Frage welche Distribution ich nehmen sollte. Überwältigt von der Vielfalt und zunächst nicht im Stande Desktopumgebungen (Xcfe, Lxde, Gnome …) von Distributionen zu unterscheiden entschied ich mich für Ubuntu.
 </p>
@@ -82,7 +77,7 @@ Distributionen kann man durch mehrere Elemente charakterisieren:
 <dt> Entwicklungsstrategie </dt><dd>Hier wird zwischen Rolling- und Nonrolling-release unterschieden. Da dieses Thema für mich besonders interessant ist, wird im Folgenden darauf genauer eingegangen. 
 </dd>
 </dl>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Nonrolling-release</h3>
@@ -90,7 +85,7 @@ Distributionen kann man durch mehrere Elemente charakterisieren:
 <p>
 Die meiste Software hat eine Nonrolling-release-Entwicklung. Sprich es werden stabile Versionen eines Programmes publiziert, von denen man dann Updates zur nächsten stabilen Version machen kann. Bei mancher Software, wie z.B. bei vielen Distributionen ist hierfür eine Neuinstallation notwendig.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Debian</h4>
@@ -98,7 +93,7 @@ Die meiste Software hat eine Nonrolling-release-Entwicklung. Sprich es werden st
 <p>
 Debian ist eine sehr alte Distribution mit sehr vielen Entwicklern. Der Entwicklungsprozess ist sehr konservativ; es werden ungefähr alle zwei Jahre neue Versionen publiziert, welche in der gesamten Zwischenzeit keinen neuen Features, sondern nur Sicherheitsupdates bekommen. Da diese Versionen außerordentlich stabil sind werden diese meist für Server verwendet.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-1-1-1-1" class="outline-5">
 <h5 id="sec-1-1-1-1"><span class="section-number-5">1.1.1.1</span> Repositorys</h5>
@@ -106,52 +101,52 @@ Debian ist eine sehr alte Distribution mit sehr vielen Entwicklern. Der Entwickl
 <p>
 Die Repositorys von Debian sind weiterhin in Experimental, Unstable und Testing unterteilt.
 </p>
-</div><p></p>
+</div>
 
 <ol class="org-ol"><li>Experimental<br  /><div class="outline-text-6" id="text-1-1-1-1-1">
 <p>
 Hier befinden sich Programme, die große Systemveränderungen benötigen oder noch sehr unstabil laufen. Experimental ist kein vollständiges Repository, sondern kann nur zusammen mit Unstable verwendet werden. Generell sollte man dieses Repository meiden, außer man möchte explizit bei der Debianentwicklung mitarbeiten.
 </p>
-</div><p></p>
+</div>
 </li>
 <li>Unstable<br  /><div class="outline-text-6" id="text-1-1-1-1-2">
 <p>
 Unstable ist ein vollständiges Repository, welches verwendet werden kann um sehr aktuelle Software zu installieren. Unstable ist ein Rolling-release, Neuinstallationen sind also nurnoch notwendig, falls einem die unstabile Software zu viele Probleme bereitet. Auch von diesem Repository wird i.d.R. abgeraten.
 </p>
-</div><p></p>
+</div>
 </li>
 <li>Testing<br  /><div class="outline-text-6" id="text-1-1-1-1-3">
 <p>
 Dieses Repository hat schon eine gewisse Stabilität erreicht, da hier nur Software gelagert wird, die eine Zeit lang ohne Probleme in Unstable war. Jedoch benutzt Testing kein volles Rolling-release-Modell mehr, da immer ein halbes Jahr vor einer neuen stabilen Debianversion es einen Featuerfreeze gibt, in dem die Entwickler sich auf Fehlerbehandlung fokussieren.
 </p>
-</div><p></p>
+</div>
 </li></ol>
-</div><p></p>
+</div>
 <div id="outline-container-sec-1-1-1-2" class="outline-5">
 <h5 id="sec-1-1-1-2"><span class="section-number-5">1.1.1.2</span> Derivate</h5>
 <div class="outline-text-5" id="text-1-1-1-2">
 <p>
 Wegen des Alters und der Größe von Debian entstanden Derivate, also Modifikationen, welche sich vor allem im Bezug zur freien Software unterscheiden.
 </p>
-</div><p></p>
+</div>
 
 <ol class="org-ol"><li>Ubuntu<br  /><div class="outline-text-6" id="text-1-1-1-2-1">
 <p>
 Die bekannteste Linuxdistro nennt sich Ubuntu, was so viel wie Menschlichkeit bedeutet. Sie ist auf einfache Benutzung und somit auf unerfahrene Benutzer hin optimiert.
 </p>
-</div><p></p>
+</div>
 
 <ol class="org-ol"><li>Kritik<br  /><ol class="org-ol"><li>Kommerz<br  /><div class="outline-text-8" id="text-1-1-1-2-1-1-1">
 <p>
 In der letzten Zeit wurde Ubuntu immer mehr kommerzialisiert. Auch wenn die Benutzung weiterhin kostenlos ist, so werden nun Verhalten der Benutzer protokolliert und an Amazon verkauft. Ferner strebt die Distribution gewisse Inkompatibilitäten an, welche zu einer Monopolstellung (vor allem auf dem Smartphone-Markt) führen sollen.
 </p>
-</div><p></p>
+</div>
 </li>
 <li>Stabilität<br  /><div class="outline-text-8" id="text-1-1-1-2-1-1-2">
 <p>
 Weiterhin baut Ubuntu auf dem Unstable-release von Debian auf, ohne jedoch selbst ein Rolling-release zu sein. Dies hat zur Konsequenz, dass zwar aktuelle Software verwendet wird, jedoch diese aber nicht neu gehalten wird, was aber gerade bei unstabiler Software besonders wichtig ist. 
 </p>
-</div><p></p>
+</div>
 </li></ol>
 </li></ol>
 </li>
@@ -159,48 +154,48 @@ Weiterhin baut Ubuntu auf dem Unstable-release von Debian auf, ohne jedoch selbs
 <p>
 Diese Distro ist ein Fork von Ubuntu. Sie hat auch eher unerfahrene Benutzer im Blick, lässt jedoch mehr Freiheiten und Konfigurierbarkeiten. Zudem setzt mint auf einen klassischen Desktop, im Gegensatz zu Ubuntu.
 </p>
-</div><p></p>
+</div>
 
 <ol class="org-ol"><li>Kritik<br  /><ol class="org-ol"><li>Codebase<br  /><div class="outline-text-8" id="text-1-1-1-2-2-1-1">
 <p>
 Problematisch dürfte die Basis Ubuntu sein, da dieses immer inkompatibler wird. Somit dürften die Modifikationen, die Mint vornimmt immer schwieriger und monolithischer werden, was den UNIX-Prinzipien widerspricht. Um dem entgegenzutreten wurde eine Version von Mint erstellt, welche direkt auf Debian aufbaut (<a href="#sec-1-2-2-1-3">LMDE</a>).
 </p>
-</div><p></p>
+</div>
 </li>
 <li>Unfrei<br  /><div class="outline-text-8" id="text-1-1-1-2-2-1-2">
 <p>
 Ferner wird kritisiert, dass Mint standardmäßig eine Vielzahl an unfreier Software installiert (was andererseits zu einer komfortablen Nutzungserfahrung führt).
 </p>
-</div><p></p>
+</div>
 </li></ol>
 </li></ol>
 </li></ol>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-1-1-2" class="outline-4">
 <h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Fedora</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <p>
 Diese Distribution unterscheidet sich in mancherlei Hinsicht von Debian. Sie hat einen anderen Packetmanager, ist (immer) modern und hat eine große Firma im Rücken (Red Hat).
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-1-1-3" class="outline-4">
 <h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> OpenSuse</h4>
 <div class="outline-text-4" id="text-1-1-3">
 <p>
 Eine deutsche, weitverbreitete Distro, welche das freie Pendant zu Suse darstellt. Sie hat also auch eine Firma im Rücken (welche unliebsamen Einfluss nehmen kann).
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> Rolling-release</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 Bei Rolling-release-software hat der Anwender stets eine aktuelle Version der Software und kann jederzeit auf den derzeitigen Entwicklungsstand updaten. In aller Regel geschieht dies ohne Neuinstallation. Da es hier aber keine klar definierten Versionen gibt, sondern nur Snapshots, sind evtl. auch mehr Fehler oder Probleme zu finden. Dementsprechend sind die meisten Rolling-release-distributionen für erfahrene Nutzer konzipiert.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-1-2-1" class="outline-4">
 <h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> Arch</h4>
@@ -208,7 +203,7 @@ Bei Rolling-release-software hat der Anwender stets eine aktuelle Version der So
 <p>
 <a href="http://archlinux.org">Arch</a> ist eine sehr berühmte Rolling-releas-distro, welche sich vor allem an sehr erfahrene Nutzer wendet. Beispielsweise installiert der Installer (welcher rein Terminalbasiert ist) nur ein minimales System. Eine Desktopumgebung, Videocodecs und Büroprogramme etc. muss selbst installiert werden. Dies hat den unschlagbaren Vorteil, dass nur das installiert wird, was man auch wirklich möchte. Andererseits werden unerfahrene Benutzer mit einem nicht funktionsfähigen System konfrontiert. Um im selbstversuch zu lernen, werde ich vermutlich als nächstes Arch installieren.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-1-2-1-1" class="outline-5">
 <h5 id="sec-1-2-1-1"><span class="section-number-5">1.2.1.1</span> Aktualität</h5>
@@ -216,57 +211,57 @@ Bei Rolling-release-software hat der Anwender stets eine aktuelle Version der So
 <p>
 Eines der Hauptziele von Arch ist es, möglichst nahe der bleeding Edge zu sein. Dies hat den Vorzug stets aktuelle Software zu besitzen und nie wieder das System neu installieren zu müssen, jedoch auch den Nachteil, dass das ganze System hin und wieder unstabil oder gar defekt sein kann. Da die Community sehr aktiv ist, werden Fehler schnell behoben; dennoch empfiehlt sich diese Distro nicht für Server oder sensible Daten.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-1-2-1-2" class="outline-5">
 <h5 id="sec-1-2-1-2"><span class="section-number-5">1.2.1.2</span> Manjaro</h5>
 <div class="outline-text-5" id="text-1-2-1-2">
 <p>
 Hier werden versucht, die Vorzüge von Arch mit denen von Mint zu kombinieren, dementsprechend nutzt auch Manjaro standardmäßig die von Mint entwickelte klassische Desktopumgebung Cinnamon. Ferner sind Videocodecs etc. bereits installiert. Leider büßt diese Distro an Aktualität ein, da sie trotz der Codebase Updatepackages verteilt und somit kein volles Rolling-release mehr ist.
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-1-2-2" class="outline-4">
 <h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> Debian</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <p>
 Da Debian zwei Repositories hat, die ständig entwickelt werden, kann Debian unter Verwendung dieser auch als Rolling-release-distribution betrachtet werden. Da dies aber nicht der eigentlich konservativen Philosophie Debians entspricht gibt es einige Forks, die auf diesen Repositories aufbauen, nicht aber auf dieser Philosophie.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-1-2-2-1" class="outline-5">
 <h5 id="sec-1-2-2-1"><span class="section-number-5">1.2.2.1</span> Derivate</h5>
 <div class="outline-text-5" id="text-1-2-2-1">
-</div><p></p><ol class="org-ol"><li>Aptosid<br  /><div class="outline-text-6" id="text-1-2-2-1-1">
+</div><ol class="org-ol"><li>Aptosid<br  /><div class="outline-text-6" id="text-1-2-2-1-1">
 <p>
 Eine auf dem Unstable-repository aufbauende Distro.
 </p>
-</div><p></p>
+</div>
 </li>
 <li>Crunchbang<br  /><div class="outline-text-6" id="text-1-2-2-1-2">
 <p>
 Ebenso auf Unstable bauend.
 </p>
-</div><p></p>
+</div>
 </li>
 <li>Mint LMDE<br  /><div class="outline-text-6" id="text-1-2-2-1-3">
 <p>
 Auf Testing aufbauend, mit der Behauptung (oder Traum), ein Rolling-release zu sein. Da aber das DE viele Probleme bereitet, vertreibt Mint Updatepackages. Trotz dass die Idee eines debianbasierten hervorragend ist, so ist doch die Umsetzung viel schlechter als bei dem originalen Mint.
 </p>
-</div><p></p>
+</div>
 </li></ol>
-</div><p></p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> Desktopumgebungen</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Ein Betriebssystem besteht auf den ersten Blick vor allem aus Programmen und einer grafischen Oberfläche (GUI). Diese Elemente sind aber nicht eigentlicher Teil eines Linuxbetriebssystemes, sondern Teil von Desktopumgebungen. Hier sieht man einen grundlegenden Unterschied zwischen Linux und Windows besonders deutlich: Linux ist modular, und nicht monolithisch.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-2-1" class="outline-3">
 <h3 id="sec-2-1"><span class="section-number-3">2.1</span> LXde</h3>
@@ -274,31 +269,31 @@ Ein Betriebssystem besteht auf den ersten Blick vor allem aus Programmen und ein
 <p>
 Eine besonders ressourcenschonende Desktopumgebung, die vor allem für ältere Rechner gedacht ist. Kritikpunkte sind die alte Software und das sehr kleine Entwicklerteam, was ein verwaisen der Software ermöglicht.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2"><span class="section-number-3">2.2</span> Xfce</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 Auch ressourcenschonend, jedoch weiter verbreitet, moderner und mit größerem Entwicklungsteam.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-2-3" class="outline-3">
 <h3 id="sec-2-3"><span class="section-number-3">2.3</span> Kde</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 Sehr verbreitet, großes Entwicklerteam, grafisch aufwendig und dementsprechend langsam.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-2-4" class="outline-3">
 <h3 id="sec-2-4"><span class="section-number-3">2.4</span> Gnome</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 Diese DE hat eine lange Entwicklungsgeschichte hinter sich und ist bei vielen Distros der Standard. Jedoch löste das Gnome-Projekt auch eine sehr große Kontroverse mit Gnome3 aus, welches sich vom damaligen klassischen Desktopparadigma (und somit von vielen Nutzern) abwandte.
 </p>
-</div><p></p>
+</div>
 
 <div id="outline-container-sec-2-4-1" class="outline-4">
 <h4 id="sec-2-4-1"><span class="section-number-4">2.4.1</span> Mate</h4>
@@ -306,23 +301,23 @@ Diese DE hat eine lange Entwicklungsgeschichte hinter sich und ist bei vielen Di
 <p>
 Ein Fork von Gnome2, welcher versucht, den alten Desktop zu pflegen und mit Sicherheitsaktualisierungen zu versorgen.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-2-4-2" class="outline-4">
 <h4 id="sec-2-4-2"><span class="section-number-4">2.4.2</span> Cinnamon</h4>
 <div class="outline-text-4" id="text-2-4-2">
 <p>
 Ein Fork von Gnome3, welcher versucht, trotz Integration neuster Softwaretechnologie immernoch eine klassische DE bereitzustellen. Cinnamon ist die Standard-DE von Mint und von Manjaro und erfreut sich großer Beliebtheit.
 </p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
 <div id="outline-container-sec-2-4-3" class="outline-4">
 <h4 id="sec-2-4-3"><span class="section-number-4">2.4.3</span> Unity</h4>
 <div class="outline-text-4" id="text-2-4-3">
 <p>
 Ebenso ein Gnome-fork, welcher aber mit dem Original nurnoch sehr wenig zu tun hat. Unity ist mit nahezu allen Distros außer Ubuntu inkompatibel. Es strebt einen primitiven (leicht benutzbaren) Desktop an, der gut auch auf Touch-screens und Tablets verwendet werden kann.
 </p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
-</div><p></p>
+</div>
+</div>
+</div>
+</div>
