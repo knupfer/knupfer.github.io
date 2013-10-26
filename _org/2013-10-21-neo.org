@@ -2,26 +2,46 @@
 ---
 layout: post
 title:  "Neo Layout"
-
+father: Computer
 ---
 #+END_COMMENT
-#+EXPORT_FILE_NAME: test.html
 
-
-
+Vor zwei Jahren bin ich mehr oder minder über das alternative Tastaturlayout Neo gestolpert und mich seither intensiv mit Ergonomie und der Geschichte des konventionellen QWERTY-Layouts auseinandergesetzt.
 
 * Konventionelles Tastaturlayout
+Die heutige übliche Tastaturbelegung geht auf das 19. Jahrhundert zurück. Ziel war, häufige Buchstabenfolgen auf der vormaligen alphabetischen Anordnung der Schreibmaschinentasten möglichst weit auseinanderzulegen, um ein Verkanten der Hämmer zu vermeiden.
 
+Somit wurde auf Grund einer technischen Einschränkung die Tasten explizit so angeordnet, dass sie für den Menschen möglichst schlecht liegen. Diesen technischen Einschränkungen unterliegen wir heutzutage natürlich nicht mehr, jedoch hat sich auf Grund von der bereits etablierten Konvention das bestehende Layout (bis auf regionale Varianten) nicht mehr geändert.
 
-ietrntrn
-** QWERTY
+Eine weitere Besonderheit ist, dass man auf der englischen Variante "Typewriter" komplett auf der obersten Reihe schreiben kann, was wohl ein Easteregg ist.
 
-**
-**
+Der horizontale Tastenversatz liegt auch an den Hämmern, die Platz für ihre Traktur benötigten. Jedoch ist dieser Versatz nicht tippfreundlich, da man um höhere oder niedrigere Tasten zu erreichen man seinen Finger nicht nur strecken oder einziehen, sonder auch verdrehen muss.
 
 * Alternative Tastaturlayouts
-** Dvorak
+Mit der Zeit bildeten sich Alternativen heraus, die aber allesamt nicht sehr populär sind, was daran liegen mag, da:
+1. Viele kein Zehnfingersystem benutzen
+2. QWERTY der ubiquitäre Standard ist
+3. Die Nachteile nicht bekannt sind
+4. Die alternativen Layouts unbekannt sind
 
+** Dvorak
+Das bekannteste und auch älteste Reformlayout ist das Dvorak-Layout, welches 1930 entwickelt wurde. 
+
+*** Ergebnisse
+Hierfür wurden verschiedene Studien bezüglich Ergonomie und Effizienz durchgeführt. Wichtige, auch in aktuelleren Reformbelegungen präsente, Ergebnisse waren, dass:
+- Die Finger möglichst kurze Bewegungen durchführen sollten
+- Dementsprechend sollten möglichst häufige Buchstaben in der Ruheposition der Finger sich befinden
+- Der gleiche Finger nicht wiederholt werden sollte
+- Im besonderen Maße sollten Sprünge des gleichen Fingers von der obern auf die untere Reihe, oder andersrum vermieden werden
+- Dass sich die Hände im optimalfall abwechseln
+- Bigramme, also häufige Buchstabenkombinationen, sollten weit entfernt liegen
+- Die Hände sollten ungefähr gleich viel zu tun haben
+- Die starken Finger sollten häufiger verwendet werden als die schwachen, um Ermüdungserscheinungen zu vermeiden
+
+*** Umsetzung
+Diese Ergebnisse konnten jedoch nur händisch umgesetzt werden, da entsprechende Computer zur Berechnung und Optimierung nicht zur Verfügung standen.
+
+Nichts desto trotz wurde eine auch heute noch beliebte und ergonomische Tastaturbelegung erstellt, die in modernen Betriebssystemen als Standard einstellbar ist.
 
 ** Ristome
 ** Neo
