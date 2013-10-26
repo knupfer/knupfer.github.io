@@ -6,8 +6,10 @@ title: Musik
 <div id="home">
   <h1>Musik</h1>
   <ul class="posts">
-    {% for post in site.categories.musik %}
+    {% for post in site.posts %}
+      {% if post.father == 'Musik' %}
         <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+      {% endif %}
     {% endfor %}
   </ul>
 </div>
