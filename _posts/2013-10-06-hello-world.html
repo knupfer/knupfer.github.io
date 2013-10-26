@@ -3,42 +3,6 @@ layout: post
 title:  "Hello World!"
 father: Linux
 ---
-echo '---
-layout: default
-title: Index
----
-    TITLE=$(sed -n '/---/,/---/ s/title: *"*\([^"]*\)"*/\1/p' $DATEI.org);
-    FATHER=$(sed -n '/---/,/---/ s/father: *"*\([^"]*\)"*/\1/p' $DATEI.org);
-    sed -n '/---/,/---/ p' $DATEI.org > $DATEI.org.publish &&
-    sed 'N;
-        s/[(<\/ul>)(<\/dl>)]\n<\/div>/&<p><\/p>/;
-        P;
-        s/file:\/\///;
-        s/<h2>Table of Contents<\/h2>/<h3>Inhaltsverzeichnis<\/h3>/;
-        D' $DATEI.html >> $DATEI.org.publish &&
-    cat $DATEI.org.publish > ../_posts/$DATEI.html &&
-    rm  $DATEI.org.publish;
-done
-
-for INDEX in categorie.*
-do
-    if [ "$(echo $INDEX | sed 's/categorie\(.*\)/\1/')" != '.' ]
-    then
-        echo '<li><a href="">' $(echo $INDEX | 
-            sed 's/categorie\.\(.*\)/\1/') '</a>' '<ul>' >> totalindex;
-    else
-        echo '<li><a href="">' Verschiedenes '</a>' '<ul>' >> totalindex;
-    fi
-    cat $INDEX >> totalindex;
-    echo '</ul>' >> totalindex;
-done
-
-echo '</ul></div></div>' >> totalindex;
-mv totalindex  ../totalindex.html;
-rm categorie.*;
-
-
-#+END_SRC
 <div id="table-of-contents">
 <h3>Inhaltsverzeichnis</h3>
 <div id="text-table-of-contents">
@@ -211,21 +175,12 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
 
 <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">!/bin/sh</span>
 
-<span style="color: #f08080;">echo</span> <span style="color: #deb887;">'---</span>
-<span style="color: #deb887;">layout: default</span>
-<span style="color: #deb887;">title: Index</span>
-<span style="color: #deb887;">---</span>
-<span style="color: #deb887;">&lt;div id="table-of-contents2"&gt;</span>
-<span style="color: #deb887;">&lt;h3&gt;Index&lt;/h3&gt;</span>
-<span style="color: #deb887;">&lt;div id="text-table-of-contents2"&gt;</span>
-<span style="color: #deb887;">&lt;ul&gt;'</span> &gt; totalindex;
-
 <span style="color: #00bfff;">for</span> FILE<span style="color: #00bfff;"> in</span> *.org
 <span style="color: #00bfff;">do</span>
     <span style="color: #4eee94;">DATEI</span>=$(<span style="color: #fa8072;">echo</span> $<span style="color: #4eee94;">FILE</span> | sed <span style="color: #deb887;">'s:\(.*\).org:\1:'</span>);
     <span style="color: #4eee94;">URL</span>=$(<span style="color: #fa8072;">echo</span> /$<span style="color: #4eee94;">DATEI</span> | sed <span style="color: #deb887;">'s:-:/: ; s:-:/: ; s:-:/:; s:$:.html:'</span>)
-    <span style="color: #4eee94;">TITLE</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'/---/,/---/ s/title: *"*\([^"]*\)"*/\1/p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
-    <span style="color: #4eee94;">FATHER</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'/---/,/---/ s/father: *"*\([^"]*\)"*/\1/p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
+    <span style="color: #4eee94;">TITLE</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'/--/,/--/ s/title: *"*\([^"]*\)"*/\1/p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
+    <span style="color: #4eee94;">FATHER</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'/--/,/--/ s/father: *"*\([^"]*\)"*/\1/p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
 
     <span style="color: #f08080;">test</span> -e $<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
 
@@ -234,7 +189,7 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
         tail -n +2 | 
         head -n -1 | 
         sed <span style="color: #deb887;">'s:\(href="\)#:\1'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'#:g'</span> &gt;&gt; categorie.$<span style="color: #4eee94;">FATHER</span> &amp;&amp;
-    sed -n <span style="color: #deb887;">'/---/,/---/ p'</span> $<span style="color: #4eee94;">DATEI</span>.org &gt; $<span style="color: #4eee94;">DATEI</span>.org.publish &amp;&amp;
+    sed -n <span style="color: #deb887;">'/--/,/--/ p'</span> $<span style="color: #4eee94;">DATEI</span>.org &gt; $<span style="color: #4eee94;">DATEI</span>.org.publish &amp;&amp;
     sed <span style="color: #deb887;">'N;</span>
 <span style="color: #deb887;">        s/[(&lt;\/ul&gt;)(&lt;\/dl&gt;)]\n&lt;\/div&gt;/&amp;&lt;p&gt;&lt;\/p&gt;/;</span>
 <span style="color: #deb887;">        P;</span>

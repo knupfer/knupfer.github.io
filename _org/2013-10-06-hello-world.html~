@@ -167,6 +167,50 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
 <div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">!/bin/</span><span style="color: #00bfff;">sh</span>
+
+<span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">!/bin/sh</span>
+
+<span style="color: #00bfff;">for</span> FILE<span style="color: #00bfff;"> in</span> *.org
+<span style="color: #00bfff;">do</span>
+    <span style="color: #4eee94;">DATEI</span>=$(<span style="color: #fa8072;">echo</span> $<span style="color: #4eee94;">FILE</span> | sed <span style="color: #deb887;">'s:\(.*\).org:\1:'</span>);
+    <span style="color: #4eee94;">URL</span>=$(<span style="color: #fa8072;">echo</span> /$<span style="color: #4eee94;">DATEI</span> | sed <span style="color: #deb887;">'s:-:/: ; s:-:/: ; s:-:/:; s:$:.html:'</span>)
+    <span style="color: #4eee94;">TITLE</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'/---/,/---/ s/title: *"*\([^"]*\)"*/\1/p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
+    <span style="color: #4eee94;">FATHER</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'/---/,/---/ s/father: *"*\([^"]*\)"*/\1/p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
+
+    <span style="color: #f08080;">test</span> -e $<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
+
+    <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href="'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'"&gt;'</span>$<span style="color: #4eee94;">TITLE</span><span style="color: #deb887;">'&lt;/a&gt;'</span> &gt;&gt; categorie.$<span style="color: #4eee94;">FATHER</span> &amp;&amp;
+    sed -n <span style="color: #deb887;">'/&lt;div id="text-table-of-contents"&gt;/,/&lt;\/div&gt;/ p'</span> $<span style="color: #4eee94;">DATEI</span>.html | 
+        tail -n +2 | 
+        head -n -1 | 
+        sed <span style="color: #deb887;">'s:\(href="\)#:\1'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'#:g'</span> &gt;&gt; categorie.$<span style="color: #4eee94;">FATHER</span> &amp;&amp;
+    sed -n <span style="color: #deb887;">'/---/,/---/ p'</span> $<span style="color: #4eee94;">DATEI</span>.org &gt; $<span style="color: #4eee94;">DATEI</span>.org.publish &amp;&amp;
+    sed <span style="color: #deb887;">'N;</span>
+<span style="color: #deb887;">        s/[(&lt;\/ul&gt;)(&lt;\/dl&gt;)]\n&lt;\/div&gt;/&amp;&lt;p&gt;&lt;\/p&gt;/;</span>
+<span style="color: #deb887;">        P;</span>
+<span style="color: #deb887;">        s/file:\/\///;</span>
+<span style="color: #deb887;">        s/&lt;h2&gt;Table of Contents&lt;\/h2&gt;/&lt;h3&gt;Inhaltsverzeichnis&lt;\/h3&gt;/;</span>
+<span style="color: #deb887;">        D'</span> $<span style="color: #4eee94;">DATEI</span>.html &gt;&gt; $<span style="color: #4eee94;">DATEI</span>.org.publish &amp;&amp;
+    cat $<span style="color: #4eee94;">DATEI</span>.org.publish &gt; ../_posts/$<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
+    rm  $<span style="color: #4eee94;">DATEI</span>.org.publish;
+<span style="color: #00bfff;">done</span>
+
+<span style="color: #00bfff;">for</span> INDEX<span style="color: #00bfff;"> in</span> categorie.*
+<span style="color: #00bfff;">do</span>
+    <span style="color: #00bfff;">if</span> [ <span style="color: #deb887;">"$(</span><span style="color: #fa8072;">echo</span><span style="color: #deb887;"> $INDEX | sed 's/categorie\(.*\)/\1/')"</span> != <span style="color: #deb887;">'.'</span> ]
+    <span style="color: #00bfff;">then</span>
+        <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href=""&gt;'</span> $(<span style="color: #fa8072;">echo</span> $<span style="color: #4eee94;">INDEX</span> | 
+            sed <span style="color: #deb887;">'s/categorie\.\(.*\)/\1/'</span>) <span style="color: #deb887;">'&lt;/a&gt;'</span> <span style="color: #deb887;">'&lt;ul&gt;'</span> &gt;&gt; totalindex;
+    <span style="color: #00bfff;">else</span>
+        <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href=""&gt;'</span> Verschiedenes <span style="color: #deb887;">'&lt;/a&gt;'</span> <span style="color: #deb887;">'&lt;ul&gt;'</span> &gt;&gt; totalindex;
+    <span style="color: #00bfff;">fi</span>
+    cat $<span style="color: #4eee94;">INDEX</span> &gt;&gt; totalindex;
+    <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;/ul&gt;'</span> &gt;&gt; totalindex;
+<span style="color: #00bfff;">done</span>
+
+<span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;'</span> &gt;&gt; totalindex;
+mv totalindex  ../totalindex.html;
+rm categorie.*;
 </pre>
 </div>
 </div>
