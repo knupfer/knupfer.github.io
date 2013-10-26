@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 echo '---
 layout: default
 title: Index
@@ -9,18 +8,19 @@ title: Index
 <h3>Index</h3>
 <div id="text-table-of-contents2">
 <ul>' > totalindex;
-rm categorie.*
+
 for file in *.org
 do
     DATEI=$(echo $file | sed 's/\(.*\).org/\1/');
     URL=$(echo $file | sed 's/\([^-]*\)-\([^-]*\)-\([^-]*\)-\(.*\)\.org/\/\1\/\2\/\3\/\4.html/');
-  
+    TITLE=$(sed -n '/---/,/---/ s/title: *"*\([^"]*\)"*/\1/p' $DATEI.org);
+    FATHER=$(sed -n '/---/,/---/ s/father: *"*\([^"]*\)"*/\1/p' $DATEI.org);
 
-    echo '<li><a href="'$(echo $file | sed 's/\([^-]*\)-\([^-]*\)-\([^-]*\)-\(.*\)\.org/\/\1\/\2\/\3\/\4.html/')'">' $(sed -n 's/title: *"*\([^"]*\)"*/\1/p' $DATEI.org) '</a>' >> categorie.$(sed -n 's/father: *"*\([^"]*\)"*/\1/p' $DATEI.org);
-    echo $(sed -n '/<div id="text-table-of-contents">/,/<\/div>/ p' $DATEI.html |  tail -n +2 | head -n -1) | sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$(sed -n 's/father: *"*\([^"]*\)"*/\1/p' $DATEI.org);
-         
     test -e $DATEI.html &&
-    grep -B 20 -m 1 END $DATEI.org | head -n -1 | tail -n +2 > $DATEI.org.publish &&
+
+    echo '<li><a href="'$URL'">'$TITLE'</a>' >> categorie.$FATHER &&
+    sed -n '/<div id="text-table-of-contents">/,/<\/div>/ p' $DATEI.html | tail -n +2 | head -n -1 | sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
+    sed -n '/---/,/---/ p' $DATEI.org > $DATEI.org.publish &&
     sed 'N;
         s/[(<\/ul>)(<\/dl>)]\n<\/div>/&<p><\/p>/;
         P;
@@ -31,19 +31,20 @@ do
     rm  $DATEI.org.publish;
 done
 
-for categ in categorie.*
+for INDEX in categorie.*
 do
-    if [ "$(echo $categ | sed 's/categorie\(.*\)/\1/')" != '.' ]
+    if [ "$(echo $INDEX | sed 's/categorie\(.*\)/\1/')" != '.' ]
     then
-        echo '<li><a href="">' $(echo $categ | sed 's/categorie\.\(.*\)/\1/') '</a>' '<ul>' >> totalindex;
+        echo '<li><a href="">' $(echo $INDEX | sed 's/categorie\.\(.*\)/\1/') '</a>' '<ul>' >> totalindex;
     else
         echo '<li><a href="">' Verschiedenes '</a>' '<ul>' >> totalindex;
     fi
-    cat $categ >> totalindex;
+    cat $INDEX >> totalindex;
     echo '</ul>' >> totalindex;
 done
 
 echo '</ul></div></div>' >> totalindex;
-cat totalindex > ../totalindex.html
+mv totalindex  ../totalindex.html;
+rm categorie.*;
 
 
