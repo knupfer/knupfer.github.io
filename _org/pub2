@@ -13,8 +13,8 @@ for FILE in *.org
 do
     DATEI=$(echo $FILE | sed 's:\(.*\).org:\1:');
     URL=$(echo /$DATEI | sed 's:-:/: ; s:-:/: ; s:-:/:; s:$:.html:')
-    TITLE=$(sed -n '2,/---/ s/title: *"*\([^"]*\)"*/\1/p' $DATEI.org);
-    FATHER=$(sed -n '2,/---/ s/father: *"*\([^"]*\)"*/\1/p' $DATEI.org);
+    TITLE=$(sed -n '0,/---/ s/title: *"*\([^"]*\)"*/\1/p' $DATEI.org);
+    FATHER=$(sed -n '0,/---/ s/father: *"*\([^"]*\)"*/\1/p' $DATEI.org);
 
     test -e $DATEI.html &&
 
@@ -23,9 +23,9 @@ do
         tail -n +2 | 
         head -n -1 | 
         sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
-    sed -n '/---/,/---/ p' $DATEI.org > $DATEI.org.publish &&
+    sed -n '0,/---/ p' $DATEI.org > $DATEI.org.publish &&
     sed 'N;
-        s/[(<\/ul>)(<\/dl>)]\n<\/div>/&<p><\/p>/;
+        s:[(<\/ul>)(<\/dl>)]\n<\/div>/&<p><\/p>/;
         P;
         s/file:\/\///;
         s/<h2>Table of Contents<\/h2>/<h3>Inhaltsverzeichnis<\/h3>/;

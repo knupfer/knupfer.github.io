@@ -167,20 +167,6 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
 <div class="org-src-container">
 
 <pre class="src src-sh"><span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">!/bin/</span><span style="color: #00bfff;">sh</span>
-
-<span id="coderef-for" class="coderef-off"><span style="color: #00bfff;">for</span> file<span style="color: #00bfff;"> in</span> *.org</span>
-<span style="color: #00bfff;">do</span>
-    <span style="color: #4eee94;">DATEI</span>=$(<span style="color: #fa8072;">echo</span> $<span style="color: #4eee94;">file</span> | sed <span style="color: #deb887;">'s/\(.*\).org/\1/'</span>) ;
-    <span style="color: #f08080;">test</span> -e $<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
-<span id="coderef-head" class="coderef-off">    grep -B 20 -m 1 END $<span style="color: #4eee94;">DATEI</span>.org | head -n -1 |</span>
-  tail -n +2 &gt; $<span style="color: #4eee94;">DATEI</span>.org.publish &amp;&amp;
-<span id="coderef-java" class="coderef-off">    cat _script &gt;&gt; $<span style="color: #4eee94;">DATEI</span>.org.publish &amp;&amp;</span>
-    sed <span style="color: #deb887;">'N; s/&lt;\/ul&gt;\n&lt;\/div&gt;/&amp;&lt;p&gt;&lt;\/p&gt;/; P; </span>
-<span style="color: #deb887;">  s/&lt;h2&gt;Table of Contents&lt;\/h2&gt;/&lt;h3&gt;Inhaltsverzeichnis&lt;\/h3&gt;/; D'</span>
-  $<span style="color: #4eee94;">DATEI</span>.html &gt;&gt; $<span style="color: #4eee94;">DATEI</span>.org.publish &amp;&amp;
-<span id="coderef-move" class="coderef-off">    cat $<span style="color: #4eee94;">DATEI</span>.org.publish &gt; ../_posts/$<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;</span>
-    rm $<span style="color: #4eee94;">DATEI</span>.html $<span style="color: #4eee94;">DATEI</span>.org.publish;
-<span style="color: #00bfff;">done</span>;
 </pre>
 </div>
 </div>
