@@ -41,9 +41,11 @@ do
     fi
 done
 
+mv categorie. categorie.ZZZ
+
 for INDEX in categorie.*
 do
-    if [ "$(echo $INDEX | sed 's_categorie\(.*\)_\1_')" != '.' ]
+    if [ "$(echo $INDEX | sed 's_categorie\.\(.*\)_\1_')" != 'ZZZ' ]
     then
         echo '<li><a href="">' $(echo $INDEX | 
             sed 's_categorie\.\(.*\)_\1_') '</a>' '<ul>' >> totalindex;
