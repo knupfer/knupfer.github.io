@@ -1,24 +1,60 @@
 #+BEGIN_COMMENT
 ---
 layout: post
-title: Adapives Testen
+title: Adaptives Testen
 father: Wissenschaft
 ---
 #+END_COMMENT
 
+Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung in erweitertem Maße ausgenutzt.
+Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
+um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
+
+
+** Kriterien
+Wie genau die Frage ausgewählt wird hängt vornehmlich von den Zielen der Testung und den Nebenwirkungen, die man ggf. 
+vermeiden möchte, ab. So wäre eine Frage, die der Proband mit einer Chance von 50% lösen kann ideal im Sinne eines 
+Informationsgewinnes über den Probanden, da die Entropie maximal ist. 
+
+Entropie stellt nicht nur Chaos, sondern auch Informationsdichte nach Shannon dar 
+(vgl. [[http://de.wikipedia.org/wiki/Entropie_%28Informationstheorie%29][Wikipedia]]).
+Die folgende Formel ergiebt die Entropie eines Ereignisses. Hierbei ist $n$ die Anzahl der Möglichkeiten und $p_i$ 
+die jeweiligen Wahrscheinlichkeiten dieser (sich ausschließender) Möglichkeiten.
+
+$$ H = - \Sum_{i=1}^n p_i \cdot \log_2{p_i} $$
+
+Betrachten wir ein binäres System, also nur Fragen die entweder vollständig falsch oder vollständig richtig beantwortet
+werden können, so haben wir $n = 2$ und $p_2 = 1 - p_1$.
+
+$$ H_2 = - p \cdot \log_2{p} - (1 - p) \cdot \log_2{1 - p} $$
+
+Hieraus ergiebt sich, dass der Informationsgewinn bei $p = .5$ (im binären) maximal ist, da die Funktion symmetrisch ist und bei
+$p = 0$ auf beiden Seiten $0$ ergibt.
+
+$$ H_{max} = - .5 \cdot \log_2{.5} - .5 \cdot \log_2{.5} = 1 bit $$
+
+Hierbei ist $bit$ die übliche Einheit des Informationsgehaltes, auf Grund des $\log_2$. Es kann also ein Informationsgehalt
+von 8 bit mit Hilfe eines bytes dargestellt werden, sprich mit 8 Nullen oder Einsen (z.B. 10101010).
+
+[[http://upload.wikimedia.org/wikipedia/commons/a/a0/Entropy_max.png]]
+
+Mit der Formel für tatsächliche und für maximale Entropie kann die Redundanz ausgerechnet werden, welche in einer 
+Testkonstruktion als Indikator für das Potential der Verbesserung durch ein adaptives Testverfahren benutzt werden kann.
+
+$$ R = H_{max} - H $$
+
+Somit kann im binären ein Test im idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen. 
+Befinden sich im Test auch Fragen, die nicht binär sind, so verändert sich die Situation ein wenig.
+Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten. Gibt es nun bei einer Frage z.B. 0, 1, 2 oder 3 Punkte
+gibt es eine maximale Entropie von $H_{max} = - \log_2{.25} = 2 bits$. Somit kann man einen Test auch um $R/2$ solcher
+Fragen ohne Informationsverlust verkleinern.
+
+
 
 
 * Nicht adaptives Testen
- ieaitarnitanrit
-- blaa
-** mio
-ob
-*** baaar
-oo
-****
+Beim 
 * Adaptives Testen
-
-- blaa
 
 ** Umsetzung
 
