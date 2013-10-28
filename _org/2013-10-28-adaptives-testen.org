@@ -1,0 +1,28 @@
+#+BEGIN_COMMENT
+---
+layout: post
+title: Adapives Testen
+father: Wissenschaft
+---
+#+END_COMMENT
+
+
+
+* Nicht adaptives Testen
+ ieaitarnitanrit
+- blaa
+** mio
+ob
+*** baaar
+oo
+****
+* Adaptives Testen
+
+- blaa
+
+** Umsetzung
+
+*** Programmierung
+
+
+
