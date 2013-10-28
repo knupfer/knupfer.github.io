@@ -37,7 +37,7 @@ do
             s_<h2>Table of Contents</h2>_<h3>Inhaltsverzeichnis</h3>_;
             D' $DATEI.html >> $DATEI.org.publish &&
         cat $DATEI.org.publish > ../_posts/$DATEI.html;
-#        rm  $DATEI.org.publish;
+        rm  $DATEI.org.publish;
     fi
 done
 
