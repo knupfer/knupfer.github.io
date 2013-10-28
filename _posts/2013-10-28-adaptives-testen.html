@@ -45,7 +45,7 @@ die jeweiligen Wahrscheinlichkeiten dieser (sich ausschließender) Möglichkeite
 </p>
 
 <p>
-$$ H = - \Sum_{i=1}^n p_i \cdot \log_2{p_i} $$
+$$ H = - \sum_{i=1}^n p_i \cdot \log_2{p_i} $$
 </p>
 
 <p>
@@ -63,7 +63,7 @@ Hieraus ergiebt sich, dass der Informationsgewinn bei \(p = .5\) (im binären) m
 </p>
 
 <p>
-$$ H_{max} = - .5 \cdot \log_2{.5} - .5 \cdot \log_2{.5} = 1 bit $$
+$$ H_{max} = - 0.5 \cdot \log_2{0.5} - 0.5 \cdot \log_2{0.5} = 1 bit $$
 </p>
 
 <p>
@@ -90,7 +90,7 @@ $$ R = H_{max} - H $$
 Somit kann im binären ein Test im idealfall um \(R\) Fragen verkleinert werden, ohne an Informationen einzubüßen. 
 Befinden sich im Test auch Fragen, die nicht binär sind, so verändert sich die Situation ein wenig.
 Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten. Gibt es nun bei einer Frage z.B. 0, 1, 2 oder 3 Punkte
-gibt es eine maximale Entropie von \(H_{max} = - \log_2{.25} = 2 bits\). Somit kann man einen Test auch um \(R/2\) solcher
+gibt es eine maximale Entropie von \(H_{max} = - \log_2{0.25} = 2 bits\). Somit kann man einen Test auch um \(R/2\) solcher
 Fragen ohne Informationsverlust verkleinern.
 </p>
 </div><p></p>

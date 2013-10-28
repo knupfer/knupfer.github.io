@@ -55,4 +55,4 @@ echo '</ul></div></div>' >> ../_processing/totalindex;
 cp ../_processing/totalindex  ../totalindex.html;
 mv categorie.* ../_processing/;
 cp ../_posts/about.html ../about.html;
-rm *.org~
+test -e *.org~ && rm *.org~ ;
