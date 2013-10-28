@@ -45,8 +45,17 @@ Nichts desto trotz wurde eine auch heute noch beliebte und ergonomische Tastatur
 
 ** Ristome
 ** Neo
-*** Nordtast
+Diese Layout wurde 2004 entwickelt und speziell auf die deutsche Sprache optimiert. Die Ergebnisse Dvoraks wurden hier verwendet, um computergestützt das Layout zu optimieren. Jedoch waren die Optimierungsmöglichkeiten selbst noch nicht ausgereift, was zu der Entstehung von Neo2 führte.
+
+*** Neo2
+Hier wurde das gesamte Layout nochmals computergestützt deutlich verbessert, so werden die Finger viel weniger bewegt. Beispielsweise kann man 60% eines normalen deutschen Textes auf der Grundreihe tippen.
+
+Eine phantastische Besonderheit des Neolayouts, welche mich damals dazu bewog, es zu lernen, ist, dass es noch zusätzliche Ebenen besitzt. Dies bedeutet, dass man über Spezialtasten die Belegung des Layouts ändern kann (wie z.B. bei Shift, welches für Großbuchstaben sorgt). So gibt es eine Ebene mit einem Zahlen- und Navigationsblock, welche unglaublich praktisch ist. So kann ich, während ich diesen Text hier schreibe, in der Grundposition ohne Probleme Zahlen eingeben, zum letzten Wortanfang springen, zum Zeilenanfang springen, in beide Richtungen Zeichen-, Wort-, Absatz- oder sogar Dokumentenweise löschen. Eine andere Ebene beinhaltet typische Programmierzeichen, eine weitere enthält griechische Buchstaben (für Formeln) und die letzte enthält mathematisch Spezialzeichen (Summationszeichen etc.). 
+
 *** AdNW
+Dieses Layout steht für „Aus der Neo-Welt“ und sieht sich selbst als Nachfolger des Neo-Layoutes. Hier wurde das Layout noch weiter verfeinert und nicht nur an deutschen, sondern auch an englischen Texten ausgerichtet. Somit ist dieses Layout weit internationaler und trotzdem auch in der deutschen Sprache dem Neo-Layout deutlich überlegen.
+
+Meines Wissens nach ist dies derzeit das beste und vielseitigste Tastaturlayout. Es wurde von vielen auch schon unter dem Namen Neo3 vorgeschlagen, jedoch gibt es manch eine Unstimmigkeit zwischen den Projekten. Parallel dazu wird an einem anderen Neo3 gearbeitet, was sehr gut ist, da Neo bereits einen beachtlichen Bekanntheitsgrad erlangt hat, so ist das Neo-Layout in jeder Linuxdistro als Belegungsvariante des Deutschen auswählbar.
 
 
 
