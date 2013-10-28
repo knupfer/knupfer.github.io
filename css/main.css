@@ -386,7 +386,7 @@ body {
   pre.src-sql:before   { content: 'SQL'; }
 */
 
-  table {border-collapse:collapse; margin-left: auto; margin-right: auto; } */
+  table {border-collapse:collapse;  } */
   tr {border: 1px solid #eee;}
   td, th { vertical-align:top; padding:0px 10px;  }
   th.right  { text-align: center;  }
