@@ -11,6 +11,17 @@ Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung 
 Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
 um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
 
+#+BEGIN_SRC ditaa :file /images/adaptiveditaa.png
+
++---------+   +-----------------+   +---------------+
+| Item    |-->| Modellschätzung |-->|   Schätzung   |
+| Antwort |   +-----------------+   | nächstes Item |
++---------+                         +---------------+
+    ^                                       |
+    |                                       |
+    +---------------------------------------+
+
+#+END_SRC 
 
 ** Kriterien
 Wie genau die Frage ausgewählt wird hängt vornehmlich von den Zielen der Testung und den Nebenwirkungen, die man ggf. 
