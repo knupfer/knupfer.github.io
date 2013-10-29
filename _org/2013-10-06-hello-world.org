@@ -55,54 +55,15 @@ Mithilfe des Zusatzpakete htmlize.el für Emacs ist es mir gelungen, Emacs so ei
 ** Das Shellscript
 Da Jekyll einen speziellen Head einer Html-Datei benötigt, blieb mir nichts anderes übrig, diesen Anfang über ein Shellscript in das durch Emacs exportierte Html einzufügen. Ich habe Emacs so konfiguriert, dass es nur den Body der Html exportiert und habe das Javascript für das Syntaxhighlighting seperat abgespeichert. In dem Shellscript wird der [[(head)][Head]] aus der .org-Datei flexibel extrahiert und in einer neuen Datei abgespeichert, daraufhin das [[(java)][Javascript]] eingefügt und dann der Html-Body. Zum Schluss wird noch die Datei umbenannt und in den von Jekyll verabeiteten _posts-Ordner [[(move)][verschoben]]. Das Skript macht diese Prozedur automatisch, [[(for)][mit allen .org-Dateien]], die exportiert wurden, sprich die verändert wurden. Bereits aktuelle Posts werden nicht modifiziert, so bleibt das Datum des Posts erhalten.
 
-Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighlighting usw.
+Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighlighting usw. Es wurden Gruppen von drei 
+Bindestrichen durch zwei Bindestriche eresetzt, um nicht keine Probleme mit Jekyll zu bereiten.
 
-#+BEGIN_SRC sh -r
-#!/bin/sh
-
-#!/bin/sh
-
-for FILE in *.org
-do
-    DATEI=$(echo $FILE | sed 's:\(.*\).org:\1:');
-    URL=$(echo /$DATEI | sed 's:-:/: ; s:-:/: ; s:-:/:; s:$:.html:')
-    TITLE=$(sed -n '/--/,/--/ s/title: *"*\([^"]*\)"*/\1/p' $DATEI.org);
-    FATHER=$(sed -n '/--/,/--/ s/father: *"*\([^"]*\)"*/\1/p' $DATEI.org);
-
-    test -e $DATEI.html &&
-
-    echo '<li><a href="'$URL'">'$TITLE'</a>' >> categorie.$FATHER &&
-    sed -n '/<div id="text-table-of-contents">/,/<\/div>/ p' $DATEI.html | 
-        tail -n +2 | 
-        head -n -1 | 
-        sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
-    sed -n '/--/,/--/ p' $DATEI.org > $DATEI.org.publish &&
-    sed 'N;
-        s/[(<\/ul>)(<\/dl>)]\n<\/div>/&<p><\/p>/;
-        P;
-        s/file:\/\///;
-        s/<h2>Table of Contents<\/h2>/<h3>Inhaltsverzeichnis<\/h3>/;
-        D' $DATEI.html >> $DATEI.org.publish &&
-    cat $DATEI.org.publish > ../_posts/$DATEI.html &&
-    rm  $DATEI.org.publish;
-done
-
-for INDEX in categorie.*
-do
-    if [ "$(echo $INDEX | sed 's/categorie\(.*\)/\1/')" != '.' ]
-    then
-        echo '<li><a href="">' $(echo $INDEX | 
-            sed 's/categorie\.\(.*\)/\1/') '</a>' '<ul>' >> totalindex;
-    else
-        echo '<li><a href="">' Verschiedenes '</a>' '<ul>' >> totalindex;
-    fi
-    cat $INDEX >> totalindex;
-    echo '</ul>' >> totalindex;
-done
-
-echo '</ul></div></div>' >> totalindex;
-mv totalindex  ../totalindex.html;
-rm categorie.*;
-
-
+#+NAME: skript
+#+BEGIN_SRC sh -r :exports none
+cat publish.sh | sed 's/--/-/g; s/--/-/g'
 #+END_SRC
+
+#+BEGIN_SRC sh :exports code :noweb yes
+<<skript()>>
+#+END_SRC
+
