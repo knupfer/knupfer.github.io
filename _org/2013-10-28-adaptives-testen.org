@@ -6,6 +6,7 @@ father: Wissenschaft
 ---
 #+END_COMMENT
 
+* Adaptives Testen
 Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung in erweitertem Maße ausgenutzt.
 Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
 um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
@@ -31,7 +32,7 @@ $$ H_2 = - p \cdot \log_2{p} - (1 - p) \cdot \log_2{1 - p} $$
 Hieraus ergiebt sich, dass der Informationsgewinn bei $p = .5$ (im binären) maximal ist, da die Funktion symmetrisch ist und bei
 $p = 0$ auf beiden Seiten $0$ ergibt.
 
-$$ H_{max} = - 0.5 \cdot \log_2{0.5} - 0.5 \cdot \log_2{0.5} = 1 bit $$
+$$ H_{max} = - 0.5 \cdot \log_2{0.5} - 0.5 \cdot \log_2{0.5} = 1 \mathrm{bit} $$
 
 Hierbei ist $bit$ die übliche Einheit des Informationsgehaltes, auf Grund des $\log_2$. Es kann also ein Informationsgehalt
 von 8 bit mit Hilfe eines bytes dargestellt werden, sprich mit 8 Nullen oder Einsen (z.B. 10101010).
@@ -46,10 +47,43 @@ $$ R = H_{max} - H $$
 Somit kann im binären ein Test im idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen. 
 Befinden sich im Test auch Fragen, die nicht binär sind, so verändert sich die Situation ein wenig.
 Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten. Gibt es nun bei einer Frage z.B. 0, 1, 2 oder 3 Punkte
-gibt es eine maximale Entropie von $H_{max} = - \log_2{0.25} = 2 bits$. Somit kann man einen Test auch um $R/2$ solcher
+gibt es eine maximale Entropie von $H_{max} = - \log_2{0.25} = 2 \mathrm{bit}$. Somit kann man einen Test auch um $R/2$ solcher
 Fragen ohne Informationsverlust verkleinern.
 
+*** Informationsgehalt in KoMus
+Im August diesen Jahres habe ich mit Teilen des KoMus-Testes für musikalische Kompetenz eine empirische Studie
+durchgeführt. Der KoMus-Test liegt in einem nicht adaptiven Format vor.
 
+Interessant ist nun, die Überlegung, wieviel der Test von einer Überführung in einen adaptiven Test profitieren würde.
+
+**** Durchschnittlicher Schüler
+Der Simplizität halber können wir annehmen, dass ein Schüler genau die durchschnittlichen Lösungswahrscheinlichkeiten
+für ein Item aufweist.
+
+So muss man nur die Entropie mit den klassischen Itemschwierigkeiten der Items berechnen:
+
+$$ H = \sum_{i=1}^n(- P_i \cdot \log_2{P_i} - (1 - P_i) \cdot \log_2{1 - P_i}) $$
+
+Hierbei ist $P_i$ die klassische Itemschwierigkeit des Items $i$ und $n$ die Anzahl der Items. Ferner nimmt diese Formel
+nur dichotome Items an.
+
+**** Vierdimensional
+Die Entropie ist jedoch eigentlich noch niedriger, wenn man die Schwierigkeiten adaptiv berechnet. Es handelt sich aber
+immernoch um einen nicht adaptiven Test mit fester Reihenfolge. Es wird nur eine spezialform der Entropie, die bedingte
+Entropie, benutzt (vgl. [[http://de.wikipedia.org/wiki/Bedingte_Entropie][Wikipedia]]).
+
+Um die bedingte Lösungschance und somit auch die bedingte Entropie zu berechnen, werden alle Items der selben Dimension
+einer logistisch binären Regression verwendet um die individuell Itemschwierigkeit eines Items der gleichen Dimension zu
+berechnen.
+
+$$ H = \sum_{i=1}^n(- Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) \cdot \log_2{Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})} - (1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})) \cdot \log_2{1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})}) $$
+
+Hierbei ist $Reg_2(a|b)$ die binärlogistische Regression mit der AV $a$ und den UV $b$.
+
+
+
+
+**** n-Dimensional
 
 
 * Nicht adaptives Testen
