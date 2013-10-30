@@ -11,7 +11,7 @@ Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung 
 Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
 um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
 
-#+BEGIN_SRC ditaa :file /images/adaptiveditaa.png
+#+BEGIN_SRC ditaa :file /images/adaptiveditaa.png :exports code
 
 +---------+   +-----------------+   +---------------+
 | Item    |-->| Modellschätzung |-->|   Schätzung   |
@@ -87,7 +87,8 @@ Um die bedingte Lösungschance und somit auch die bedingte Entropie zu berechnen
 einer logistisch binären Regression verwendet um die individuell Itemschwierigkeit eines Items der gleichen Dimension zu
 berechnen.
 
-$$ H = \sum_{D=1}^4(\sum_{i=1}^{n(D)}(- Reg_2(P_{ivD}|\sum_{m=1}^{i(D)-1}P_{vmD}) \cdot \log_2{Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})} - (1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})) \cdot \log_2{1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})})) $$
+$$ H = \sum_{D=1}^4(\sum_{i=1}^{n(D)}(- Reg_2(P_{ivD}|\sum_{m=1}^{i(D)-1}P_{vmD}) \cdot \log_2{Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})} - (1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})) \cdot \log_2{1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})}))$$
+$$ x = z $$
 
 Hierbei ist $Reg_2(a|b)$ die binärlogistische Regression mit der AV $a$ und den UV $b$.
 

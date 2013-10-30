@@ -1,14 +1,32 @@
 <li><a href="/2013/10/28/adaptives-testen.html">Adaptives Testen</a>
 <ul>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-0-1">0.1. Kriterien</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1">1. Adaptives Testen</a>
+<ul>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-1">1.1. Kriterien</a>
+<ul>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-1-1">1.1.1. Informationsgehalt in KoMus</a>
+<ul>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-1-1-1">1.1.1.1. Durchschnittlicher Schüler</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-1-1-2">1.1.1.2. Vierdimensional</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-1-1-3">1.1.1.3. n-Dimensional</a>
+<ul>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-1-1-3-1">1.1.1.3.1. Probleme</a></li>
 </ul>
 </li>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-1">1. Nicht adaptives Testen</a></li>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-2">2. Adaptives Testen</a>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-2">2. Nicht adaptives Testen</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-3">3. Adaptives Testen</a>
 <ul>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-2-1">2.1. Umsetzung</a>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-3-1">3.1. Umsetzung</a>
 <ul>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-2-1-1">2.1.1. Programmierung</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-3-1-1">3.1.1. Programmierung</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

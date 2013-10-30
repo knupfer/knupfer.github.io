@@ -23,15 +23,6 @@ title: Über mich
 *** Bass
 *** Altus
 * Curriculum Vitae
-** Persönliche Daten
-|---------------+-------------------------------------------|
-| Name          | Florian Klaus Knupfer                     |
-| Geburtsdatum  | 18.10.1987                                |
-| Geburtsort    | Aalen                                     |
-| Eltern        | Klaus Knupfer Ursula Knupfer, geb. Schmid |
-| Familienstand | Verheiratet                               |
-|---------------+-------------------------------------------|
-
 ** Ausbildung                                                                                                           
 |-----------+---------------------------------------------------------------------------------------------------------|
 |       <r> |                                                                                                         |

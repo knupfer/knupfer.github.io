@@ -5,7 +5,6 @@ title:  "Hello World!"
 father: Linux
 ---
 #+END_COMMENT
-
 * Begrüßung
 Hallo, dies ist mein erster Post hier. Ich bin gespannt, ob ich mich für das Bloggen begeistern kann. Gleichzeitig dient diese Homepage dazu, gemeinschaftlich über Probleme nachzudenken. Diese können aus ganz verschiedenen Bereichen kommen. Hier im Speziellen wird es sich um Themen der Musikpädagogik, der Empirie, des Computers und der Typography drehen.
 
@@ -59,8 +58,8 @@ Hier zum nachlesen und nachdenken das Shellscript, natürlich mit Syntaxhighligh
 Bindestrichen durch zwei Bindestriche eresetzt, um nicht keine Probleme mit Jekyll zu bereiten.
 
 #+NAME: skript
-#+BEGIN_SRC sh -r :exports none
-cat publish.sh | sed 's/--/-/g; s/--/-/g'
+#+BEGIN_SRC sh -r :exports none :results output
+cat publish.sh | sed 's/--/-/g;'
 #+END_SRC
 
 #+BEGIN_SRC sh :exports code :noweb yes
