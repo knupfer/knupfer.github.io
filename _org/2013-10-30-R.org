@@ -1,0 +1,14 @@
+#+BEGIN_COMMENT
+---
+layout: post
+title: R
+father: computer
+---
+#+END_COMMENT
+
+
+* 1.
+
+* 2.
+
+* 3.
