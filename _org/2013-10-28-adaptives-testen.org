@@ -87,8 +87,8 @@ Um die bedingte Lösungschance und somit auch die bedingte Entropie zu berechnen
 einer logistisch binären Regression verwendet um die individuell Itemschwierigkeit eines Items der gleichen Dimension zu
 berechnen.
 
-$$ H = \sum_{D=1}^4(\sum_{i=1}^{n(D)}(- Reg_2(P_{ivD}|\sum_{m=1}^{i(D)-1}P_{vmD}) \cdot \log_2{Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})} - (1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})) \cdot \log_2{1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm})}))$$
-$$ x = z $$
+$$ H = \sum_{D=1}^4(\sum_{i=1}^{n(D)}(- R \cdot \log_2{R})} - (1 - R)) \cdot \log_2{1- R})}))$$
+$$ R = Reg_2(P_{ivD}|\sum_{m=1}^{i(D)-1}P_{vmD}) $$
 
 Hierbei ist $Reg_2(a|b)$ die binärlogistische Regression mit der AV $a$ und den UV $b$.
 
@@ -103,7 +103,8 @@ Berücksichtigen wir unabhängig von der Dimensionszugehörigkeit einfach alle b
 signifikanten Einfluss auf die Frage haben, haben wir im Endeffekt ein n-dimensionales Modell, wobei $n$ die Anzahl der
 Fragen ist.
 
-$$ H = \sum_{i=1}^n(- Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) \cdot \log_2{Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}} - (1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) \cdot \log_2{1 - Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}}) $$
+$$ H = \sum_{i=1}^n(- R \cdot \log_2{R} - (1 - R) \cdot \log_2{1 - R}) $$
+$$ R = Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) $$
 
 ***** Probleme
 Mögliche Probleme dieser Methode sind fehlende Datensätze, da die binärlogistische Regression normalerweise alle Fälle
