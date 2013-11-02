@@ -9,6 +9,282 @@ father: computer
 
 * 1.
 
+#+NAME: regression
+#+BEGIN_SRC sh :noweb yes :results output
+for i in `seq 1 50`
+do
+#if [ $i = 1 ]
+#then
+#echo 'Entropie = append(Entropie,-colMeans(komus[1])*log(colMeans(komus[1]),2)-(1-colMeans(komus[1]))*log(1-colMeans(komus[1]),2))
+#Entropiealt = append(Entropiealt,-colMeans(komus[1])*log(colMeans(komus[1]),2)-(1-colMeans(komus[1]))*log(1-colMeans(komus[1]),2))
+#'
+#else
+echo '
+modell = glm(V'$i' ~ 1, data = komus, family = "binomial"(link=logit))'
+if [ $i = 1 ]
+then
+echo 'Entropietemp = -colMeans(komus['$i'])*log(colMeans(komus['$i']),2)-(1-colMeans(komus['$i']))*log(1-colMeans(komus['$i']),2)'
+else
+echo 'fitting1 = step(modell,reformulate(names(komus[1:'$i-1'])),trace = 0, test = "Chisq")
+fitting = step(fitting1, ~.^2, trace = 0, test = "Chisq")
+chance = predict(fitting, type = "response")
+Entropietemp = -chance*log(chance,2)-(1-chance)*log(1-chance,2)'
+fi
+#echo 'Entropie = append(Entropie, mean(Entropietemp))
+echo 'Entropie = rbind(Entropie, mean(Entropietemp))
+# Entropiealt['$i'] = -mean(komus['$i'])*log(mean(komus['$i']),2)-(1-mean(komus['$i']))*log(1-mean(komus['$i']),2)
+Entropiealt = rbind(Entropiealt,-colMeans(komus['$i'])*log(colMeans(komus['$i']),2)-(1-colMeans(komus['$i']))*log(1-colMeans(komus['$i']),2))
+summe = append(summe, sum(Entropie))
+summealt = append(summealt, sum(Entropiealt))
+'
+#fi
+done
+#+END_SRC
+
+
+#+NAME: statistic
+#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
+Entropie = 0
+Entropiealt = 0
+summe = 0
+summealt = 0
+summm = 0
+<<regression()>>
+
+Entropie = Entropie[2:length(Entropie)]
+Entropiealt = Entropiealt[2:length(Entropiealt)]
+
+grafikdaten = cbind(Entropie, Entropiealt, 1:length(Entropie))
+colnames(grafikdaten)[3] <- "Frage"
+grafikdaten
+
+a = 5
+
+a = rbind(a, 6)
+
+a =cbind(a,a)
+
+a
+b
+b[1] = 5
+b[1] = cbind(b[1],7)
+
+b
+staedte <- "Stadt;Einwohner;Fläche in km2;Schulden in Mrd;Regierung
+Berlin;3499879;891,85;64,03;SPD und CDU
+Dortmund;580444;280,71;2,16;SPD
+München;1353186;310,43;0;SPD
+Hamburg;1799144;755,264;24,9;SPD
+Stuttgart;606588;207,36;2,8;CDU"
+ 
+stadtdaten <- read.table(textConnection(staedte), sep=";", head=T, dec=",")
+stadtdaten
+sum(grafikdaten[1:4,2])
+
+summm = cbind(summe, summealt, 1:length(summe))
+summe
+summealt
+summe[2]
+summm
+#Entropiealt
+
+#Entropiealt - Entropie
+#sum(Entropie)
+#sum(Entropiealt)
+#+END_SRC
+
+#+RESULTS: statistic
+#+begin_example
+Es gab 50 oder mehr Warnungen (Anzeige der ersten 50 mit warnings())
+Es gab 50 oder mehr Warnungen (Anzeige der ersten 50 mit warnings())
+Es gab 50 oder mehr Warnungen (Anzeige der ersten 50 mit warnings())
+Warnmeldungen:
+1: glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1 aufgetreten 
+2: glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1 aufgetreten
+Es gab 50 oder mehr Warnungen (Anzeige der ersten 50 mit warnings())
+       Entropie Entropiealt Frage
+ [1,] 0.8125179   0.8125179     1
+ [2,] 0.8862155   0.8862155     2
+ [3,] 0.9099595   0.9456603     3
+ [4,] 0.8719943   0.9575535     4
+ [5,] 0.9717673   0.9962469     5
+ [6,] 0.8546452   0.9855975     6
+ [7,] 0.8647742   0.9974395     7
+ [8,] 0.9514564   0.9984045     8
+ [9,] 0.8951707   0.9799954     9
+[10,] 0.9586750   0.9931771    10
+[11,] 0.9481926   0.9698397    11
+[12,] 0.6009752   0.6840384    12
+[13,] 0.8913045   0.9988017    13
+[14,] 0.8820039   0.8935711    14
+[15,] 0.8066169   0.8625279    15
+[16,] 0.9254624   0.9991421    16
+[17,] 0.7703813   0.8746787    17
+[18,] 0.9506004   0.9698397    18
+[19,] 0.8489824   0.9140593    19
+[20,] 0.6681412   0.8222671    20
+[21,] 0.8063705   0.9404757    21
+[22,] 0.9141951   0.9902738    22
+[23,] 0.5747753   0.8075304    23
+[24,] 0.7316654   0.9716794    24
+[25,] 0.8700803   0.8899266    25
+[26,] 0.3931577   0.5084609    26
+[27,] 0.9440433   0.9955651    27
+[28,] 0.8501847   0.9350441    28
+[29,] 0.2879228   0.5446635    29
+[30,] 0.3556027   0.7231802    30
+[31,] 0.8515633   0.9968716    31
+[32,] 0.7160587   0.8971493    32
+[33,] 0.6086819   0.8125179    33
+[34,] 0.4631316   0.5533836    34
+[35,] 0.8779181   0.9799954    35
+[36,] 0.8230268   0.9172474    36
+[37,] 0.5170623   0.8583391    37
+[38,] 0.8522900   0.9639651    38
+[39,] 0.5340577   0.7704493    39
+[40,] 0.9000117   0.9979504    40
+[41,] 0.6196069   0.9481606    41
+[42,] 0.2607577   0.9264294    42
+[43,] 0.7925496   0.9074902    43
+[44,] 0.9150833   0.9998228    44
+[45,] 0.6279161   0.7704493    45
+[46,] 0.6988121   0.9172474    46
+[47,] 0.6645409   0.8540804    47
+[48,] 0.6341715   0.8785920    48
+[49,] 0.5382617   0.7591358    49
+[50,] 0.5718902   0.7293881    50
+  [,1] [,2]
+a    5    5
+     6    6
+     b  
+[1,] 5 7
+Warnmeldung:
+In b[1] = cbind(b[1], 7) :
+  Anzahl der zu ersetzenden Elemente ist kein Vielfaches der Ersetzungslänge
+     b  
+[1,] 5 7
+      Stadt Einwohner Fläche.in.km2 Schulden.in.Mrd   Regierung
+1    Berlin   3499879       891.850           64.03 SPD und CDU
+2  Dortmund    580444       280.710            2.16         SPD
+3   München   1353186       310.430            0.00         SPD
+4   Hamburg   1799144       755.264           24.90         SPD
+5 Stuttgart    606588       207.360            2.80         CDU
+[1] 3.601947
+ [1]  0.0000000  0.8125179  1.6987334  2.6086929  3.4806872  4.4524545
+ [7]  5.3070997  6.1718739  7.1233304  8.0185011  8.9771761  9.9253687
+[13] 10.5263439 11.4176485 12.2996523 13.1062692 14.0317317 14.8021130
+[19] 15.7527134 16.6016958 17.2698370 18.0762075 18.9904026 19.5651779
+[25] 20.2968433 21.1669235 21.5600812 22.5041245 23.3543092 23.6422320
+[31] 23.9978347 24.8493980 25.5654567 26.1741386 26.6372702 27.5151884
+[37] 28.3382151 28.8552775 29.7075674 30.2416251 31.1416368 31.7612437
+[43] 32.0220014 32.8145510 33.7296344 34.3575504 35.0563625 35.7209034
+[49] 36.3550749 36.8933366 37.4652268
+ [1]  0.0000000  0.8125179  1.6987334  2.6443937  3.6019472  4.5981941
+ [7]  5.5837916  6.5812311  7.5796355  8.5596309  9.5528079 10.5226477
+[13] 11.2066861 12.2054878 13.0990589 13.9615867 14.9607288 15.8354075
+[19] 16.8052473 17.7193065 18.5415736 19.4820493 20.4723231 21.2798535
+[25] 22.2515329 23.1414595 23.6499204 24.6454855 25.5805296 26.1251931
+[31] 26.8483733 27.8452450 28.7423943 29.5549122 30.1082958 31.0882912
+[37] 32.0055386 32.8638777 33.8278428 34.5982921 35.5962425 36.5444031
+[43] 37.4708325 38.3783226 39.3781454 40.1485947 41.0658420 41.9199224
+[49] 42.7985144 43.5576502 44.2870383
+[1] 0.8125179
+           summe   summealt   
+ [1,]  0.0000000  0.0000000  1
+ [2,]  0.8125179  0.8125179  2
+ [3,]  1.6987334  1.6987334  3
+ [4,]  2.6086929  2.6443937  4
+ [5,]  3.4806872  3.6019472  5
+ [6,]  4.4524545  4.5981941  6
+ [7,]  5.3070997  5.5837916  7
+ [8,]  6.1718739  6.5812311  8
+ [9,]  7.1233304  7.5796355  9
+[10,]  8.0185011  8.5596309 10
+[11,]  8.9771761  9.5528079 11
+[12,]  9.9253687 10.5226477 12
+[13,] 10.5263439 11.2066861 13
+[14,] 11.4176485 12.2054878 14
+[15,] 12.2996523 13.0990589 15
+[16,] 13.1062692 13.9615867 16
+[17,] 14.0317317 14.9607288 17
+[18,] 14.8021130 15.8354075 18
+[19,] 15.7527134 16.8052473 19
+[20,] 16.6016958 17.7193065 20
+[21,] 17.2698370 18.5415736 21
+[22,] 18.0762075 19.4820493 22
+[23,] 18.9904026 20.4723231 23
+[24,] 19.5651779 21.2798535 24
+[25,] 20.2968433 22.2515329 25
+[26,] 21.1669235 23.1414595 26
+[27,] 21.5600812 23.6499204 27
+[28,] 22.5041245 24.6454855 28
+[29,] 23.3543092 25.5805296 29
+[30,] 23.6422320 26.1251931 30
+[31,] 23.9978347 26.8483733 31
+[32,] 24.8493980 27.8452450 32
+[33,] 25.5654567 28.7423943 33
+[34,] 26.1741386 29.5549122 34
+[35,] 26.6372702 30.1082958 35
+[36,] 27.5151884 31.0882912 36
+[37,] 28.3382151 32.0055386 37
+[38,] 28.8552775 32.8638777 38
+[39,] 29.7075674 33.8278428 39
+[40,] 30.2416251 34.5982921 40
+[41,] 31.1416368 35.5962425 41
+[42,] 31.7612437 36.5444031 42
+[43,] 32.0220014 37.4708325 43
+[44,] 32.8145510 38.3783226 44
+[45,] 33.7296344 39.3781454 45
+[46,] 34.3575504 40.1485947 46
+[47,] 35.0563625 41.0658420 47
+[48,] 35.7209034 41.9199224 48
+[49,] 36.3550749 42.7985144 49
+[50,] 36.8933366 43.5576502 50
+[51,] 37.4652268 44.2870383 51
+#+end_example
+
+
+#+BEGIN_SRC R :session stat :results output graphics :file /images/entropie2.png :exports results
+
+#x = (1:length(Entropie))
+#y = Entropie
+#plot(x,y,type="l",xlab=expression(Lösungswahrscheinlichkeit),ylab=expression("Entropie in bit"),  main="Entropieverteilung")
+
+library("ggplot2")
+
+# dummy data
+#set.seed(90)
+#df <- data.frame(x=rep(1:length(Entropie), 9), val=sample(1:100, 45), 
+ #                  variable=rep(paste0("category", 1:9), each=5))
+# plot
+# ggplot(data = df, aes(x=x, y=val)) + geom_line(aes(colour=variable))
+
+
+
+df <- data.frame(x = 3, val=summm)
+# plot
+# ggplot(data = df, aes(x=x, y=val)) + geom_line(aes(colour=variable))
+
+
+g <- ggplot(df, 
+            aes(x=x, 
+                y=summm(1:5,2)
+        ))
+
+g <- g + geom_line()
+#g
+#plot(sin, -pi, 2*pi)
+
+plot(summe, type="o", col="blue")
+lines(summealt, type="o", pch=22, lty=2, col="red")
+lines(summm[,3]-1, type="o", col="green")
+
+#+END_SRC
+
+#+RESULTS:
+[[file:/images/entropie2.png]]
+
 * 2.
 
 * 3.

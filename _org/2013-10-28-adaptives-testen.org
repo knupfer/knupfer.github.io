@@ -48,7 +48,14 @@ $$ H_{max} = - 0.5 \cdot \log_2{0.5} - 0.5 \cdot \log_2{0.5} = 1 \mathrm{bit} $$
 Hierbei ist $bit$ die übliche Einheit des Informationsgehaltes, auf Grund des $\log_2$. Es kann also ein Informationsgehalt
 von 8 bit mit Hilfe eines bytes dargestellt werden, sprich mit 8 Nullen oder Einsen (z.B. 10101010).
 
-[[http://upload.wikimedia.org/wikipedia/commons/a/a0/Entropy_max.png]]
+#+BEGIN_SRC R :results output graphics :file /images/entropie.png :exports results
+x = (0:100)/100
+y = -x*log(x,2)-(1-x)*log(1-x,2)
+plot(x,y,type="l",xlab=expression(Lösungswahrscheinlichkeit),ylab=expression("Entropie in bit"),  main="Entropieverteilung")
+#+END_SRC
+
+#+RESULTS:
+[[file:/images/entropie.png]]
 
 Mit der Formel für tatsächliche und für maximale Entropie kann die Redundanz ausgerechnet werden, welche in einer 
 Testkonstruktion als Indikator für das Potential der Verbesserung durch ein adaptives Testverfahren benutzt werden kann.
