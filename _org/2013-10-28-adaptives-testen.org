@@ -139,58 +139,53 @@ Beim
 
 *** Programmierung
 
-#+NAME: regression
-#+BEGIN_SRC sh :noweb yes :exports code :results output
-for i in `seq 2 50`
-do
-echo 'modell = glm(V'$i' ~ 1, data = komus, family = "binomial"(link=logit))
-fitting1 = step(modell,reformulate(names(komus[1:'$i-1'])),trace = 0, test = "Chisq")
-fittingmu[['$i']] = step(fitting1, ~.^2, trace = 0, test = "Chisq")'
-done
-#+END_SRC
-
 #+NAME: statistic
 #+BEGIN_SRC R :exports code :results output :noweb yes
 komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
-
-summe2 = NULL
-summealt2 = NULL
+Entropie = NULL
 chances = NULL
-fittingmu = NULL
+fitting = NULL
+summe = list()
+summe[[1]] = 0
+summe[[2]] = 0
+Fragenanzahl = length(komus)
 
-fittingmu[[1]] = glm(V1 ~ 1, data = komus, family = "binomial"(link=logit))
-<<regression()>>
+fitting[[1]] = glm(V1 ~ 1, data = komus, family = "binomial"(link=logit))
 
-chances = sapply(fittingmu, predict, type="response")
-
-Entropietemp2 = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
-Entropie2 = colMeans(Entropietemp2)
-Entropiealt2 = -colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)
-
-grafikdaten2 = cbind(1:length(Entropie2), Entropie2, Entropiealt2)
-colnames(grafikdaten2)[1] <- "Frage"
-
-for ( i in 1:length(Entropie2)) {
-summe2[i] = sum(Entropie2[1:i])
-summealt2[i] = sum(Entropiealt2[1:i])
+for (i in 2:Fragenanzahl) {
+    modell = glm(reformulate(names(komus[1:i-1]), names(komus[i])), data = komus, family = "binomial"(link=logit))
+    fitting[[i]] = step(modell,reformulate(names(komus[1:i-1])),trace = 0, test = "Chisq")
+    fitting[[i]] = step(fitting[[i]], ~.^2, trace = 0, test = "Chisq")
 }
 
-result = cbind(1:length(summe2), summealt2, summe2)
+chances = sapply(fitting, predict, type="response")
 
+Entropietemp2 = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
+Entropie[[1]] = colMeans(Entropietemp2)
+Entropie[[2]] =  -colMeans(komus[1:Fragenanzahl])*log(colMeans(komus[1:Fragenanzahl]),2)-(1-colMeans(komus[1:Fragenanzahl]))*log(1-colMeans(komus[1:Fragenanzahl]),2)
+
+grafikdaten2 = cbind(1:length(Entropie[[1]]), Entropie[[1]], Entropie[[2]])
+
+for (i in 1:length(Entropie[[1]])) {
+    summe[[1]][i] = sum(Entropie[[1]][1:i])
+    summe[[2]][i] = sum(Entropie[[2]][1:i])
+}
+
+summe = data.frame(cbind(summe[[2]], summe[[1]]))
 
 #+END_SRC
 
-#+RESULTS: statistic
-
-
 #+BEGIN_SRC R :noweb yes :results output graphics :file /images/entropie2.png :exports results
 <<statistic>>
-plot(result[,1], type="l" ,col=rgb(0,0,0))
-for (i in 2:(length(result[1,]))) {
-farbe = 1 - (sum(result[,i])/sum(result[,1]))^5
-lines(result[,i], col=rgb(sqrt(farbe/2),farbe^2,farbe/2))
+plot(1:length(summe[,1]), type="l", col=rgb(0,0,0), ann=F)
+for (i in 1:(length(summe[1,]))) {
+farbe = 1 - (sum(summe[,i])/sum(1:length(summe[,1])))^5
+lines(summe[,i], col=rgb(sqrt(farbe/2),farbe^2,farbe/2))
 }
-
+title(xlab="Anzahl der beantworteten Fragen")
+title(ylab="Entropie in bit")
+legend(1, length(summe[,1]), c(names(summe)), cex=0.8, 
+    lty=1)
 #+END_SRC
 
 #+RESULTS:
