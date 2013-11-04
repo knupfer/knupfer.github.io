@@ -35,11 +35,11 @@ do
   cat $TEMP/$DATEI.org.publish > ../_posts/$DATEI.html;
 done
 
-mv categorie. categorie.ZZZ
+mv categorie. categorie.zzz
 
 for INDEX in categorie.*
 do
-  if [ "$(echo $INDEX | sed 's_categorie\.\(.*\)_\1_')" != 'ZZZ' ]
+  if [ "$(echo $INDEX | sed 's_categorie\.\(.*\)_\1_')" != 'zzz' ]
   then
     echo '<li><a href="">' $(echo $INDEX | 
       sed 's_categorie\.\(.*\)_\1_') '</a>' '<ul>' >> $TEMP/$TOC;

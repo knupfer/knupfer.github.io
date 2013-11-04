@@ -189,7 +189,7 @@ Bindestrichen durch zwei Bindestriche eresetzt, um nicht keine Probleme mit Jeky
 
   <span style="color: #f08080;">test</span> -e $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
   <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href="'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'"&gt;'</span>$<span style="color: #4eee94;">TITLE</span><span style="color: #deb887;">'&lt;/a&gt;'</span> &gt;&gt; categorie.$<span style="color: #4eee94;">FATHER</span> &amp;&amp;
-  sed -n <span style="color: #deb887;">'/&lt;div id="text-table-of-contents"&gt;/,/&lt;\/div&gt;/xp'</span> $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.html | 
+  sed -n <span style="color: #deb887;">'/&lt;div id="text-table-of-contents"&gt;/,/&lt;\/div&gt;/p'</span> $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.html | 
     tail -n +2 | 
     head -n -1 | 
     sed <span style="color: #deb887;">'s:\(href="\)#:\1'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'#:g'</span> &gt;&gt; categorie.$<span style="color: #4eee94;">FATHER</span> &amp;&amp;

@@ -139,5 +139,60 @@ Beim
 
 *** Programmierung
 
+#+NAME: regression
+#+BEGIN_SRC sh :noweb yes :exports code :results output
+for i in `seq 2 50`
+do
+echo 'modell = glm(V'$i' ~ 1, data = komus, family = "binomial"(link=logit))
+fitting1 = step(modell,reformulate(names(komus[1:'$i-1'])),trace = 0, test = "Chisq")
+fittingmu[['$i']] = step(fitting1, ~.^2, trace = 0, test = "Chisq")'
+done
+#+END_SRC
 
+#+NAME: statistic
+#+BEGIN_SRC R :exports code :results output :noweb yes
+komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
+
+summe2 = NULL
+summealt2 = NULL
+chances = NULL
+fittingmu = NULL
+
+fittingmu[[1]] = glm(V1 ~ 1, data = komus, family = "binomial"(link=logit))
+<<regression()>>
+
+chances = sapply(fittingmu, predict, type="response")
+
+Entropietemp2 = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
+Entropie2 = colMeans(Entropietemp2)
+Entropiealt2 = -colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)
+
+grafikdaten2 = cbind(1:length(Entropie2), Entropie2, Entropiealt2)
+colnames(grafikdaten2)[1] <- "Frage"
+
+for ( i in 1:length(Entropie2)) {
+summe2[i] = sum(Entropie2[1:i])
+summealt2[i] = sum(Entropiealt2[1:i])
+}
+
+result = cbind(1:length(summe2), summealt2, summe2)
+
+
+#+END_SRC
+
+#+RESULTS: statistic
+
+
+#+BEGIN_SRC R :noweb yes :results output graphics :file /images/entropie2.png :exports results
+<<statistic>>
+plot(result[,1], type="l" ,col=rgb(0,0,0))
+for (i in 2:(length(result[1,]))) {
+farbe = 1 - (sum(result[,i])/sum(result[,1]))^5
+lines(result[,i], col=rgb(sqrt(farbe/2),farbe^2,farbe/2))
+}
+
+#+END_SRC
+
+#+RESULTS:
+[[file:/images/entropie2.png]]
 
