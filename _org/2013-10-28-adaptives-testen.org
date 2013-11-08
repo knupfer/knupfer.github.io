@@ -140,47 +140,233 @@ Beim
 *** Programmierung
 
 #+NAME: statistic
-#+BEGIN_SRC R :exports code :results output :noweb yes
+#+BEGIN_SRC R :exports none :results output :noweb yes
+library(multicore)
 komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
 Entropie = NULL
 chances = NULL
+chances2 = NULL
 fitting = NULL
+fitting2 = NULL
 summe = list()
 summe[[1]] = 0
+modell = NULL
 summe[[2]] = 0
-Fragenanzahl = length(komus)
+summe[[3]] = 0
+summe[[4]] = 0
+summe[[5]] = 0
+summe[[6]] = 0
+summe[[7]] = 0
+nextitem = NULL
+Fragenanzahl = length(komus[1:50])
 
-fitting[[1]] = glm(V1 ~ 1, data = komus, family = "binomial"(link=logit))
+modell[[1]] = glm(V1 ~ 1, data = komus, family = "binomial"(link=logit))
 
 for (i in 2:Fragenanzahl) {
-    modell = glm(reformulate(names(komus[1:i-1]), names(komus[i])), data = komus, family = "binomial"(link=logit))
-    fitting[[i]] = step(modell,reformulate(names(komus[1:i-1])),trace = 0, test = "Chisq")
-    fitting[[i]] = step(fitting[[i]], ~.^2, trace = 0, test = "Chisq")
+
+    modell[[i]] = glm(reformulate(names(komus[1:i-1]), names(komus[i])), data = komus, family = "binomial"(link=logit))
 }
 
-chances = sapply(fitting, predict, type="response")
+fitting = mclapply(modell, step, trace = 0)
+chances = simplify2array(mclapply(fitting, predict, type="response"))
+
 
 Entropietemp2 = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
 Entropie[[1]] = colMeans(Entropietemp2)
 Entropie[[2]] =  -colMeans(komus[1:Fragenanzahl])*log(colMeans(komus[1:Fragenanzahl]),2)-(1-colMeans(komus[1:Fragenanzahl]))*log(1-colMeans(komus[1:Fragenanzahl]),2)
+Entropie[[3]] = sort(Entropie[[2]], decreasing = TRUE)
+Entropie[[4]] = sort(Entropie[[1]], decreasing = TRUE)
 
-grafikdaten2 = cbind(1:length(Entropie[[1]]), Entropie[[1]], Entropie[[2]])
+
+############### -------------- ################
+komus2 = komus[c(names(sort(Entropie[[2]], decreasing = TRUE)))]
+
+modell[[1]] = glm(V1 ~ 1, data = komus2, family = "binomial"(link=logit))
+
+for (i in 2:Fragenanzahl) {
+    modell[[i]] = glm(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2, family = "binomial"(link=logit))
+}
+
+fitting = mclapply(modell, step, trace = 0)
+chances = simplify2array(mclapply(fitting, predict, type="response"))
+
+
+Entropietemp2 = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
+Entropie[[5]] = colMeans(Entropietemp2)
+Entropie[[6]] = sort(Entropie[[5]], decreasing = TRUE)
+
+####### ------- ########
+
+
+#
+#
+# max(
+# for each item
+#    check entropie)
+# add to modell
+#
+#
+fragen = c(44)
+modell = NULL
+fragen2 = NULL
+
+modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
+
+
+for (i in 2:Fragenanzahl) {
+
+Entropietemp2 = NULL
+fitting = NULL
+chances = NULL
+nextitem = NULL
+    #gesamtes Modell
+
+    for (j in 1:length(komus[-fragen])) {
+        nextitem[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+    
+   }
+
+    fitting = mclapply(nextitem, step, trace = 0)
+    chances = simplify2array(mclapply(fitting, predict, type="response"))
+    chancesind = simplify2array(mclapply(fitting, predict, komus[1,], type="response"))
+
+    Entropietemp2 = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+   
+#    fragen2 = c(fragen2, which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))+sum(fragen < which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))))
+#print(fragen2)
+#    fragen = c(fragen, names(komus[-fragen][j]))
+fragen = c(fragen, which(names(komus[-fragen][which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))]) == names(komus)))
+ #   fragen = c(fragen, length(fragen[fragen < which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))]) + which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2))))
+   # nextitem = NULL
+#fragen = c(fragen, i)
+#print(c(fragen, length(fragen[fragen < which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))]) + which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))))
+print(fragen)
+    modell[[i]] = fitting[[which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))]]
+    
+
+    #print(max(colMeans(Entropietemp2)))
+#Entropie[[7]] = colMeans(Entropietemp2)
+}
+
+
+
+chances = simplify2array(mclapply(modell, predict, type="response"))
+ Entropietemp2 = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+Entropie[[7]] = colMeans(Entropietemp2)
+
+#############################################################xxx
+
+fragen = c(44)
+modell = NULL
+fragen2 = NULL
+
+modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
+
+
+for (i in 2:Fragenanzahl) {
+
+Entropietemp2 = NULL
+fitting = NULL
+chances = NULL
+nextitem = NULL
+    #gesamtes Modell
+
+    for (j in 1:length(komus[-fragen])) {
+        nextitem[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+    
+   }
+
+    fitting = mclapply(nextitem, step, trace = 0)
+    chances = simplify2array(mclapply(fitting, predict, komus[1,], type="response"))
+    chancesind = simplify2array(mclapply(fitting, predict, komus[1,], type="response"))
+
+    Entropietemp2 = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+   
+#    fragen2 = c(fragen2, which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))+sum(fragen < which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))))
+#print(fragen2)
+#    fragen = c(fragen, names(komus[-fragen][j]))
+fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp2) == max((Entropietemp2)))]) == names(komus)))
+ #   fragen = c(fragen, length(fragen[fragen < which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))]) + which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2))))
+   # nextitem = NULL
+#fragen = c(fragen, i)
+#print(c(fragen, length(fragen[fragen < which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))]) + which(colMeans(Entropietemp2) == max(colMeans(Entropietemp2)))))
+    modell[[i]] = fitting[[which((Entropietemp2) == max((Entropietemp2)))]]
+    
+
+    #print(max(colMeans(Entropietemp2)))
+#Entropie[[7]] = colMeans(Entropietemp2)
+}
+
+Entropie[[8]] = NULL
+
+
+chances = simplify2array(mclapply(modell, predict, komus[1,], type="response"))
+ Entropietemp2 = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+Entropie[[8]] = (Entropietemp2)
+
+#sappo[2]
+#############################x
+
+
+
+#colnames(Entropietemp2) = colnames(komus[-fragen])
+#fragen2 = c(fragen, names(sort(colMeans(Entropietemp2), decreasing = TRUE))[1])
+#fragen2
+##reformulate(names(komus[i]), i)
+#reformulate(names(komus[fragen]), names(komus[-fragen][j]))
+#length(komus[-fragen])
+#nextitem
+
+
+summe[[8]] = 0
+
 
 for (i in 1:length(Entropie[[1]])) {
     summe[[1]][i] = sum(Entropie[[1]][1:i])
     summe[[2]][i] = sum(Entropie[[2]][1:i])
+    summe[[3]][i] = sum(Entropie[[3]][1:i])
+    summe[[4]][i] = sum(Entropie[[4]][1:i])
+    summe[[5]][i] = sum(Entropie[[5]][1:i])
+    summe[[6]][i] = sum(Entropie[[6]][1:i])
+    summe[[7]][i] = sum(Entropie[[7]][1:i])
+    summe[[8]][i] = sum(Entropie[[8]][1:i])
+
 }
 
-summe = data.frame(cbind(summe[[2]], summe[[1]]))
+summe = data.frame(cbind(summe[[2]], summe[[1]], summe[[3]], summe[[4]], summe[[5]], summe[[6]], summe[[7]], summe[[8]]))
+#colnames(aaa) = colnames(komus)
+summe 
 
+#Entropie[[8]]
 #+END_SRC
 
-#+BEGIN_SRC R :noweb yes :results output graphics :file /images/entropie2.png :exports results
+#+RESULTS: statistic
+#+begin_example
+[1] 44 16
+[1] 44 16  7
+[1] 44 16
+[1] 44 16 10
+        1         1 
+0.9998228 0.9991421 
+[1] 3
+         X1        X2        X3        X4        X5        X6        X7
+1 0.8125179 0.8125179 0.9456603 0.9099595 0.8125179 0.8505147 0.9998228
+2 1.6987334 1.6987334 1.8318758 1.7961750 1.6630326 1.6630326 1.9989649
+3 2.6443937 2.6086929 2.6443937 2.6086929 2.4755505 2.4755505 2.9964044
+         X8
+1 0.9998228
+2 1.9989649
+3 2.9988432
+#+end_example
+
+
+#+BEGIN_SRC R :noweb yes :results output graphics :file /images/entropie2.png :exports both
 <<statistic>>
 plot(1:length(summe[,1]), type="l", col=rgb(0,0,0), ann=F)
 for (i in 1:(length(summe[1,]))) {
-farbe = 1 - (sum(summe[,i])/sum(1:length(summe[,1])))^5
-lines(summe[,i], col=rgb(sqrt(farbe/2),farbe^2,farbe/2))
+#farbe = 1 - (sum(summe[,i])/sum(1:length(summe[,1])))^5
+
+lines(summe[,i], col=rgb(runif(1,0,1),runif(1,0,1),runif(1,0,1)))
 }
 title(xlab="Anzahl der beantworteten Fragen")
 title(ylab="Entropie in bit")
