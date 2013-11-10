@@ -1,0 +1,296 @@
+#+BEGIN_COMMENT
+---
+layout: post
+title: Adaptives Testen
+father: Wissenschaft
+---
+#+END_COMMENT
+
+* Adaptives Testen
+Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung in erweitertem Maße ausgenutzt.
+Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
+um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
+
+#+BEGIN_SRC ditaa :file /images/adaptiveditaa.png :exports code
+
++---------+   +-----------------+   +---------------+
+| Item    |-->| Modellschätzung |-->|   Schätzung   |
+| Antwort |   +-----------------+   | nächstes Item |
++---------+                         +---------------+
+    ^                                       |
+    |                                       |
+    +---------------------------------------+
+
+#+END_SRC 
+
+** Kriterien
+Wie genau die Frage ausgewählt wird hängt vornehmlich von den Zielen der Testung und den Nebenwirkungen, die man ggf. 
+vermeiden möchte, ab. So wäre eine Frage, die der Proband mit einer Chance von 50% lösen kann ideal im Sinne eines 
+Informationsgewinnes über den Probanden, da die Entropie maximal ist. 
+
+Entropie stellt nicht nur Chaos, sondern auch Informationsdichte nach Shannon dar 
+(vgl. [[http://de.wikipedia.org/wiki/Entropie_%28Informationstheorie%29][Wikipedia]]).
+Die folgende Formel ergiebt die Entropie eines Ereignisses. Hierbei ist $n$ die Anzahl der Möglichkeiten und $p_i$ 
+die jeweiligen Wahrscheinlichkeiten dieser (sich ausschließender) Möglichkeiten.
+
+$$ H = - \sum_{i=1}^n p_i \cdot \log_2{p_i} $$
+
+Betrachten wir ein binäres System, also nur Fragen die entweder vollständig falsch oder vollständig richtig beantwortet
+werden können, so haben wir $n = 2$ und $p_2 = 1 - p_1$.
+
+$$ H_2 = - p \cdot \log_2{p} - (1 - p) \cdot \log_2(1 - p) $$
+
+Hieraus ergiebt sich, dass der Informationsgewinn bei $p = .5$ (im binären) maximal ist, da die Funktion symmetrisch ist und bei
+$p = 0$ auf beiden Seiten $0$ ergibt.
+
+$$ H_{max} = - 0.5 \cdot \log_2{0.5} - 0.5 \cdot \log_2{0.5} = 1 \mathrm{bit} $$
+
+Hierbei ist $bit$ die übliche Einheit des Informationsgehaltes, auf Grund des $\log_2$. Es kann also ein Informationsgehalt
+von 8 bit mit Hilfe eines bytes dargestellt werden, sprich mit 8 Nullen oder Einsen (z.B. 10101010).
+
+#+BEGIN_SRC R :results output graphics :file /images/entropie.png :exports results
+x = (0:100)/100
+y = -x*log(x,2)-(1-x)*log(1-x,2)
+plot(x,y,type="l",xlab=expression(Lösungswahrscheinlichkeit),ylab=expression("Entropie in bit"),  main="Entropieverteilung")
+#+END_SRC
+
+#+RESULTS:
+[[file:/images/entropie.png]]
+
+Mit der Formel für tatsächliche und für maximale Entropie kann die Redundanz ausgerechnet werden, welche in einer 
+Testkonstruktion als Indikator für das Potential der Verbesserung durch ein adaptives Testverfahren benutzt werden kann.
+
+$$ R = H_{max} - H $$
+
+Somit kann im binären ein Test im idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen. 
+Befinden sich im Test auch Fragen, die nicht binär sind, so verändert sich die Situation ein wenig.
+Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten. Gibt es nun bei einer Frage z.B. 0, 1, 2 oder 3 Punkte
+gibt es eine maximale Entropie von $H_{max} = - \log_2{0.25} = 2 \mathrm{bit}$. Somit kann man einen Test auch um $R/2$ solcher
+Fragen ohne Informationsverlust verkleinern.
+
+*** Informationsgehalt in KoMus
+Im August diesen Jahres habe ich mit Teilen des KoMus-Testes für musikalische Kompetenz eine empirische Studie
+durchgeführt. Der KoMus-Test liegt in einem nicht adaptiven Format vor.
+
+Interessant ist nun, die Überlegung, wieviel der Test von einer Überführung in einen adaptiven Test profitieren würde.
+
+**** Durchschnittlicher Schüler
+Der Simplizität halber können wir annehmen, dass ein Schüler genau die durchschnittlichen Lösungswahrscheinlichkeiten
+für ein Item aufweist.
+
+So muss man nur die Entropie mit den klassischen Itemschwierigkeiten der Items berechnen:
+
+$$ H = \sum_{i=1}^n(- P_i \cdot \log_2{P_i} - (1 - P_i) \cdot \log_2(1 - P_i)) $$
+
+Hierbei ist $P_i$ die klassische Itemschwierigkeit des Items $i$ und $n$ die Anzahl der Items. Ferner nimmt diese Formel
+nur dichotome Items an.
+
+**** Vierdimensional
+Die Entropie ist jedoch eigentlich noch niedriger, wenn man die Schwierigkeiten adaptiv berechnet. Es handelt sich aber
+immernoch um einen nicht adaptiven Test mit fester Reihenfolge. Es wird nur eine spezialform der Entropie, die bedingte
+Entropie, benutzt (vgl. [[http://de.wikipedia.org/wiki/Bedingte_Entropie][Wikipedia]]).
+
+Um die bedingte Lösungschance und somit auch die bedingte Entropie zu berechnen, werden alle Items der selben Dimension
+einer logistisch binären Regression verwendet um die individuell Itemschwierigkeit eines Items der gleichen Dimension zu
+berechnen.
+
+$$ H = \sum_{D=1}^4(\sum_{i=1}^{n(D)}(- R \cdot \log_2{R}) - (1 - R) \cdot \log_2(1- R))$$
+$$ R = Reg_2(P_{ivD}|\sum_{m=1}^{i(D)-1}P_{vmD}) $$
+
+Hierbei ist $Reg_2(a|b)$ die binärlogistische Regression mit der AV $a$ und den UV $b$.
+
+**** n-Dimensional
+Das obige Modell nimmt jedoch an, dass die einzelnen Dimensionen nicht korrelieren und somit Itemantworten einer Dimension 
+keine Information (also Entropiesenkung) über andere Dimensionen zulassen.
+
+Dies ist aber eine nicht notwendige Einschränkung, die die Berechnung nicht nur weniger effektiv, sondern auch
+komplizierter macht.
+
+Berücksichtigen wir unabhängig von der Dimensionszugehörigkeit einfach alle bereits beantworteten Items, die einen
+signifikanten Einfluss auf die Frage haben, haben wir im Endeffekt ein n-dimensionales Modell, wobei $n$ die Anzahl der
+Fragen ist.
+
+$$ H = \sum_{i=1}^n(- R \cdot \log_2{R} - (1 - R) \cdot \log_2(1 - R)) $$
+$$ R = Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) $$
+
+***** Probleme
+Mögliche Probleme dieser Methode sind fehlende Datensätze, da die binärlogistische Regression normalerweise alle Fälle
+ausschließt, die auch nur bei einem der UV keinen Wert hat. Durch den maßgeschneiderten Testweg ist es bei einem 
+Itempool, der nicht komplett erschöpft wird, unmöglich diese Regression so durchzuführen. Dementsprechend müssen
+andere Methoden gewählt werden, um mit fehlenden Daten umzugehen.
+
+Eine Möglichkeit wäre, nicht vorhandene Antworten in den Datensätzen zu simulieren. Diese Simulation würde von den Items
+die am sichersten geschätzt werden können zu den Items, die schwer geschätzt werden können stattfinden.
+
+Der Grund hierfür liegt daran, dass bei einer sehr sicheren Schätzung der Entropiegehalt sich nur wenig ändert, 
+aber es gleich viel mehr Personen gibt, die seriös für schwerere Schätzungen verwendet werden können, was diese
+Schätzungen erleichtert.
+
+Die Simulation sollte nach jeder Testung durchgeführt werden, um die Simulation mehr und mehr zu verbessern. Das dieses
+Verfahren direkt einen Nutzen erbringt, sollte daran sichtbar sein, dass die Lösungen der alten Datensätze immer besser
+retrospektiv vorhergesagt werden können und somit davon außgegangen werden kann, dass auch bei aktuellen Testungen
+die Schätzungen besser sind und somit effektiver gemessen werden kann.
+
+* Nicht adaptives Testen
+Beim 
+* Adaptives Testen
+
+** Umsetzung
+
+*** Programmierung
+
+#+NAME: statistic
+#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+calculationtime <- proc.time()
+library(multicore)
+komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
+Entropie = NULL
+chances = NULL
+fitting = NULL
+modell = NULL
+summe = data.frame()
+
+############
+items = length(komus[1:50])
+############
+
+
+############## Bedingte und undbedingte Entropie in normaler Reihenfolge
+modell[[1]] = glm(V1 ~ 1, data = komus, family = "binomial"(link=logit))
+
+for (i in 2:items) {
+    modell[[i]] = glm(reformulate(names(komus[1:i-1]), names(komus[i])), data = komus, family = "binomial"(link=logit))
+}
+fitting = modell
+<<fitting>>
+chances = simplify2array(mclapply(fitting, predict, type="response"))
+Entropietemp = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
+Entropie = cbind(colMeans(Entropietemp))
+Entropie = cbind(Entropie,-colMeans(komus[1:items])*log(colMeans(komus[1:items]),2)-(1-colMeans(komus[1:items]))*log(1-colMeans(komus[1:items]),2))
+Entropie = cbind(Entropie,sort(Entropie[,2], decreasing = TRUE))
+Entropie = cbind(Entropie,sort(Entropie[,1], decreasing = TRUE))
+
+############### Bedingte Entropie in über den Durchschnitt sortierten Reihenfolge
+komus2 = komus[c(names(sort(Entropie[,2], decreasing = TRUE)))]
+modell[[1]] = glm(V1 ~ 1, data = komus2, family = "binomial"(link=logit))
+
+for (i in 2:items) {
+    modell[[i]] = glm(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2, family = "binomial"(link=logit))
+}
+fitting = modell
+<<fitting>>
+chances = simplify2array(mclapply(fitting, predict, type="response"))
+Entropietemp = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
+Entropie = cbind(Entropie, colMeans(Entropietemp))
+Entropie = cbind(Entropie, sort(Entropie[,5], decreasing = TRUE))
+
+
+####### Bedingte Entropie, sortiert nach jeder durchschnittlichen Antwort
+fragen = c(44)
+
+modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
+
+for (i in 2:items) {
+    Entropietemp = NULL
+    fitting = NULL
+
+    for (j in 1:length(komus[-fragen])) {
+        fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+    }
+
+    <<fitting>>
+    chances = simplify2array(mclapply(fitting, predict, type="response"))
+    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+    fragen = c(fragen, which(names(komus[-fragen][which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))]) == names(komus)))
+    modell[[i]] = fitting[[which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))]]
+}
+
+chances = simplify2array(mclapply(modell, predict, type="response"))
+Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+Entropie = cbind(Entropie, colMeans(Entropietemp))
+
+####### Bedingte Entropie, sortiert nach jeder individuellen Antwort
+Entropieall = NULL
+chances = NULL
+modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
+for (k in 1:length(komus[,1])) {
+    fragen = c(44)
+    for (i in 2:items) {
+        Entropietemp = NULL
+        fitting = NULL
+
+        for (j in 1:length(komus[-fragen])) {
+            fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+        }
+        <<fitting>>
+        chances = simplify2array(mclapply(fitting, predict, komus[k,], type="response"))
+        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+        fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))]) == names(komus)))
+        modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
+    }
+
+    chances = simplify2array(mclapply(modell, predict, komus[k,], type="response"))
+    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+    if (exists("Entropieall")) {
+        Entropieall = rbind(Entropieall, Entropietemp)
+    } else {
+        Entropieall = Entropietemp
+    }
+}
+
+Entropie = cbind(Entropie, colMeans(Entropieall))
+
+################# Schlussberechnungen
+for (i in 1:length(Entropie[1,])) {
+    for (j in 1:length(Entropie[,1])) {
+        summe[j,i] = sum(Entropie[1:j,i])
+    }
+}
+
+if (exists("benchmark")) {
+    benchmark = array(c(benchmark,(proc.time() - calculationtime)[3]))
+} else {
+    benchmark = (proc.time() - calculationtime)[3]
+}
+
+
+
+#+END_SRC
+
+**** Formel für die Modellanpassung
+#+NAME: fitting
+#+BEGIN_SRC R
+#fitting = mclapply(fitting, step, trace = 0)
+#fitting = mclapply(fitting, step, ~.^2, trace = 0)
+#+END_SRC
+
+**** Benchmark
+#+BEGIN_SRC R :session stat :noweb yes :results output graphics :file /images/benchmark.png :exports both
+plot(benchmark, type="l", col=rgb(0,0,0), ann=F)
+title(xlab="Durchlauf")
+title(ylab="Dauer")
+#+END_SRC
+
+#+RESULTS:
+[[file:/images/benchmark.png]]
+
+**** Entropiegrafik
+#+NAME: grafik
+#+BEGIN_SRC R :session stat :noweb yes :results output graphics :file /images/entropie2.png :exports both
+<<statistic>>
+plot(1:length(summe[,1]), type="l", col=rgb(0,0,0), ann=F)
+for (i in 1:(length(summe[1,]))) {
+#farbe = 1 - (sum(summe[,i])/sum(1:length(summe[,1])))^5
+
+lines(summe[,i], col=rgb(runif(1,0,1),runif(1,0,1),runif(1,0,1)))
+}
+title(xlab="Anzahl der beantworteten Fragen")
+title(ylab="Entropie in bit")
+#legend(1, length(summe[,1]), c(names(summe)), cex=0.8, lty=1)
+legend(1, length(summe[,1]), c(benchmark,summe[48:50,7],summe[48:50,8]), cex=0.8, lty=1)
+
+
+#+END_SRC
+
+#+RESULTS: grafik
+[[file:/images/entropie2.png]]
