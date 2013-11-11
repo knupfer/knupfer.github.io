@@ -132,29 +132,35 @@ retrospektiv vorhergesagt werden können und somit davon außgegangen werden kan
 die Schätzungen besser sind und somit effektiver gemessen werden kann.
 
 * Nicht adaptives Testen
-Beim 
+ 
 * Adaptives Testen
 
 ** Umsetzung
 
 *** Programmierung
 
+**** Initialisierung
 #+NAME: statistic
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
-calculationtime <- proc.time()
 library(multicore)
+calculationtime <- proc.time()
 komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
 Entropie = NULL
 chances = NULL
 fitting = NULL
 modell = NULL
 summe = data.frame()
-
 ############
-items = length(komus[1:50])
+#items = length(komus)
+#persons = length(komus[,1])
+items = 5
+persons = 5
 ############
+#+END_SRC
 
-
+**** Unbedingte und bedingte Entropie in normaler Reihenfolge
+#+NAME: statistic1
+#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
 ############## Bedingte und undbedingte Entropie in normaler Reihenfolge
 modell[[1]] = glm(V1 ~ 1, data = komus, family = "binomial"(link=logit))
 
@@ -169,7 +175,11 @@ Entropie = cbind(colMeans(Entropietemp))
 Entropie = cbind(Entropie,-colMeans(komus[1:items])*log(colMeans(komus[1:items]),2)-(1-colMeans(komus[1:items]))*log(1-colMeans(komus[1:items]),2))
 Entropie = cbind(Entropie,sort(Entropie[,2], decreasing = TRUE))
 Entropie = cbind(Entropie,sort(Entropie[,1], decreasing = TRUE))
+#+END_SRC
 
+**** Bedingte, sortierte Entropie
+#+NAME: statistic2
+#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
 ############### Bedingte Entropie in über den Durchschnitt sortierten Reihenfolge
 komus2 = komus[c(names(sort(Entropie[,2], decreasing = TRUE)))]
 modell[[1]] = glm(V1 ~ 1, data = komus2, family = "binomial"(link=logit))
@@ -183,8 +193,11 @@ chances = simplify2array(mclapply(fitting, predict, type="response"))
 Entropietemp = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
 Entropie = cbind(Entropie, colMeans(Entropietemp))
 Entropie = cbind(Entropie, sort(Entropie[,5], decreasing = TRUE))
+#+END_SRC
 
-
+**** Durchschnittlich bedingtsortierte Entropie
+#+NAME: statistic3
+#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
 ####### Bedingte Entropie, sortiert nach jeder durchschnittlichen Antwort
 fragen = c(44)
 
@@ -208,12 +221,16 @@ for (i in 2:items) {
 chances = simplify2array(mclapply(modell, predict, type="response"))
 Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
 Entropie = cbind(Entropie, colMeans(Entropietemp))
+#+END_SRC
 
+**** Individuellbedingtsortierte Entropie
+#+NAME: statistic4
+#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
 ####### Bedingte Entropie, sortiert nach jeder individuellen Antwort
 Entropieall = NULL
 chances = NULL
 modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
-for (k in 1:length(komus[,1])) {
+for (k in 1:persons) {
     fragen = c(44)
     for (i in 2:items) {
         Entropietemp = NULL
@@ -239,7 +256,109 @@ for (k in 1:length(komus[,1])) {
 }
 
 Entropie = cbind(Entropie, colMeans(Entropieall))
+#+END_SRC
 
+**** Individuellbedingtsortierte Entropie mit Trennschärfe
+#+NAME: statistic5
+#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+####### Bedingte Entropie, sortiert nach jeder individuellen Antwort
+Entropieall = NULL
+chances = NULL
+information = NULL
+beta = NULL
+
+for (m in 1:length(komus)) {
+    for (n in 1:(length(komus)-1)) {
+        beta[[n]] = glm(reformulate(names(komus[m]), names(komus[-m][n])), data = komus, family = "binomial"(link=logit))
+    }
+    chances = simplify2array(mclapply(beta, predict, type="response"))
+    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+    information[m] = sum(colMeans(Entropietemp))
+}
+information = -(information - max(information))
+names(information) = colnames(komus)
+
+modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
+for (k in 1:persons) {
+    fragen = c(44)
+    for (i in 2:items) {
+        Entropietemp = NULL
+        fitting = NULL
+        for (j in 1:length(komus[-fragen])) {
+            fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+        }
+
+        <<fitting>>
+        ## TODO stimmt das so?
+        chances = simplify2array(mclapply(fitting, predict, komus[k,], type="response"))
+        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + information[-fragen]
+        fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))]) == names(komus)))
+        modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
+    }
+
+    chances = simplify2array(mclapply(modell, predict, komus[k,], type="response"))
+    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+    if (exists("Entropieall")) {
+        Entropieall = rbind(Entropieall, Entropietemp)
+    } else {
+        Entropieall = Entropietemp
+    }
+}
+
+Entropie = cbind(Entropie, colMeans(Entropieall))
+#+END_SRC
+
+#+RESULTS: statistic5
+:  Note: keine sichtbare Bindung für globale Variable 'logit'
+:  Note: keine sichtbare Bindung für globale Variable 'logit'
+
+**** Experimenteller Code
+#+BEGIN_SRC R :session stat :exports code :results output :noweb yes
+calculationtime <- proc.time()
+fitting = NULL
+fitting2 = NULL
+chances = NULL
+chances2 = NULL
+fitting3 = NULL
+fitting2 = NULL
+fitting = NULL
+beta = NULL
+chances = NULL
+information = NULL
+
+for (j in 1:50) {
+    for (k in 1:2) {
+        beta[[k]] = glm(reformulate(names(komus[j]), names(komus[-j][k])), data = komus, family = "binomial"(link=logit))
+    }
+    chances = simplify2array(mclapply(beta, predict, type="response"))
+    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+    information[j] = sum(colMeans(Entropietemp))
+#    information = information - max(information)
+}
+
+
+#   chances2 = simplify2array(mclapply(fitting2, predict, komus[1,], type="response"))
+
+if (exists("benchmark")) {
+    benchmark = array(c(benchmark,(proc.time() - calculationtime)[3]))
+} else {
+    benchmark = (proc.time() - calculationtime)[3]
+}
+#chances - chances2
+#chances
+#chances2
+#fitting
+#fitting2
+benchmark = NULL
+
+#+END_SRC
+
+#+RESULTS:
+:  Note: keine sichtbare Bindung für globale Variable 'logit'
+
+**** Schlussberechnungen
+#+NAME: statisticend
+#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
 ################# Schlussberechnungen
 for (i in 1:length(Entropie[1,])) {
     for (j in 1:length(Entropie[,1])) {
@@ -253,8 +372,7 @@ if (exists("benchmark")) {
     benchmark = (proc.time() - calculationtime)[3]
 }
 
-
-
+benchmark
 #+END_SRC
 
 **** Formel für die Modellanpassung
