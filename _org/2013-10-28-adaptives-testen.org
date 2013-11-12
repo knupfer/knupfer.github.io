@@ -155,12 +155,14 @@ summe = data.frame()
 ############
 #items = length(komus)
 #persons = length(komus[,1])
-items = 5
-persons = 10
+items = 50
+persons = 5
 ############
 
 EEE = data.frame(matrix(ncol = 1, nrow = items))
+SumSD = data.frame(matrix(ncol = 1, nrow = items))
 names(EEE) = 'kill'
+names(SumSD) = 'kill'
 
 #+END_SRC
 
@@ -179,49 +181,22 @@ fitting = modell
 <<fitting>>
 chances = simplify2array(mclapply(fitting, predict, type="response"))
 Entropietemp = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
-#Entropie = cbind(colMeans(Entropietemp))
+
+SumSDtemp = sd(Entropietemp[,1])
+for (i in 2:length(Entropietemp[1,])) {
+SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+}
+
+SumSD$bedunsort = SumSDtemp 
 
 EEE$bedunsort = colMeans(Entropietemp)
-
-#Entropie = cbind(Entropie,-colMeans(komus[1:items])*log(colMeans(komus[1:items]),2)-(1-colMeans(komus[1:items]))*log(1-colMeans(komus[1:items]),2))
-
 EEE$unbedunsort = -colMeans(komus[1:items])*log(colMeans(komus[1:items]),2)-(1-colMeans(komus[1:items]))*log(1-colMeans(komus[1:items]),2)
-
-#Entropie = cbind(Entropie,sort(Entropie[,2], decreasing = TRUE))
-
 EEE$unbedsort = sort(EEE$unbedunsort, decreasing = TRUE)
 
-#Entropie = cbind(Entropie,sort(Entropie[,1], decreasing = TRUE))
-
-EEE$bedsort = sort(EEE$bedunsort, decreasing = TRUE)
 
 #+END_SRC
 
 #+RESULTS: statistic1
-#+begin_example
-   kill bedunsort unbedunsort unbedsort   bedsort
-1    NA 0.8125179   0.8125179 0.9984045 0.9659964
-2    NA 0.8824013   0.8862155 0.9974395 0.9475668
-3    NA 0.9092887   0.9456603 0.9962469 0.9456551
-4    NA 0.8700261   0.9575535 0.9931771 0.9092887
-5    NA 0.9659964   0.9962469 0.9855975 0.8896877
-6    NA 0.8456403   0.9855975 0.9799954 0.8824013
-7    NA 0.8682629   0.9974395 0.9575535 0.8700261
-8    NA 0.9475668   0.9984045 0.9456603 0.8682629
-9    NA 0.8896877   0.9799954 0.8862155 0.8456403
-10   NA 0.9456551   0.9931771 0.8125179 0.8125179
-         [,1]      [,2]      [,3]      [,4]
-V1  0.8125179 0.8125179 0.9984045 0.9659964
-V2  0.8824013 0.8862155 0.9974395 0.9475668
-V3  0.9092887 0.9456603 0.9962469 0.9456551
-V4  0.8700261 0.9575535 0.9931771 0.9092887
-V5  0.9659964 0.9962469 0.9855975 0.8896877
-V6  0.8456403 0.9855975 0.9799954 0.8824013
-V7  0.8682629 0.9974395 0.9575535 0.8700261
-V8  0.9475668 0.9984045 0.9456603 0.8682629
-V9  0.8896877 0.9799954 0.8862155 0.8456403
-V10 0.9456551 0.9931771 0.8125179 0.8125179
-#+end_example
 
 **** Bedingte, sortierte Entropie
 #+NAME: statistic2
@@ -237,14 +212,19 @@ fitting = modell
 <<fitting>>
 chances = simplify2array(mclapply(fitting, predict, type="response"))
 Entropietemp = -chances*log(chances,2)-(1-chances)*log(1-chances,2)
-#Entropie = cbind(Entropie, colMeans(Entropietemp))
+
+SumSDtemp = sd(Entropietemp[,1])
+for (i in 2:length(Entropietemp[1,])) {
+SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+}
+
+SumSD$sortbed = SumSDtemp 
 
 EEE$sortbed = colMeans(Entropietemp)
 
-#Entropie = cbind(Entropie, sort(Entropie[,5], decreasing = TRUE))
-
-EEE$sortbedsort = sort(EEE$sortbed, decreasing = TRUE)
 #+END_SRC
+
+#+RESULTS: statistic2
 
 **** Durchschnittlich bedingtsortierte Entropie
 #+NAME: statistic3
@@ -271,8 +251,19 @@ for (i in 2:items) {
 
 chances = simplify2array(mclapply(modell, predict, type="response"))
 Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-Entropie = cbind(Entropie, colMeans(Entropietemp))
+
+SumSDtemp = sd(Entropietemp[,1])
+for (i in 2:length(Entropietemp[1,])) {
+SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+}
+
+SumSD$durchschbedsort = SumSDtemp 
+EEE$durchschbedsort = colMeans(Entropietemp)
+
+
 #+END_SRC
+
+#+RESULTS: statistic3
 
 **** Individuellbedingtsortierte Entropie
 #+NAME: statistic4
@@ -281,7 +272,8 @@ Entropie = cbind(Entropie, colMeans(Entropietemp))
 Entropieall = NULL
 chances = NULL
 modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
-for (k in 1:persons) {
+
+Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
     fragen = c(44)
     for (i in 2:items) {
         Entropietemp = NULL
@@ -299,38 +291,20 @@ for (k in 1:persons) {
 
     chances = simplify2array(mclapply(modell, predict, komus[k,], type="response"))
     Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-    if (exists("Entropieall")) {
-        Entropieall = rbind(Entropieall, Entropietemp)
-    } else {
-        Entropieall = Entropietemp
-    }
+    return(Entropietemp)
+})
+
+SumSDtemp = sd(Entropieall[1,])
+for (i in 2:length(Entropieall[,1])) {
+SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
 }
-fragen
-#Entropie = cbind(Entropie, colMeans(Entropieall))
-EEE$indivbedsort = colMeans(Entropieall)
-colMeans(Entropieall)
-EEE
+
+SumSD$indivbedsort = SumSDtemp 
+EEE$indivbedsort = rowMeans(Entropieall)
+
 #+END_SRC
 
 #+RESULTS: statistic4
-#+begin_example
- [1] 44  7  3 11 28 21 27 35 38 40
-        1         1         1         1         1         1         1         1 
-0.9998228 0.9995602 0.9993068 0.9998913 0.9993543 0.9997655 0.9999994 0.9999045 
-        1         1 
-0.9999736 0.9990993
-   kill indivbedsort
-1    NA    0.9998228
-2    NA    0.9995602
-3    NA    0.9993068
-4    NA    0.9998913
-5    NA    0.9993543
-6    NA    0.9997655
-7    NA    0.9999994
-8    NA    0.9999045
-9    NA    0.9999736
-10   NA    0.9990993
-#+end_example
 
 **** Individuellbedingtsortierte Entropie mit Trennschärfe
 #+NAME: statistic5
@@ -338,22 +312,21 @@ EEE
 ####### Bedingte Entropie, sortiert nach jeder individuellen Antwort
 Entropieall = NULL
 chances = NULL
-information = NULL
 beta = NULL
 
-
-information = simplify2array(foreach(m=1:length(komus)) %dopar% {
-    for (n in 1:(length(komus)-1)) {
-        beta[[n]] = glm(reformulate(names(komus[m]), names(komus[-m][n])), data = komus, family = "binomial"(link=logit))
-    }
-    chances = simplify2array(lapply(beta, predict, type="response"))
-    chancetemp = unlist(lapply(komus[m],mean))
-    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-    information = sum(colMeans(Entropietemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
-    return(information)
-})
-
-information = -(information - sum(-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)))
+if (!exists("information")) {
+    information = simplify2array(foreach(m=1:length(komus)) %dopar% {
+        for (n in 1:(length(komus)-1)) {
+            beta[[n]] = glm(reformulate(names(komus[m]), names(komus[-m][n])), data = komus, family = "binomial"(link=logit))
+        }
+        chances = simplify2array(lapply(beta, predict, type="response"))
+        chancetemp = unlist(lapply(komus[m],mean))
+        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+        information = sum(colMeans(Entropietemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
+        return(information)
+    })
+    information = -(information - sum(-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)))
+}
 
 modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
 
@@ -370,16 +343,25 @@ Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
         ## TODO stimmt das so?
         chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
     
-        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + information[-fragen]*(1 - (length(fragen)+1)/items)
+        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + (information[-fragen]*(1 - (length(fragen)+1)/items))
         fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))]) == names(komus)))
         modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
+
     }
 
     chances = simplify2array(lapply(modell, predict, komus[k,], type="response"))
     Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+    
     return(Entropietemp)
 })
 
+
+SumSDtemp = sd(Entropieall[1,])
+for (i in 2:length(Entropieall[,1])) {
+SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
+}
+
+SumSD$indivbedsorttrenn = SumSDtemp 
 EEE$indivbedsorttrenn = rowMeans(Entropieall)
 
 #+END_SRC
@@ -389,98 +371,14 @@ EEE$indivbedsorttrenn = rowMeans(Entropieall)
 **** Experimenteller Code
 #+BEGIN_SRC R :session stat :exports code :results output :noweb yes
 calculationtime <- proc.time()
-fitting = NULL
-fitting2 = NULL
-chances = NULL
-chances2 = NULL
-fitting3 = NULL
-fitting2 = NULL
-fitting = NULL
-beta = NULL
-chances = NULL
 
-Entropietemp = NULL
-
-modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
-
-Entropieall = NULL
-
-
-Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
-#for (k in 1:persons) {
-    fragen = c(44)
-    for (i in 2:items) {
-        Entropietemp = NULL
-        fitting = NULL
-        for (j in 1:length(komus[-fragen])) {
-            fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
-        }
-
-        <<fitting>>
-        ## TODO stimmt das so?
-        chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
-    
-        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + information[-fragen]*(1 - (length(fragen)+1)/items)
-        fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))]) == names(komus)))
-        modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
-    }
-
-    chances = simplify2array(lapply(modell, predict, komus[k,], type="response"))
-    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-    return(Entropietemp)
-})
-
-
-Entropieall
-
-fragen
-(information)
-#Entropie = cbind(Entropie, colMeans(Entropieall))
-EEE$indivbedsorttrenn = rowMeans(Entropieall)
-EEE
-sum(rowMeans(Entropieall))
-
-
-(proc.time() - calculationtime)[3]
 
 
 
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
-       [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-1 0.9998228 0.9998228 0.9998228 0.9998228 0.9998228 0.9998228 0.9998228
-1 0.8256265 0.9976283 0.9976283 0.9976283 0.8256265 0.8256265 0.8256265
-1 0.9999795 0.9985972 0.9985972 0.9881838 0.9999795 0.9999795 0.9908330
-1 0.9991289 0.9883253 0.9991457 0.9912595 0.9982977 0.9982977 0.9987635
-1 0.9999723 0.9993322 0.9996629 0.9999690 0.9999998 0.9999998 0.9999682
-       [,8]      [,9]     [,10]
-1 0.9998228 0.9998228 0.9998228
-1 0.8256265 0.9976283 0.8256265
-1 0.9999795 0.9985972 0.9999795
-1 0.9982977 0.9991457 0.9982977
-1 0.9999303 0.9996629 0.9999303
-[1] 44 30 13 24 31
- [1] 0.26018026 0.24276175 0.35371172 0.45840664 0.34553989 0.37648282
- [7] 0.15533626 0.63249772 0.46041276 0.38528306 0.38964545 0.50429443
-[13] 0.85055602 0.07873046 0.27882891 0.56413486 0.49592638 0.12190692
-[19] 0.50056071 0.47501777 0.77877323 0.36117797 0.63390964 0.87630913
-[25] 0.18000346 0.18267332 0.31857543 0.35454440 0.95738087 1.20991309
-[31] 0.43112537 0.57821640 0.64528188 0.27594745 0.39390077 0.24443662
-[37] 0.97940358 0.34168004 0.31936251 0.74435997 0.89820384 0.86225876
-[43] 0.21175969 0.28846436 0.34308222 0.47435994 0.53734307 0.37279537
-[49] 0.30675112 0.39410308
-  kill indivbedsorttrenn
-1   NA         0.9998228
-2   NA         0.8944272
-3   NA         0.9974706
-4   NA         0.9968959
-5   NA         0.9998428
-[1] 4.888459
-elapsed 
-  8.656
-#+end_example
+: [1] 0.2655087
 
 **** Schlussberechnungen
 #+NAME: statisticend
@@ -490,23 +388,62 @@ elapsed
 if (names(EEE[1]) == 'kill') {
     EEE = EEE[-1]
 }
+if (names(SumSD[1]) == 'kill') {
+    SumSD = SumSD[-1]
+}
 
 for (i in 1:length(EEE[1,])) {
     for (j in 1:length(EEE[,1])) {
         summe[j,i] = sum(EEE[1:j,i])
     }
 }
+names(summe) = names(EEE)
 
 if (exists("benchmark")) {
     benchmark = array(c(benchmark,(proc.time() - calculationtime)[3]))
 } else {
     benchmark = (proc.time() - calculationtime)[3]
 }
+
 benchmark
 #+END_SRC
 
 #+RESULTS: statisticend
-: [1]  43.925  62.436 155.985
+#+begin_example
+   durchschbedsort   sortbed sortbedsort bedunsort unbedunsort unbedsort
+1        0.9998228 0.8125179   0.9974078 0.8125179   0.8125179 0.9984045
+2        1.9966436 1.8099257   1.9777564 1.6949192   1.6987334 1.9958440
+3        2.9903563 2.7902743   2.9523106 2.6042080   2.6443937 2.9920908
+4        3.9793009 3.7648285   3.8636329 3.4742341   3.6019472 3.9852679
+5        4.9609520 4.5187020   4.7618910 4.4402305   4.5981941 4.9708654
+6        5.9265612 5.4300243   5.6158164 5.2858708   5.5837916 5.9508607
+7        6.8899568 6.3282823   6.4283343 6.1541337   6.5812311 6.9084142
+8        7.8491889 7.1822078   7.2201542 7.1017005   7.5796355 7.8540745
+9        8.8014315 7.9594998   7.9974462 7.9913882   8.5596309 8.7402900
+10       9.7529300 8.7513197   8.7513197 8.9370433   9.5528079 9.5528079
+     bedsort indivbedsort indivbedsorttrenn
+1  0.9659964    0.9998228         0.9998228
+2  1.9135632    1.9995006         1.9401171
+3  2.8592183    2.9992296         2.9236741
+4  3.7685070    3.9988626         3.8833395
+5  4.6581947    4.9970906         4.8606868
+6  5.5405960    5.9959740         5.8601034
+7  6.4106222    6.9959323         6.8542033
+8  7.2788851    7.9958163         7.8308658
+9  8.1245254    8.9944425         8.8161971
+10 8.9370433    9.9929196         9.8154871
+ [1]   21.833  304.617   53.133  656.001  686.015  692.971  700.081  782.657
+ [9]  790.530  799.315  801.223  807.715  816.267  819.084  827.460  835.891
+[17]  844.098  846.367  901.568  917.687  936.795  942.953  981.047  999.155
+[25] 1002.845 1007.719 1034.616 1079.935 1124.803 1192.753 1195.413 1209.383
+[33] 1231.030 1271.202 1281.525 1283.636 1321.782 1325.576 1331.860 1333.447
+[41] 1334.757 1336.929 1341.149 1346.157 1352.009   40.518   62.549   66.593
+[49]   73.427  159.076  162.448  283.959  309.399  312.934  321.920  407.877
+[57]  496.741  519.168  538.641  543.335  561.263  636.384  900.850  917.018
+[65]  929.047  933.375  946.377  953.158  972.639  991.263  997.769 1008.808
+[73] 1011.829 1028.920 1063.926 1067.599 1075.784 1106.952 1211.732 1228.636
+[81] 1279.492 1295.312 1321.068 1324.841 1326.975 1423.645 2371.376  301.476
+#+end_example
 
 **** Formel für die Modellanpassung
 #+NAME: fitting
@@ -528,17 +465,24 @@ title(ylab="Dauer")
 **** Entropiegrafik
 #+NAME: grafik
 #+BEGIN_SRC R :session stat :noweb yes :results output graphics :file /images/entropie2.png :exports both
+
+farbe = NULL
+for (j in 1:(length(summe[1,]))) {
+    farbe[j] = rgb(runif(1, 0, 1), runif(1, 0, 1), runif(1, 0, 1))
+}
+
 plot(1:length(summe[,1]), type="l", col=rgb(0,0,0), ann=F)
 for (i in 1:(length(summe[1,]))) {
-#farbe = 1 - (sum(summe[,i])/sum(1:length(summe[,1])))^5
-
-lines(summe[,i], col=rgb(runif(1,0,1),runif(1,0,1),runif(1,0,1)))
+    lines(summe[,i], col=farbe[i])
+    if (dim(SumSD[names(SumSD) == names(summe[i])])[2] != 0) {
+        lines(summe[,i]+SumSD[names(summe[i])],lty = 4, col=farbe[i])
+        lines(summe[,i]-SumSD[names(summe[i])],lty = 4, col=farbe[i])
+    }
 }
+
 title(xlab="Anzahl der beantworteten Fragen")
 title(ylab="Entropie in bit")
-#legend(1, length(summe[,1]), c(names(summe)), cex=0.8, lty=1)
-legend(1, length(summe[,1]), c(benchmark), cex=0.8, lty=1)
-
+legend(1, length(summe[,1]), c(names(summe), round(benchmark[length(benchmark)])), cex=0.9, col=c(farbe, rgb(1,1,1)), lty=1);
 
 #+END_SRC
 
