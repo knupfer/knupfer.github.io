@@ -142,6 +142,9 @@ die Schätzungen besser sind und somit effektiver gemessen werden kann.
 #+NAME: statistic
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
 library(multicore)
+library(foreach)
+library(doMC)
+registerDoMC(8)
 calculationtime <- proc.time()
 komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
 Entropie = NULL
@@ -152,8 +155,8 @@ summe = data.frame()
 ############
 #items = length(komus)
 #persons = length(komus[,1])
-items = 50
-persons = 150
+items = 5
+persons = 10
 ############
 
 EEE = data.frame(matrix(ncol = 1, nrow = items))
@@ -338,19 +341,23 @@ chances = NULL
 information = NULL
 beta = NULL
 
-for (m in 1:length(komus)) {
+
+information = simplify2array(foreach(m=1:length(komus)) %dopar% {
     for (n in 1:(length(komus)-1)) {
         beta[[n]] = glm(reformulate(names(komus[m]), names(komus[-m][n])), data = komus, family = "binomial"(link=logit))
     }
-    chances = simplify2array(mclapply(beta, predict, type="response"))
-    chancetemp = unlist(mclapply(komus[m],mean))
+    chances = simplify2array(lapply(beta, predict, type="response"))
+    chancetemp = unlist(lapply(komus[m],mean))
     Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-    information[m] = sum(colMeans(Entropietemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
-}
+    information = sum(colMeans(Entropietemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
+    return(information)
+})
+
 information = -(information - sum(-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)))
 
 modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
-for (k in 1:persons) {
+
+Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
     fragen = c(44)
     for (i in 2:items) {
         Entropietemp = NULL
@@ -361,44 +368,23 @@ for (k in 1:persons) {
 
         <<fitting>>
         ## TODO stimmt das so?
-        chances = simplify2array(mclapply(fitting, predict, komus[k,], type="response"))
+        chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
     
         Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + information[-fragen]*(1 - (length(fragen)+1)/items)
         fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))]) == names(komus)))
         modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
     }
 
-    chances = simplify2array(mclapply(modell, predict, komus[k,], type="response"))
+    chances = simplify2array(lapply(modell, predict, komus[k,], type="response"))
     Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-    if (exists("Entropieall")) {
-        Entropieall = rbind(Entropieall, Entropietemp)
-    } else {
-        Entropieall = Entropietemp
-    }
-}
-fragen
-#Entropie = cbind(Entropie, colMeans(Entropieall))
-EEE$indivbedsorttrenn = colMeans(Entropieall)
-EEE
-sum(colMeans(Entropieall))
+    return(Entropietemp)
+})
+
+EEE$indivbedsorttrenn = rowMeans(Entropieall)
+
 #+END_SRC
 
 #+RESULTS: statistic5
-#+begin_example
- [1] 44 30 24 13 40 41 16 17  9 27
-   kill indivbedsort indivbedsorttrenn
-1    NA    0.9998228         0.9998228
-2    NA    0.9995602         0.8256265
-3    NA    0.9993068         0.9892474
-4    NA    0.9998913         0.9707181
-5    NA    0.9993543         0.9993852
-6    NA    0.9997655         0.9987688
-7    NA    0.9999994         0.9948357
-8    NA    0.9999045         0.9878551
-9    NA    0.9999736         0.9999909
-10   NA    0.9990993         0.9999943
-[1] 9.766245
-#+end_example
 
 **** Experimenteller Code
 #+BEGIN_SRC R :session stat :exports code :results output :noweb yes
@@ -412,46 +398,95 @@ fitting2 = NULL
 fitting = NULL
 beta = NULL
 chances = NULL
-information = NULL
 
-sum((-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)))
-for (j in 1:2) {
-    for (k in 1:1) {
-        beta[[k]] = glm(reformulate(names(komus[j]), names(komus[-j][k])), data = komus, family = "binomial"(link=logit))
+Entropietemp = NULL
+
+modell[[1]] = glm(V44 ~ 1, data = komus, family = "binomial"(link=logit))
+
+Entropieall = NULL
+
+
+Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
+#for (k in 1:persons) {
+    fragen = c(44)
+    for (i in 2:items) {
+        Entropietemp = NULL
+        fitting = NULL
+        for (j in 1:length(komus[-fragen])) {
+            fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+        }
+
+        <<fitting>>
+        ## TODO stimmt das so?
+        chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
+    
+        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + information[-fragen]*(1 - (length(fragen)+1)/items)
+        fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))]) == names(komus)))
+        modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
     }
-    chances = simplify2array(mclapply(beta, predict, type="response"))
-    chancetemp = unlist(mclapply(komus[j],mean))
+
+    chances = simplify2array(lapply(modell, predict, komus[k,], type="response"))
     Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-    information[j] = sum(colMeans(Entropietemp))- (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
+    return(Entropietemp)
+})
 
-#    information = information - max(information)
-}
 
-information
-#   chances2 = simplify2array(mclapply(fitting2, predict, komus[1,], type="response"))
+Entropieall
 
-if (exists("benchmark")) {
-    benchmark = array(c(benchmark,(proc.time() - calculationtime)[3]))
-} else {
-    benchmark = (proc.time() - calculationtime)[3]
-}
-#chances - chances2
-#chances
-#chances2
-#fitting
-#fitting2
-benchmark = NULL
+fragen
+(information)
+#Entropie = cbind(Entropie, colMeans(Entropieall))
+EEE$indivbedsorttrenn = rowMeans(Entropieall)
+EEE
+sum(rowMeans(Entropieall))
+
+
+(proc.time() - calculationtime)[3]
+
+
 
 #+END_SRC
 
 #+RESULTS:
-: [1] 44.28704
-: [1]  0.06988342 -0.07751186
+#+begin_example
+       [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+1 0.9998228 0.9998228 0.9998228 0.9998228 0.9998228 0.9998228 0.9998228
+1 0.8256265 0.9976283 0.9976283 0.9976283 0.8256265 0.8256265 0.8256265
+1 0.9999795 0.9985972 0.9985972 0.9881838 0.9999795 0.9999795 0.9908330
+1 0.9991289 0.9883253 0.9991457 0.9912595 0.9982977 0.9982977 0.9987635
+1 0.9999723 0.9993322 0.9996629 0.9999690 0.9999998 0.9999998 0.9999682
+       [,8]      [,9]     [,10]
+1 0.9998228 0.9998228 0.9998228
+1 0.8256265 0.9976283 0.8256265
+1 0.9999795 0.9985972 0.9999795
+1 0.9982977 0.9991457 0.9982977
+1 0.9999303 0.9996629 0.9999303
+[1] 44 30 13 24 31
+ [1] 0.26018026 0.24276175 0.35371172 0.45840664 0.34553989 0.37648282
+ [7] 0.15533626 0.63249772 0.46041276 0.38528306 0.38964545 0.50429443
+[13] 0.85055602 0.07873046 0.27882891 0.56413486 0.49592638 0.12190692
+[19] 0.50056071 0.47501777 0.77877323 0.36117797 0.63390964 0.87630913
+[25] 0.18000346 0.18267332 0.31857543 0.35454440 0.95738087 1.20991309
+[31] 0.43112537 0.57821640 0.64528188 0.27594745 0.39390077 0.24443662
+[37] 0.97940358 0.34168004 0.31936251 0.74435997 0.89820384 0.86225876
+[43] 0.21175969 0.28846436 0.34308222 0.47435994 0.53734307 0.37279537
+[49] 0.30675112 0.39410308
+  kill indivbedsorttrenn
+1   NA         0.9998228
+2   NA         0.8944272
+3   NA         0.9974706
+4   NA         0.9968959
+5   NA         0.9998428
+[1] 4.888459
+elapsed 
+  8.656
+#+end_example
 
 **** Schlussberechnungen
 #+NAME: statisticend
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
 ################# Schlussberechnungen
+
 if (names(EEE[1]) == 'kill') {
     EEE = EEE[-1]
 }
@@ -471,7 +506,7 @@ benchmark
 #+END_SRC
 
 #+RESULTS: statisticend
-: [1] 458.610 463.309 464.707 482.228 500.530 504.956 524.203 530.676  59.316
+: [1]  43.925  62.436 155.985
 
 **** Formel für die Modellanpassung
 #+NAME: fitting
@@ -493,9 +528,6 @@ title(ylab="Dauer")
 **** Entropiegrafik
 #+NAME: grafik
 #+BEGIN_SRC R :session stat :noweb yes :results output graphics :file /images/entropie2.png :exports both
-<<statistic4>>
-<<statistic5>>
-<<statisticend>>
 plot(1:length(summe[,1]), type="l", col=rgb(0,0,0), ann=F)
 for (i in 1:(length(summe[1,]))) {
 #farbe = 1 - (sum(summe[,i])/sum(1:length(summe[,1])))^5
