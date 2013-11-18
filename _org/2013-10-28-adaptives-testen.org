@@ -137,7 +137,7 @@ die Schätzungen besser sind und somit effektiver gemessen werden kann.
 ** Umsetzung
    
 *** Programmierung
-    
+   
 **** Initialisierung
 #+NAME: statistic
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
@@ -145,7 +145,7 @@ require(MASS)
 library(multicore)
 library(foreach)
 library(doMC)
-registerDoMC(1)
+registerDoMC(8)
 
 calculationtime <- proc.time()
 komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
@@ -199,9 +199,9 @@ modell = NULL
 summe = data.frame()
 ############
 items = length(komusmult)
-#persons = length(komusmult[,1])
+persons = length(komusmult[,1])
 #items = 50
-persons = 2
+#persons = 2
 ############
 
 EEE = data.frame(matrix(ncol = 1, nrow = items+1))
@@ -233,54 +233,49 @@ The following object(s) are masked from ‘package:multicore’:
 **** Unbedingte und bedingte Entropie in normaler Reihenfolge
 #+NAME: statistic1
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
-############## Bedingte und undbedingte Entropie in normaler Reihenfolge
-modell = NULL
-
-multifragen = multifragen[multifragen <= items]
-if (1 %in% multifragen) {
-    modell[[1]] = polr(reformulate('1', names(komusmult[1])), data = komusmult)
-} else {
-    modell[[1]] = glm(reformulate('1', names(komusmult[1])), data = komusmult, family = "binomial"(link=logit))
-}
-
-for (i in 2:items) {
-    if (i %in% multifragen) {
-        modell[[i]] = polr(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult)
+    modell = NULL
+    
+    multifragen = multifragen[multifragen <= items]
+    if (1 %in% multifragen) {
+        modell[[1]] = polr(reformulate('1', names(komusmult[1])), data = komusmult)
     } else {
-        modell[[i]] = glm(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+        modell[[1]] = glm(reformulate('1', names(komusmult[1])), data = komusmult, family = "binomial"(link=logit))
     }
-}
-fitting = modell
-<<fitting>>
-chances = FUN.Chances(fitting)
-
-Entropietemp = FUN.Entropietemp(chances)
-
-### Without relations ###
-fitting = lapply(fitting, update, ~ 1)
-chances2 = FUN.Chances(fitting)
-
-Entropietemp2 = FUN.Entropietemp(chances2)
-
-multifragen = multifragenalt
-
-SumSDtemp = sd(Entropietemp[,1])
-for (i in 2:length(Entropietemp[1,])) {
-SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
-}
-
-SumSD$bedunsort = c(0,SumSDtemp)
-
-
-EEE$bedunsort = c(0,colMeans(Entropietemp))
-EEE$unbedunsort = c(0,colMeans(Entropietemp2))
-EEE$unbedsort = c(0,sort(colMeans(Entropietemp2), decreasing =TRUE))
-Entropietemp2 = data.frame(Entropietemp2)
-names(Entropietemp2) = names(komusmult[1:length(Entropietemp2)])
-colMeans(Entropietemp2)
-#names(colMeans(Entropietemp2)) = '1:50'
-#colMeans(Entropietemp2)
-#names(colMeans(Entropietemp2))
+    
+    for (i in 2:items) {
+        if (i %in% multifragen) {
+            modell[[i]] = polr(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult)
+        } else {
+            modell[[i]] = glm(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+        }
+    }
+    
+    fitting = modell
+    <<fitting>>
+    chances = FUN.Chances(fitting)
+    
+    Entropietemp = FUN.Entropietemp(chances)
+    
+    ### Without relations ###
+    fitting = lapply(fitting, update, ~ 1)
+    chances2 = FUN.Chances(fitting)
+    
+    Entropietemp2 = FUN.Entropietemp(chances2)
+    
+    multifragen = multifragenalt
+    
+    SumSDtemp = sd(Entropietemp[,1])
+    for (i in 2:length(Entropietemp[1,])) {
+        SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+    }
+    
+    SumSD$bedunsort = c(0,SumSDtemp)
+    
+    EEE$bedunsort = c(0,colMeans(Entropietemp))
+    EEE$unbedunsort = c(0,colMeans(Entropietemp2))
+    EEE$unbedsort = c(0,sort(colMeans(Entropietemp2), decreasing =TRUE))
+    Entropietemp2 = data.frame(Entropietemp2)
+    names(Entropietemp2) = names(komusmult[1:length(Entropietemp2)])    
 #+END_SRC
 
 #+RESULTS: statistic1
@@ -306,76 +301,70 @@ glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1 aufgetret
 **** Bedingte, sortierte Entropie
 #+NAME: statistic2
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
-############### Bedingte Entropie in über den Durchschnitt sortierten Reihenfolge
-
-modell = NULL
-chances = NULL
-fitting = NULL
-
-
-############## sortierte Reihenfolge
-for (i in 1:items) {
-    if (i %in% multifragen) {
-        modell[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
-    } else {
-        modell[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+    modell = NULL
+    chances = NULL
+    fitting = NULL
+    
+    ############## sortierte Reihenfolge
+    for (i in 1:items) {
+        if (i %in% multifragen) {
+            modell[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+        } else {
+            modell[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+        }
     }
-}
-
-chances = FUN.Chances(modell)
-Entropietemp = FUN.Entropietemp(chances)
-Entropietemp = data.frame(Entropietemp)
-names(Entropietemp) = names(komusmult[1:length(Entropietemp)])
-komus2 = komusmult[c(names(sort(colMeans(Entropietemp), decreasing=TRUE)))]
-#########
-
-
-names(sort(colMeans(Entropietemp), decreasing=TRUE))
-multifragen.alt = multifragen
-multifragen.alt
-multifragen = which(names(komus2) %in% names(komusmult[multifragen.alt]))
-modell = NULL
-fitting = NULL
-chances = NULL
-
-if (1 %in% multifragen) {
-    modell[[1]] = polr(reformulate('1', names(komus2[1])), data = komus2)
-} else {
-    modell[[1]] = glm(reformulate('1', names(komus2[1])), data = komus2, family = "binomial"(link=logit))
-}
-
-for (i in 2:items) {
-    if (i %in% multifragen) {
-        modell[[i]] = polr(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2)
+    
+    chances = FUN.Chances(modell)
+    Entropietemp = FUN.Entropietemp(chances)
+    Entropietemp = data.frame(Entropietemp)
+    names(Entropietemp) = names(komusmult[1:length(Entropietemp)])
+    komus2 = komusmult[c(names(sort(colMeans(Entropietemp), decreasing=TRUE)))]
+    #########
+    
+    names(sort(colMeans(Entropietemp), decreasing=TRUE))
+    multifragen.alt = multifragen
+    multifragen.alt
+    multifragen = which(names(komus2) %in% names(komusmult[multifragen.alt]))
+    modell = NULL
+    fitting = NULL
+    chances = NULL
+    
+    if (1 %in% multifragen) {
+        modell[[1]] = polr(reformulate('1', names(komus2[1])), data = komus2)
     } else {
-        modell[[i]] = glm(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2, family = "binomial"(link=logit))
+        modell[[1]] = glm(reformulate('1', names(komus2[1])), data = komus2, family = "binomial"(link=logit))
     }
-}
-
-fitting = modell
-<<fitting>>
-chances = FUN.Chances(fitting)
-#chances[-multifragen] = mclapply(fitting[-multifragen], predict, type="response")
-#chances[multifragen] = mclapply(fitting[multifragen], predict, type="probs")
-
-#Entropietemp = fitting
-Entropietemp = FUN.Entropietemp(chances)
-#Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC)
-#Entropietemp[-multifragen] =lapply(chances[-multifragen], FUN.Entropie)
-#Entropietemp = simplify2array(Entropietemp)
-
-SumSDtemp = sd(Entropietemp[,1])
-for (i in 2:length(Entropietemp[1,])) {
-SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
-}
-
-SumSD$sortbed = c(0,SumSDtemp)
-
-EEE$sortbed = c(0,colMeans(Entropietemp))
-
-
-multifragen = multifragen.alt
-
+    
+    for (i in 2:items) {
+        if (i %in% multifragen) {
+            modell[[i]] = polr(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2)
+        } else {
+            modell[[i]] = glm(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2, family = "binomial"(link=logit))
+        }
+    }
+    
+    fitting = modell
+    <<fitting>>
+    chances = FUN.Chances(fitting)
+    #chances[-multifragen] = mclapply(fitting[-multifragen], predict, type="response")
+    #chances[multifragen] = mclapply(fitting[multifragen], predict, type="probs")
+    
+    #Entropietemp = fitting
+    Entropietemp = FUN.Entropietemp(chances)
+    #Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC)
+    #Entropietemp[-multifragen] =lapply(chances[-multifragen], FUN.Entropie)
+    #Entropietemp = simplify2array(Entropietemp)
+    
+    SumSDtemp = sd(Entropietemp[,1])
+    for (i in 2:length(Entropietemp[1,])) {
+        SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+    }
+    
+    SumSD$sortbed = c(0,SumSDtemp)
+    
+    EEE$sortbed = c(0,colMeans(Entropietemp))
+    
+    multifragen = multifragen.alt
 #+END_SRC
 
 #+RESULTS: statistic2
@@ -403,91 +392,86 @@ multifragen = multifragen.alt
 **** Durchschnittlich bedingtsortierte Entropie
 #+NAME: statistic3
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
-####### Bedingte Entropie, sortiert nach jeder durchschnittlichen Antwort
-
-fragen = NULL
-modell = NULL
-Restentropietemp = NULL
-multifragenalt = multifragen
-############## sortierte Reihenfolge
-for (i in 1:length(komusmult)) {
-    if (i %in% multifragen) {
-        fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+    fragen = NULL
+    modell = NULL
+    Restentropietemp = NULL
+    multifragenalt = multifragen
+    ############## sortierte Reihenfolge
+    for (i in 1:length(komusmult)) {
+        if (i %in% multifragen) {
+            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+        } else {
+            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+        }
+    }
+    #modell
+    chances = FUN.Chances(fitting)
+    
+    Entropietemp = FUN.Entropietemp(chances)
+    
+    fragen = which(names(komusmult[which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))]) == names(komusmult))
+    fragen
+    #########
+    modell[[1]] = fitting[[fragen]]
+    
+    for (i in 2:items) {
+        Entropietemp = NULL
+        fitting = NULL
+    
+        multifragen = which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt]))
+    
+        for (j in 1:length(komusmult[-fragen])) {
+            if (j %in% multifragen) {
+                fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+            } else {
+                fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+            }
+        }
+        <<fitting>>
+        chances = FUN.Chances(fitting)
+    
+        Entropietemp = FUN.Entropietemp(chances)
+        Restentropietemp[[i-1]] = rowSums(Entropietemp)
+    
+        fragen = c(fragen, which(names(komusmult[-fragen][which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))]) == names(komusmult)))
+        modell[[i]] = fitting[[which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))]]
+    }
+    
+    if (length(komusmult) == items) {
+        Restentropietemp[[items]] = Restentropietemp[[1]]*0
     } else {
-        fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
-   }
-}
-#modell
-chances = FUN.Chances(fitting)
-
-Entropietemp = FUN.Entropietemp(chances)
-
-fragen = which(names(komusmult[which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))]) == names(komusmult))
-fragen
-#########
-modell[[1]] = fitting[[fragen]]
-
-for (i in 2:items) {
-    Entropietemp = NULL
-    fitting = NULL
-
-    multifragen = which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt]))
-
-
-    for (j in 1:length(komusmult[-fragen])) {
-        if (j %in% multifragen) {
-            fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
-        } else {
-            fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+        fitting = NULL
+    
+        multifragen = which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt]))
+    
+        for (j in 1:length(komusmult[-fragen])) {
+            if (j %in% multifragen) {
+                fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+            } else {
+                fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+            }
         }
+        <<fitting>>
+        chances = FUN.Chances(fitting)
+        Entropietemp = FUN.Entropietemp(chances)
+        Restentropietemp[[items]] = rowSums(Entropietemp)
     }
-    <<fitting>>
-    chances = FUN.Chances(fitting)
-
+    multifragen = which(fragen %in% multifragenalt)
+    
+    Restentropietemp = simplify2array(Restentropietemp)
+    
+    chances = FUN.Chances(modell)
     Entropietemp = FUN.Entropietemp(chances)
-    Restentropietemp[[i-1]] = rowSums(Entropietemp)
-
-    fragen = c(fragen, which(names(komusmult[-fragen][which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))]) == names(komusmult)))
-    modell[[i]] = fitting[[which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))]]
-}
-
-if (length(komusmult) == items) {
-    Restentropietemp[[items]] = Restentropietemp[[1]]*0
-} else {
-    fitting = NULL
-
-    multifragen = which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt]))
-
-
-    for (j in 1:length(komusmult[-fragen])) {
-        if (j %in% multifragen) {
-            fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
-        } else {
-            fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
-        }
+    
+    SumSDtemp = sd(Entropietemp[,1])
+    for (i in 2:length(Entropietemp[1,])) {
+    SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
     }
-    <<fitting>>
-    chances = FUN.Chances(fitting)
-    Entropietemp = FUN.Entropietemp(chances)
-    Restentropietemp[[items]] = rowSums(Entropietemp)
-}
-multifragen = which(fragen %in% multifragenalt)
-
-Restentropietemp = simplify2array(Restentropietemp)
-
-chances = FUN.Chances(modell)
-Entropietemp = FUN.Entropietemp(chances)
-
-SumSDtemp = sd(Entropietemp[,1])
-for (i in 2:length(Entropietemp[1,])) {
-SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
-}
-
-SumSD$durchschbedsort = c(0,SumSDtemp)
-EEE$durchschbedsort = c(0,colMeans(Entropietemp))
-RestEntropie$durchschbedsort = c(0,colMeans(Restentropietemp))
-RestEntropieSD$durchschbedsort = c(0,apply(Restentropietemp, 2, sd))
-
+    
+    SumSD$durchschbedsort = c(0,SumSDtemp)
+    EEE$durchschbedsort = c(0,colMeans(Entropietemp))
+    RestEntropie$durchschbedsort = c(0,colMeans(Restentropietemp))
+    RestEntropieSD$durchschbedsort = c(0,apply(Restentropietemp, 2, sd))
 #+END_SRC
 
 #+RESULTS: statistic3
@@ -497,152 +481,151 @@ RestEntropieSD$durchschbedsort = c(0,apply(Restentropietemp, 2, sd))
 **** Individuellbedingtsortierte Entropie
 #+NAME: statistic4
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
-####### Bedingte Entropie, sortiert nach jeder individuellen Antwort
-Entropieall = NULL
-chances = NULL
-Restentropietemp = NULL
-fragen = NULL
-modell = NULL
-Restentropietemp = NULL
-multifragen = multifragenalt
-fitting = NULL
-############## sortierte Reihenfolge
-for (i in 1:length(komusmult)) {
-    if (i %in% multifragen) {
-        fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
-    } else {
-        fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
-   }
-}
-
-chances = fitting
-chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
-chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
-Entropietemp = FUN.Entropietemp.IND(chances)
-fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))]) == names(komusmult))
-#########
-modell[[1]] = fitting[[fragen]]
-frageninit = fragen
-fitting = NULL
-
-Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
-    fragen = frageninit
-    Restentropie = NULL
-    for (i in 2:items) {
-        chances = NULL
-        Entropietemp = NULL
-        fitting = NULL
-        multifragen = 0
-        multifragen = c(multifragen,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-        for (j in 1:length(komusmult[-fragen])) {
-            if (j %in% multifragen) {
-                fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
-            } else {
-                fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
-            }
+    ## initializing
+    Entropieall = NULL
+    chances = NULL
+    Restentropietemp = NULL
+    fragen = NULL
+    modell = NULL
+    Restentropietemp = NULL
+    multifragen = multifragenalt
+    fitting = NULL
+    
+    ## first item
+    for (i in 1:length(komusmult)) {
+        if (i %in% multifragen) {
+            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+        } else {
+            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
         }
-        <<fitting>>
-        chances = fitting
+    }
+    
+    chances = fitting
+    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
+    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
+    Entropietemp = FUN.Entropietemp.IND(chances)
+    fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))]) == names(komusmult))
+    
+    modell[[1]] = fitting[[fragen]]
+    frageninit = fragen
+    fitting = NULL
+    
+    ## multicorecalculation for every person
+    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
+        fragen = frageninit
+        Restentropie = NULL
+        for (i in 2:items) {
+            chances = NULL
+            Entropietemp = NULL
+            fitting = NULL
+            multifragen = 0
+            multifragen = c(multifragen,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+            for (j in 1:length(komusmult[-fragen])) {
+                if (j %in% multifragen) {
+                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+                } else {
+                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                }
+            }
+            <<fitting>>
+            chances = fitting
+            
+            ## chosing next item with highest entropie
+            if (length(multifragen) == 1) {
+                chances = lapply(fitting, predict, komusmult[k,], type="response")
+                Entropietemp = chances
+                Entropietemp = lapply(chances, FUN.Entropie)
+                Entropietemp = simplify2array(Entropietemp)
+            } else {
+                multifragen = multifragen[2:length(multifragen)]
+                chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
+                chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
+                Entropietemp = chances
+                
+                ## TODO perhaps, functions don't work 
+                Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
+                Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
+                Entropietemp = simplify2array(Entropietemp)
+            }
+            
+            Restentropietemp[i-1] = sum(Entropietemp) #rest of entropie before this item
+            fragen = c(fragen, which(names(komusmult[-fragen][which(Entropietemp == max(Entropietemp))]) == names(komusmult)))
+            modell[[i]] = fitting[[which(Entropietemp == max(Entropietemp))]]
+        }
+        
+        ## calculation of last rest entropie
+        if (length(komusmult) == items) {
+            Restentropietemp[items] = 0
+        } else {
+            fitting = NULL
+            multifragen = 0
+            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+            for (j in 1:length(komusmult[-fragen])) {
+                if (j %in% multifragen) {
+                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+                } else {
+                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                }
+            }
+            <<fitting>>
+                
+            if (length(multifragen) == 1) {
+                chances = lapply(fitting, predict, komusmult[k,], type="response")
+                Entropietemp = chances
+                Entropietemp = lapply(chances, FUN.Entropie)
+                Entropietemp = simplify2array(Entropietemp)
+            } else {
+                multifragen = multifragen[2:length(multifragen)]
+                chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
+                chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
+                Entropietemp = chances
+                
+                Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
+                Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
+                Entropietemp = simplify2array(Entropietemp)
+            }
+            
+            Restentropietemp[items] = sum(Entropietemp)
+        }
+        
+        ## calculation of the choosen modell
+        multifragen = 0
+        multifragen = c(multifragen,which(fragen %in% multifragenalt))
         if (length(multifragen) == 1) {
-            chances = lapply(fitting, predict, komusmult[k,], type="response")
+            chances = modell
+            chances = lapply(modell, predict, komusmult[k,], type="response")
             Entropietemp = chances
             Entropietemp = lapply(chances, FUN.Entropie)
             Entropietemp = simplify2array(Entropietemp)
         } else {
             multifragen = multifragen[2:length(multifragen)]
-            chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
-            chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
+            chances = modell
+            chances[-multifragen] = lapply(modell[-multifragen], predict, komusmult[k,], type="response")
+            chances[multifragen] = lapply(modell[multifragen], predict, komusmult[k,], type="probs")
             Entropietemp = chances
-#print(chances)
-### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+            
             Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
             Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
             Entropietemp = simplify2array(Entropietemp)
         }
-
-        Restentropietemp[i-1] = sum(Entropietemp)
-        fragen = c(fragen, which(names(komusmult[-fragen][which(Entropietemp == max(Entropietemp))]) == names(komusmult)))
-        modell[[i]] = fitting[[which(Entropietemp == max(Entropietemp))]]
-    }
-
-    if (length(komusmult) == items) {
-        Restentropietemp[items] = 0
-    } else {
-        fitting = NULL
-        multifragen = 0
-        multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-        for (j in 1:length(komusmult[-fragen])) {
-            if (j %in% multifragen) {
-                fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
-            } else {
-                fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
-            }
-        }
-        <<fitting>>
-
-        if (length(multifragen) == 1) {
-            chances = lapply(fitting, predict, komusmult[k,], type="response")
-            Entropietemp = chances
-            Entropietemp = lapply(chances, FUN.Entropie)
-            Entropietemp = simplify2array(Entropietemp)
+        
+        return(c(Entropietemp, Restentropietemp))    
+    })
+    
+    Restentropietemp = (Entropieall[(items+1):(items*2),])
+    Entropieall = Entropieall[1:items,]
      
-        } else {
-            multifragen = multifragen[2:length(multifragen)]
-            chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
-            chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
-            Entropietemp = chances
-
-    ### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-            Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
-            Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
-            Entropietemp = simplify2array(Entropietemp)
-        }
-
-        Restentropietemp[items] = sum(Entropietemp)
+    SumSDtemp = sd(Entropieall[1,])
+    for (i in 2:length(Entropieall[,1])) {
+        SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
     }
-    multifragen = 0
-    multifragen = c(multifragen,which(fragen %in% multifragenalt))
-
-    if (length(multifragen) == 1) {
-        chances = modell
-        chances = lapply(modell, predict, komusmult[k,], type="response")
-        Entropietemp = chances
-        Entropietemp = lapply(chances, FUN.Entropie)
-        Entropietemp = simplify2array(Entropietemp)
-    } else {
-        multifragen = multifragen[2:length(multifragen)]
-        chances = modell
-        chances[-multifragen] = lapply(modell[-multifragen], predict, komusmult[k,], type="response")
-        chances[multifragen] = lapply(modell[multifragen], predict, komusmult[k,], type="probs")
-        Entropietemp = chances
-
-### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-        Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
-        Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
-        Entropietemp = simplify2array(Entropietemp)
-    }
-
-    return(c(Entropietemp, Restentropietemp))    
-})
-
-Restentropietemp = (Entropieall[(items+1):(items*2),])
-Entropieall = Entropieall[1:items,]
- 
-SumSDtemp = sd(Entropieall[1,])
-for (i in 2:length(Entropieall[,1])) {
-SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
-}
- 
-SumSD$indivbedsort = c(0,SumSDtemp)
-EEE$indivbedsort = c(0,rowMeans(Entropieall))
-RestEntropie$indivbedsort = c(0,rowMeans(Restentropietemp))
-RestEntropieSD$indivbedsort = c(0,apply(Restentropietemp, 1, sd))
-
-multifragen = multifragenalt
-EEE
-SumSD
-RestEntropie
-RestEntropieSD
+     
+    SumSD$indivbedsort = c(0,SumSDtemp)
+    EEE$indivbedsort = c(0,rowMeans(Entropieall))
+    RestEntropie$indivbedsort = c(0,rowMeans(Restentropietemp))
+    RestEntropieSD$indivbedsort = c(0,apply(Restentropietemp, 1, sd))
+    
+    multifragen = multifragenalt
 #+END_SRC
 
 #+RESULTS: statistic4
@@ -876,338 +859,497 @@ RestEntropieSD
 **** Individuellbedingtsortierte Entropie mit Trennschärfe
 #+NAME: statistic5
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
-####### Bedingte Entropie, sortiert nach jeder individuellen Antwort
-Entropieall = NULL
-chances = NULL
-beta = NULL
-Restentropietemp = NULL
-Entropietemp = NULL
-fitting = NULL
-
-if (!exists("information")) {
-    information = simplify2array(foreach(m=1:length(komus)) %dopar% {
-        for (n in 1:(length(komus)-1)) {
-            beta[[n]] = glm(reformulate(names(komus[m]), names(komus[-m][n])), data = komus, family = "binomial"(link=logit))
-        }
-        chances = simplify2array(lapply(beta, predict, type="response"))
-        chancetemp = unlist(lapply(komus[m],mean))
-        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-        information = sum(colMeans(Entropietemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
-        return(information)
-    })
-    information = -(information - sum(-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)))
-}
-
-
-
-
-
-for (j in 1:length(komus)) {
-    fitting[[j]] = glm(reformulate('1', names(komus[j])), data = komus, family = "binomial"(link=logit))
-}
-<<fitting>>
-chances = simplify2array(lapply(fitting, predict, komus[1,], type="response"))
-Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + (information)
-frageninit = which(names(komus[which((Entropietemp) == max((Entropietemp)))]) == names(komus))
-
- 
-
-modell[[1]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
-
-Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
-    fragen = frageninit
-    for (i in 2:items) {
-        Entropietemp = NULL
-        fitting = NULL
-        for (j in 1:length(komus[-fragen])) {
-            fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
-        }
-
-        <<fitting>>
-        ## TODO stimmt das so?
-        chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
-        Restentropietemp[i-1] = sum(-chances*log(chances,2)-(1-chances)*log(1-chances,2)) 
-        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + (information[-fragen]*(1 - (length(fragen)+1)/items))
-        fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))]) == names(komus)))
-        modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
-    }
-
-    if (length(komus) == items) {
-        Restentropietemp[items] = 0
-    } else {
-        fitting = NULL
-        for (j in 1:length(komus[-fragen])) {
-            fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
-        }
-        <<fitting>>
-        chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
-        Restentropietemp[length(fragen)] = sum(-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-    }
-
-    chances = simplify2array(lapply(modell, predict, komus[k,], type="response"))
-    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+    Entropieall = NULL
+    chances = NULL
+    beta = NULL
+    Restentropietemp = NULL
+    Entropietemp = NULL
+    fitting = NULL
     
-    return(c(Entropietemp, Restentropietemp))
-})
-
-Restentropietemp = (Entropieall[(items+1):(items*2),])
-Entropieall = Entropieall[1:items,]
-SumSDtemp = sd(Entropieall[1,])
-for (i in 2:length(Entropieall[,1])) {
-SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
-}
-
-SumSD$indivbedsorttrenn = c(0,SumSDtemp )
-EEE$indivbedsorttrenn = c(0,rowMeans(Entropieall))
-RestEntropie$indivbedsorttrenn = c(0,rowMeans(Restentropietemp))
-RestEntropieSD$indivbedsorttrenn = c(0,apply(Restentropietemp,1 ,sd))
-
+    if (!exists("information")) {
+        information = simplify2array(foreach(m=1:length(komus)) %dopar% {
+            for (n in 1:(length(komus)-1)) {
+                beta[[n]] = glm(reformulate(names(komus[m]), names(komus[-m][n])), data = komus, family = "binomial"(link=logit))
+            }
+            chances = simplify2array(lapply(beta, predict, type="response"))
+            chancetemp = unlist(lapply(komus[m],mean))
+            Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+            information = sum(colMeans(Entropietemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
+            return(information)
+        })
+        information = -(information - sum(-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)))
+    }
+    
+    
+    
+    
+    
+    for (j in 1:length(komus)) {
+        fitting[[j]] = glm(reformulate('1', names(komus[j])), data = komus, family = "binomial"(link=logit))
+    }
+    <<fitting>>
+    chances = simplify2array(lapply(fitting, predict, komus[1,], type="response"))
+    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + (information)
+    frageninit = which(names(komus[which((Entropietemp) == max((Entropietemp)))]) == names(komus))
+    
+     
+    
+    modell[[1]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
+    
+    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
+        fragen = frageninit
+        for (i in 2:items) {
+            Entropietemp = NULL
+            fitting = NULL
+            for (j in 1:length(komus[-fragen])) {
+                fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+            }
+    
+            <<fitting>>
+            ## TODO stimmt das so?
+            chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
+            Restentropietemp[i-1] = sum(-chances*log(chances,2)-(1-chances)*log(1-chances,2)) 
+            Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + (information[-fragen]*(1 - (length(fragen)+1)/items))
+            fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))]) == names(komus)))
+            modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))]]
+        }
+    
+        if (length(komus) == items) {
+            Restentropietemp[items] = 0
+        } else {
+            fitting = NULL
+            for (j in 1:length(komus[-fragen])) {
+                fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+            }
+            <<fitting>>
+            chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
+            Restentropietemp[length(fragen)] = sum(-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+        }
+    
+        chances = simplify2array(lapply(modell, predict, komus[k,], type="response"))
+        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+        
+        return(c(Entropietemp, Restentropietemp))
+    })
+    
+    Restentropietemp = (Entropieall[(items+1):(items*2),])
+    Entropieall = Entropieall[1:items,]
+    SumSDtemp = sd(Entropieall[1,])
+    for (i in 2:length(Entropieall[,1])) {
+    SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
+    }
+    
+    SumSD$indivbedsorttrenn = c(0,SumSDtemp )
+    EEE$indivbedsorttrenn = c(0,rowMeans(Entropieall))
+    RestEntropie$indivbedsorttrenn = c(0,rowMeans(Restentropietemp))
+    RestEntropieSD$indivbedsorttrenn = c(0,apply(Restentropietemp,1 ,sd))
 #+END_SRC
 
 #+RESULTS: statistic5
 
-
-**** Experiment2
+**** Individuellbedingtsortierte Entropie mit Prädiktion 
+#+NAME: statistic6
 #+BEGIN_SRC R :session stat :exports code :results output :noweb yes
-
-
-fitting = NULL
-Entropieall = NULL
-chances = NULL
-Restentropietemp = NULL
-fragen = NULL
-modell = NULL
-Restentropietemp = NULL
-multifragen = multifragenalt
-
-############## sortierte Reihenfolge
-for (i in 1:length(komusmult)) {
-    if (i %in% multifragen) {
-        fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
-    } else {
-        fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
-   }
-}
-
-chances = fitting
-chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
-chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
-Entropietemp = FUN.Entropietemp.IND(chances)
-fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))]) == names(komusmult))
-#########
-modell[[1]] = fitting[[fragen]]
-frageninit = fragen
-fitting = NULL
-Restentropie2 = NULL
-
-Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
-    fragen = frageninit
-    Restentropie = NULL
-    Restentropietemp2 = NULL
+    ## initializing
+    fitting = NULL
+    Entropieall = NULL
+    chances = NULL
     Restentropietemp = NULL
-    for (i in 2:items) {
-        chances = NULL
-        Entropietemp = NULL
-        fitting = NULL
-        fitting2 = NULL
-        fittingplus = NULL
-        fittingminus = NULL
-        Entropietemp2 = NULL
-        multifragen = 0
-        multifragen = c(multifragen,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-        for (j in 1:length(komusmult[-fragen])) {
-            if (j %in% multifragen) {
-                fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
-            } else {
-                fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
-            }
-if (length(komusmult[-fragen]) > 1) {
-            multifragen2 = c(0,which(names(komusmult[-fragen][-j]) %in% names(komusmult[multifragenalt])))
-            for (n in 1:length(komusmult[-fragen][-j])) {
-                if (n %in% multifragen2) {
-                    fitting2[[n]] = polr(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult)
+    fragen = NULL
+    modell = NULL
+    Restentropietemp = NULL
+    multifragen = multifragenalt
+    
+    ## first item
+    for (i in 1:length(komusmult)) {
+        if (i %in% multifragen) {
+            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+        } else {
+            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+        }
+    }
+    
+    chances = fitting
+    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
+    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
+    Entropietemp = FUN.Entropietemp.IND(chances)
+    fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))]) == names(komusmult))
+    
+    modell[[1]] = fitting[[fragen]]
+    frageninit = fragen
+    fitting = NULL
+    Restentropie2 = NULL
+    
+    ## multicore calculation
+    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
+        fragen = frageninit
+        Restentropie = NULL
+        Restentropietemp2 = NULL
+        Restentropietemp = NULL
+        for (i in 2:items) {
+            chances = NULL
+            Entropietemp = NULL
+            fitting = NULL
+            fitting2 = NULL
+            fittingplus = NULL
+            fittingminus = NULL
+            Entropietemp2 = NULL
+            multifragen = 0
+            multifragen = c(multifragen,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+            
+            ## prediction for all not-answerd questions
+            for (j in 1:length(komusmult[-fragen])) {
+                if (j %in% multifragen) {
+                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
                 } else {
-                    fitting2[[n]] = glm(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult, family = "binomial"(link=logit))
+                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                }
+                
+                ## prediction for all not-answered questions after prediction
+                if (length(komusmult[-fragen]) > 1) {
+                    multifragen2 = c(0,which(names(komusmult[-fragen][-j]) %in% names(komusmult[multifragenalt])))
+                    for (n in 1:length(komusmult[-fragen][-j])) {
+                        if (n %in% multifragen2) {
+                            fitting2[[n]] = polr(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult)
+                        } else {
+                            fitting2[[n]] = glm(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult, family = "binomial"(link=logit))
+                        }
+                    }
+                    
+                    ## calculation of rest entropie for each possibility
+                    tempdata = komusmult[k,]
+                    ##tempdata[-fragen][j] = 0 #dies muss noch bearbeitet werden (chancen...)
+                    <<fitting>>
+                        chances = fitting2
+                    if (length(multifragen2) == 1) {
+                        chances = lapply(fitting2, predict, tempdata, type="response")
+                        Entropietemp = chances
+                        Entropietemp = lapply(chances, FUN.Entropie)
+                        Entropietemp = simplify2array(Entropietemp)
+                    } else {
+                        multifragen2 = multifragen2[2:length(multifragen2)]
+                        chances[-multifragen2] = lapply(fitting2[-multifragen2], predict, tempdata, type="response")
+                        chances[multifragen2] = lapply(fitting2[multifragen2], predict, tempdata, type="probs")
+                        Entropietemp = chances
+                        
+                        ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+                        Entropietemp[multifragen2] = lapply(chances[multifragen2], FUN.EntropieMC.IND)
+                        Entropietemp[-multifragen2] = lapply(chances[-multifragen2], FUN.Entropie)
+                        Entropietemp = simplify2array(Entropietemp)
+                    }
+                    
+                    Restentropietemp2[j] = sum(Entropietemp)
+                } else {
+                    Restentropietemp2[j] = 0 
                 }
             }
-
-        tempdata = komusmult[k,]
-#        tempdata[-fragen][j] = 0
-        <<fitting>>
-        chances = fitting2
-        if (length(multifragen2) == 1) {
-            chances = lapply(fitting2, predict, tempdata, type="response")
-            Entropietemp = chances
-            Entropietemp = lapply(chances, FUN.Entropie)
-            Entropietemp = simplify2array(Entropietemp)
-        } else {
-            multifragen2 = multifragen2[2:length(multifragen2)]
-            chances[-multifragen2] = lapply(fitting2[-multifragen2], predict, tempdata, type="response")
-            chances[multifragen2] = lapply(fitting2[multifragen2], predict, tempdata, type="probs")
-            Entropietemp = chances
-#print(chances)
-### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-            Entropietemp[multifragen2] = lapply(chances[multifragen2], FUN.EntropieMC.IND)
-            Entropietemp[-multifragen2] = lapply(chances[-multifragen2], FUN.Entropie)
-            Entropietemp = simplify2array(Entropietemp)
-        }
-
-        Restentropietemp2[j] = sum(Entropietemp)
-#        fragen = c(fragen, which(names(komusmult[-fragen][which(Entropietemp == max(Entropietemp))]) == names(komusmult)))
- #       modell[[i]] = fitting[[which(Entropietemp == max(Entropietemp))]]
-
-#################################
-if (length(fitting) > 1) {
-        chances = fitting
-multialt = multifragen
-multifragen = multifragen[multifragen <= length(fitting)]
-        if (length(multifragen) == 1) {
-            chances = lapply(fitting, predict, komusmult[k,], type="response")
-            Entropietemp = chances
-            Entropietemp = lapply(chances, FUN.Entropie)
-            Entropietemp = simplify2array(Entropietemp)
-        } else {
-            multifragen = multifragen[2:length(multifragen)]
-            chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
-            chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
-            Entropietemp = chances
-#print(chances)
-### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-            Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
-            Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
-            Entropietemp = simplify2array(Entropietemp)
-            multifragen = c(0,multifragen)
-        }
-multifragen = multialt
-        Restentropietemp[k-1] = sum(Entropietemp)
-
-x = 1:length(Restentropietemp2)
-y = Restentropietemp2
-
-plot(y ~ x, type='l')
-legend(2, 50, c(k, i, j), cex=0.9, col=rgb(0,0,0), lty=1)
-
-#legend(length(Restentropietemp2), Restentropietemp2, c(k, i, j), cex=0.9, col=rgb(0,0,0), lty=1)
-#if (exists('Restentropietemp')) {
-#lines(Restentropietemp)}
- 
-}
-
-#################################
-
-
-} else {
-Restentropietemp2[j] = 0 
-}
-
-
-
-        }
-        <<fitting>>
-        chances = fitting
-        if (length(multifragen) == 1) {
-            chances = lapply(fitting, predict, komusmult[k,], type="response")
-            Entropietemp = chances
-            Entropietemp = lapply(chances, FUN.Entropie)
-            Entropietemp = simplify2array(Entropietemp)
-        } else {
-            multifragen = multifragen[2:length(multifragen)]
-            chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
-            chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
-            Entropietemp = chances
-#print(chances)
-### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-            Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
-            Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
-            Entropietemp = simplify2array(Entropietemp)
-        }
-
-        Restentropietemp[i-1] = sum(Entropietemp)
-        fragen = c(fragen, which(names(komusmult[-fragen][which(Restentropietemp2 == min(Restentropietemp2))]) == names(komusmult)))
-        modell[[i]] = fitting[[which(Entropietemp == max(Entropietemp))]]
-    }
-
-    if (length(komusmult) == items) {
-        Restentropietemp[items] = 0
-    } else {
-        fitting = NULL
-        multifragen = 0
-        multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-        for (j in 1:length(komusmult[-fragen])) {
-            if (j %in% multifragen) {
-                fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+            
+            <<fitting>>
+                chances = fitting
+            
+            ## calculation of current rest entropie
+            if (length(multifragen) == 1) {
+                chances = lapply(fitting, predict, komusmult[k,], type="response")
+                Entropietemp = chances
+                Entropietemp = lapply(chances, FUN.Entropie)
+                Entropietemp = simplify2array(Entropietemp)
             } else {
-                fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                multifragen = multifragen[2:length(multifragen)]
+                chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
+                chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
+                Entropietemp = chances
+                
+                ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+                Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
+                Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
+                Entropietemp = simplify2array(Entropietemp)
             }
+            
+            Restentropietemp[i-1] = sum(Entropietemp)
+            fragen = c(fragen, which(names(komusmult[-fragen][which(Restentropietemp2 == min(Restentropietemp2))]) == names(komusmult)))
+            ## stimmt das? sollte das nicht mit Restentropietemp2 arbeiten?
+            ##        modell[[i]] = fitting[[which(Entropietemp == max(Entropietemp))]]
+            modell[[i]] = fitting[[which(Restentropietemp2 == min(Restentropietemp2))]]
         }
-        <<fitting>>
-
+        
+        ## calculation of last rest entropie
+        if (length(komusmult) == items) {
+            Restentropietemp[items] = 0
+        } else {
+            fitting = NULL
+            multifragen = 0
+            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+            for (j in 1:length(komusmult[-fragen])) {
+                if (j %in% multifragen) {
+                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+                } else {
+                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                }
+            }
+            
+            <<fitting>>
+                if (length(multifragen) == 1) {
+                    chances = lapply(fitting, predict, komusmult[k,], type="response")
+                    Entropietemp = chances
+                    Entropietemp = lapply(chances, FUN.Entropie)
+                    Entropietemp = simplify2array(Entropietemp) 
+                } else {
+                    multifragen = multifragen[2:length(multifragen)]
+                    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
+                    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
+                    Entropietemp = chances
+                    
+                    ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+                    Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
+                    Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
+                    Entropietemp = simplify2array(Entropietemp)
+                }
+            
+        Restentropietemp[items] = sum(Entropietemp)
+        }
+        
+        ## calculation of choosen modell
+        multifragen = 0
+        multifragen = c(multifragen,which(fragen %in% multifragenalt))
         if (length(multifragen) == 1) {
-            chances = lapply(fitting, predict, komusmult[k,], type="response")
+            chances = modell
+            chances = lapply(modell, predict, komusmult[k,], type="response")
             Entropietemp = chances
             Entropietemp = lapply(chances, FUN.Entropie)
             Entropietemp = simplify2array(Entropietemp)
-     
         } else {
             multifragen = multifragen[2:length(multifragen)]
-            chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
-            chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
+            chances = modell
+            chances[-multifragen] = lapply(modell[-multifragen], predict, komusmult[k,], type="response")
+            chances[multifragen] = lapply(modell[multifragen], predict, komusmult[k,], type="probs")
             Entropietemp = chances
-
-    ### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+            
+            ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
             Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
             Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
             Entropietemp = simplify2array(Entropietemp)
         }
-
-        Restentropietemp[items] = sum(Entropietemp)
+        
+        return(c(Entropietemp, Restentropietemp))    
+    })
+    
+    Restentropietemp = (Entropieall[(items+1):(items*2),])
+    Entropieall = Entropieall[1:items,]
+    
+    SumSDtemp = sd(Entropieall[1,])
+    for (i in 2:length(Entropieall[,1])) {
+        SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
     }
-    multifragen = 0
-    multifragen = c(multifragen,which(fragen %in% multifragenalt))
+    
+    SumSD$indivbedsortpred = c(0,SumSDtemp)
+    EEE$indivbedsortpred = c(0,rowMeans(Entropieall))
+    RestEntropie$indivbedsortpred = c(0,rowMeans(Restentropietemp))
+    RestEntropieSD$indivbedsortpred = c(0,apply(Restentropietemp, 1, sd))
+    
+    multifragen = multifragenalt
+    EEE
+    SumSD
+    RestEntropie
+    RestEntropieSD
+#+END_SRC
 
-    if (length(multifragen) == 1) {
-        chances = modell
-        chances = lapply(modell, predict, komusmult[k,], type="response")
-        Entropietemp = chances
-        Entropietemp = lapply(chances, FUN.Entropie)
-        Entropietemp = simplify2array(Entropietemp)
-    } else {
-        multifragen = multifragen[2:length(multifragen)]
-        chances = modell
-        chances[-multifragen] = lapply(modell[-multifragen], predict, komusmult[k,], type="response")
-        chances[multifragen] = lapply(modell[multifragen], predict, komusmult[k,], type="probs")
-        Entropietemp = chances
-
-### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-        Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
-        Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
-        Entropietemp = simplify2array(Entropietemp)
-    }
-
-    return(c(Entropietemp, Restentropietemp))    
-})
-
-Restentropietemp = (Entropieall[(items+1):(items*2),])
-Entropieall = Entropieall[1:items,]
+**** Experiment2
  
-SumSDtemp = sd(Entropieall[1,])
-for (i in 2:length(Entropieall[,1])) {
-SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
-}
- 
-SumSD$indivbedsortpred = c(0,SumSDtemp)
-EEE$indivbedsortpred = c(0,rowMeans(Entropieall))
-RestEntropie$indivbedsortpred = c(0,rowMeans(Restentropietemp))
-RestEntropieSD$indivbedsortpred = c(0,apply(Restentropietemp, 1, sd))
-
-multifragen = multifragenalt
-EEE
-SumSD
-RestEntropie
-RestEntropieSD
-
-
-
+#+BEGIN_SRC R :session stat :exports code :results output :noweb yes
+  
+  
+  fitting = NULL
+  Entropieall = NULL
+  chances = NULL
+  Restentropietemp = NULL
+  fragen = NULL
+  modell = NULL
+  Restentropietemp = NULL
+  multifragen = multifragenalt
+  
+  ############## sortierte Reihenfolge
+  for (i in 1:length(komusmult)) {
+      if (i %in% multifragen) {
+          fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+      } else {
+          fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+        }
+  }
+  
+  chances = fitting
+  chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
+  chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
+  Entropietemp = FUN.Entropietemp.IND(chances)
+  fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))]) == names(komusmult))
+  #########
+  modell[[1]] = fitting[[fragen]]
+  frageninit = fragen
+  fitting = NULL
+  Restentropie2 = NULL
+  
+  Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
+      fragen = frageninit
+      Restentropie = NULL
+      Restentropietemp2 = NULL
+      Restentropietemp = NULL
+      for (i in 2:items) {
+          chances = NULL
+          Entropietemp = NULL
+          fitting = NULL
+          fitting2 = NULL
+          fittingplus = NULL
+          fittingminus = NULL
+          Entropietemp2 = NULL
+          multifragen = 0
+          multifragen = c(multifragen,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+          for (j in 1:length(komusmult[-fragen])) {
+              if (j %in% multifragen) {
+                  fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+              } else {
+                  fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+              }
+              
+              if (length(komusmult[-fragen]) > 1) {
+                  multifragen2 = c(0,which(names(komusmult[-fragen][-j]) %in% names(komusmult[multifragenalt])))
+                  for (n in 1:length(komusmult[-fragen][-j])) {
+                      if (n %in% multifragen2) {
+                          fitting2[[n]] = polr(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult)
+                      } else {
+                          fitting2[[n]] = glm(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult, family = "binomial"(link=logit))
+                      }
+                  }
+                  
+                  tempdata = komusmult[k,]
+                  ##tempdata[-fragen][j] = 0 #dies muss noch bearbeitet werden (chancen...)
+                  <<fitting>>
+                      chances = fitting2
+                  if (length(multifragen2) == 1) {
+                      chances = lapply(fitting2, predict, tempdata, type="response")
+                      Entropietemp = chances
+                      Entropietemp = lapply(chances, FUN.Entropie)
+                      Entropietemp = simplify2array(Entropietemp)
+                  } else {
+                      multifragen2 = multifragen2[2:length(multifragen2)]
+                      chances[-multifragen2] = lapply(fitting2[-multifragen2], predict, tempdata, type="response")
+                      chances[multifragen2] = lapply(fitting2[multifragen2], predict, tempdata, type="probs")
+                      Entropietemp = chances
+                      
+                      ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+                      Entropietemp[multifragen2] = lapply(chances[multifragen2], FUN.EntropieMC.IND)
+                      Entropietemp[-multifragen2] = lapply(chances[-multifragen2], FUN.Entropie)
+                      Entropietemp = simplify2array(Entropietemp)
+                  }
+                  
+                  Restentropietemp2[j] = sum(Entropietemp)
+              } else {
+                  Restentropietemp2[j] = 0 
+              }
+          }
+          
+          <<fitting>>
+              chances = fitting
+          if (length(multifragen) == 1) {
+              chances = lapply(fitting, predict, komusmult[k,], type="response")
+              Entropietemp = chances
+              Entropietemp = lapply(chances, FUN.Entropie)
+              Entropietemp = simplify2array(Entropietemp)
+          } else {
+              multifragen = multifragen[2:length(multifragen)]
+              chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
+              chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
+              Entropietemp = chances
+              
+              ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+              Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
+              Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
+              Entropietemp = simplify2array(Entropietemp)
+          }
+          
+          Restentropietemp[i-1] = sum(Entropietemp)
+          fragen = c(fragen, which(names(komusmult[-fragen][which(Restentropietemp2 == min(Restentropietemp2))]) == names(komusmult)))
+          modell[[i]] = fitting[[which(Entropietemp == max(Entropietemp))]]
+      }
+      
+      if (length(komusmult) == items) {
+          Restentropietemp[items] = 0
+      } else {
+          fitting = NULL
+          multifragen = 0
+          multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+          for (j in 1:length(komusmult[-fragen])) {
+              if (j %in% multifragen) {
+                  fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+              } else {
+                  fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+              }
+          }
+          
+          <<fitting>>
+              if (length(multifragen) == 1) {
+                  chances = lapply(fitting, predict, komusmult[k,], type="response")
+                  Entropietemp = chances
+                  Entropietemp = lapply(chances, FUN.Entropie)
+                  Entropietemp = simplify2array(Entropietemp) 
+              } else {
+                  multifragen = multifragen[2:length(multifragen)]
+                  chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
+                  chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
+                  Entropietemp = chances
+                  
+  ### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+                  Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
+                  Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
+                  Entropietemp = simplify2array(Entropietemp)
+              }
+      
+      Restentropietemp[items] = sum(Entropietemp)
+      }
+      
+      multifragen = 0
+      multifragen = c(multifragen,which(fragen %in% multifragenalt))
+      if (length(multifragen) == 1) {
+          chances = modell
+          chances = lapply(modell, predict, komusmult[k,], type="response")
+          Entropietemp = chances
+          Entropietemp = lapply(chances, FUN.Entropie)
+          Entropietemp = simplify2array(Entropietemp)
+      } else {
+          multifragen = multifragen[2:length(multifragen)]
+          chances = modell
+          chances[-multifragen] = lapply(modell[-multifragen], predict, komusmult[k,], type="response")
+          chances[multifragen] = lapply(modell[multifragen], predict, komusmult[k,], type="probs")
+          Entropietemp = chances
+          
+  ### Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
+          Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
+          Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
+          Entropietemp = simplify2array(Entropietemp)
+      }
+      
+      return(c(Entropietemp, Restentropietemp))    
+  })
+  
+  Restentropietemp = (Entropieall[(items+1):(items*2),])
+  Entropieall = Entropieall[1:items,]
+  
+  SumSDtemp = sd(Entropieall[1,])
+  for (i in 2:length(Entropieall[,1])) {
+      SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
+  }
+  
+  SumSD$indivbedsortpred = c(0,SumSDtemp)
+  EEE$indivbedsortpred = c(0,rowMeans(Entropieall))
+  RestEntropie$indivbedsortpred = c(0,rowMeans(Restentropietemp))
+  RestEntropieSD$indivbedsortpred = c(0,apply(Restentropietemp, 1, sd))
+  
+  multifragen = multifragenalt
+  EEE
+  SumSD
+  RestEntropie
+  RestEntropieSD
+  
+  
+  
 #+END_SRC
 
 #+RESULTS:
@@ -1795,55 +1937,50 @@ RestEntropieSD
 **** Schlussberechnungen
 #+NAME: statisticend
 #+BEGIN_SRC R :session stat :exports both :results output :noweb yes
-################# Schlussberechnungen
-
-if (names(EEE[1]) == 'kill') {
-    EEE = EEE[-1]
-}
-if (names(SumSD[1]) == 'kill') {
-    SumSD = SumSD[-1]
-}
-if (names(RestEntropie[1]) == 'kill') {
-    RestEntropie = RestEntropie[-1]
-    RestEntropieSD = RestEntropieSD[-1]
-}
-
-for (i in 1:length(EEE[1,])) {
-    for (j in 1:length(EEE[,1])) {
-        summe[j,i] = sum(EEE[1:j,i])
+    if (names(EEE[1]) == 'kill') {
+        EEE = EEE[-1]
     }
-}
-
-#RestEntropie[1,] = sum(-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2))
-fitting = NULL
-multifragen = multifragenalt
-for (i in 1:length(komusmult)) {
-    if (i %in% multifragen) {
-        fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+    
+    if (names(SumSD[1]) == 'kill') {
+        SumSD = SumSD[-1]
+    }
+    
+    if (names(RestEntropie[1]) == 'kill') {
+        RestEntropie = RestEntropie[-1]
+        RestEntropieSD = RestEntropieSD[-1]
+    }
+    
+    for (i in 1:length(EEE[1,])) {
+        for (j in 1:length(EEE[,1])) {
+            summe[j,i] = sum(EEE[1:j,i])
+        }
+    }
+    
+    fitting = NULL
+    multifragen = multifragenalt
+    for (i in 1:length(komusmult)) {
+        if (i %in% multifragen) {
+            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+        } else {
+            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+        }
+    }
+    
+    chances = fitting
+    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
+    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
+    Entropietemp = FUN.Entropietemp.IND(chances)
+    RestEntropie[1,] = sum(Entropietemp)
+    
+    names(summe) = names(EEE)
+    
+    if (exists("benchmark")) {
+        benchmark = array(c(benchmark,(proc.time() - calculationtime)[3]))
     } else {
-        fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
-   }
-}
-
-chances = fitting
-chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
-chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
-Entropietemp = FUN.Entropietemp.IND(chances)
-RestEntropie[1,] = sum(Entropietemp)
-
-
-
-names(summe) = names(EEE)
-
-if (exists("benchmark")) {
-    benchmark = array(c(benchmark,(proc.time() - calculationtime)[3]))
-} else {
-    benchmark = (proc.time() - calculationtime)[3]
-}
-
-
-benchmark
-
+        benchmark = (proc.time() - calculationtime)[3]
+    }
+    
+    benchmark
 #+END_SRC
 
 #+RESULTS: statisticend
@@ -1928,41 +2065,40 @@ title(ylab="Dauer")
 **** Entropiegrafik
 #+NAME: grafik
 #+BEGIN_SRC R :session stat :noweb yes :results output graphics :file /images/entropie2.png :exports both
-<<statistic>>
-<<statistic1>>
-<<statistic2>>
-<<statistic3>>
-<<statistic4>>
-<<statisticend>>
-
-farbe = NULL
-farbeSD = NULL
-for (j in 1:(length(summe[1,]))) {
-    r = runif(1,0.1,0.9)
-    g = runif(1,0.1,0.9)
-    b = runif(1,0.1,0.9)
-    farbe[j] = rgb(r^1.2, g^1.2, b^1.2)
-    farbeSD[j] = rgb(sqrt(r), sqrt(g), sqrt(b))
-}
-
-plot(0:(length(komusmult)), type="l", col=rgb(0,0,0), ann=F)
-for (i in 1:(length(summe[1,]))) {
-    lines(summe[,i], col=farbe[i])
-    if (dim(SumSD[names(SumSD) == names(summe[i])])[2] != 0) {
-        lines(summe[,i]+SumSD[names(summe[i])],lty = 4, col=farbeSD[i])
-        lines(summe[,i]-SumSD[names(summe[i])],lty = 4, col=farbeSD[i])
+    <<statistic>>
+    <<statistic1>>
+    <<statistic2>>
+    <<statistic3>>
+    <<statistic4>>
+    <<statisticend>>
+    
+    farbe = NULL
+    farbeSD = NULL
+    for (j in 1:(length(summe[1,]))) {
+        r = runif(1,0.1,0.9)
+        g = runif(1,0.1,0.9)
+        b = runif(1,0.1,0.9)
+        farbe[j] = rgb(r^1.2, g^1.2, b^1.2)
+        farbeSD[j] = rgb(sqrt(r), sqrt(g), sqrt(b))
     }
-    if (dim(RestEntropie[names(RestEntropie) == names(summe[i])])[2] != 0) {
-        lines(RestEntropie[names(summe[i])], col=farbe[i])
-        lines(RestEntropie[names(summe[i])]+RestEntropieSD[names(summe[i])],lty = 4, col=farbeSD[i])
-        lines(RestEntropie[names(summe[i])]-RestEntropieSD[names(summe[i])],lty = 4, col=farbeSD[i])
+    
+    plot(0:(length(komusmult)), type="l", col=rgb(0,0,0), ann=F)
+    for (i in 1:(length(summe[1,]))) {
+        lines(summe[,i], col=farbe[i])
+        if (dim(SumSD[names(SumSD) == names(summe[i])])[2] != 0) {
+            lines(summe[,i]+SumSD[names(summe[i])],lty = 4, col=farbeSD[i])
+            lines(summe[,i]-SumSD[names(summe[i])],lty = 4, col=farbeSD[i])
+        }
+        if (dim(RestEntropie[names(RestEntropie) == names(summe[i])])[2] != 0) {
+            lines(RestEntropie[names(summe[i])], col=farbe[i])
+            lines(RestEntropie[names(summe[i])]+RestEntropieSD[names(summe[i])],lty = 4, col=farbeSD[i])
+            lines(RestEntropie[names(summe[i])]-RestEntropieSD[names(summe[i])],lty = 4, col=farbeSD[i])
+        }
     }
-}
-
-title(xlab="Anzahl der beantworteten Fragen")
-title(ylab="Entropie in bit")
-legend(length(komusmult)/4, length(komusmult), c(names(summe), round(benchmark[length(benchmark)])), cex=0.9, col=c(farbe, rgb(1,1,1)), lty=1);
-
+    
+    title(xlab="Anzahl der beantworteten Fragen")
+    title(ylab="Entropie in bit")
+    legend(length(komusmult)/4, length(komusmult), c(names(summe), round(benchmark[length(benchmark)])), cex=0.9, col=c(farbe, rgb(1,1,1)), lty=1);
 #+END_SRC
 
 #+RESULTS: grafik
