@@ -586,10 +586,12 @@ ul.posts span {
 
 /* standard */
 .post pre {
-  border: 1px solid #DDD;
+ 
   color: #DDD;
-  background-color: #222;
+  background-color: #050505;
   padding: .7em 1.0em;
+  line-height: 1.3em;
+
 }
 
 .post ul, .post ol {
@@ -599,7 +601,7 @@ ul.posts span {
 .post code {
   border: 1px solid #DDD;
   background-color: #EEE;
-  padding: 0 .2em;
+ 
 }
 
 .post pre code {
