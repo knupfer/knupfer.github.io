@@ -109,16 +109,16 @@ Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden, sondern auch na
 Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt ausgeführt wird und das Ergebnis automatisch in eine Tabelle überführt wird. Es wurde keine Zahl händisch in die Tabelle eingetragen.
 
 #+BEGIN_SRC python :exports both
-# Fibonacci-Reihe
-x = 5
-y = 5
-fib = [[0] * x for i in range(y)]
-fib[0][0] = 1
-for i in range(x * y):
-    for j in range (1, 3):
-        fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
-return fib
-
+    # Fibonacci-Reihe
+    x = 5
+    y = 5
+    fib = [[0] * x for i in range(y)]
+    fib[0][0] = 1
+    for i in range(x * y):
+        for j in range (1, 3):
+            fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
+    return fib
+    
 #+END_SRC
 
 #+RESULTS:
