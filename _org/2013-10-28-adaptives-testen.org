@@ -145,7 +145,7 @@ require(MASS)
 library(multicore)
 library(foreach)
 library(doMC)
-registerDoMC(5)
+registerDoMC(3)
 
 calculationtime <- proc.time()
 komus = read.table("data/data_komus_bin2.dat",header=TRUE) 
@@ -229,7 +229,7 @@ summe = data.frame()
 items = length(komusmult)
 #persons = length(komusmult[,1])
 #items = 50
-persons = 2
+persons = 3
 ############
 
 EEE = data.frame(matrix(ncol = 1, nrow = items+1))
@@ -243,20 +243,6 @@ names(RestEntropieSD) = 'kill'
 #+END_SRC
 
 #+RESULTS: statistic
-#+begin_example
-Lade nötiges Paket: MASS
-foreach: simple, scalable parallel programming from Revolution Analytics
-Use Revolution R for scalability, fault tolerance and more.
-http://www.revolutionanalytics.com
-Lade nötiges Paket: iterators
-Lade nötiges Paket: parallel
-
-Attache Paket: ‘parallel’
-
-The following object(s) are masked from ‘package:multicore’:
-
-    mclapply, mcparallel, pvec
-#+end_example
 
 **** Unbedingte und bedingte Entropie in normaler Reihenfolge
 #+NAME: statistic1
@@ -893,450 +879,368 @@ The following object(s) are masked from ‘package:multicore’:
 
 **** Experimenteller Code
 #+BEGIN_SRC R :session stat :exports code :results output :noweb yes
-                calculationtime <- proc.time()
-                
-                    ## initializing
-                    fitting = NULL
-                    Entropieall = NULL
-                    chances = NULL
-                    Restentropietemp = NULL
-                    fragen = NULL
-                    modell = NULL
-                    Restentropietemp = NULL
-                    multifragen = multifragenalt
-                    
-                    ## first item
-                    for (i in 1:length(komusmult)) {
-                        if (i %in% multifragen) {
-                            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
-                        } else {
-                            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
-                        }
-                    }
-                    
-                    chances = fitting
-                    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
-                    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
-                    Entropietemp = FUN.Entropietemp.IND(chances)
-                    fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))[1]]) == names(komusmult))[1]
-                    
-                    modell[[1]] = fitting[[fragen]]
-                    frageninit = fragen
-                    fitting = NULL
-                    Restentropie2 = NULL
-                    ## multicore calculation
-                #    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
-                    for (k in 1:persons) {
-                        fragen = frageninit
-                        Restentropie = NULL
-                        Restentropietemp2 = NULL
-                        Restentropietemp = NULL
-                        antwortmuster = vector(length=(length(komusmult)*2+1))
-    schongerechnet = NULL
-                        if (file.exists('database.dat')) {
-                            schongerechnet = read.table('database.dat')
-                        } else {
-            schongerechnet = NULL}
-                        antwortmuster[1] = fragen[1] + as.numeric(as.character(komusmult[k,fragen[1]]))/100
-        #                antwortmuster[2] = komusmult[k,fragen[1]]
-                        for (i in 2:items) {
-                            chances = NULL
-                            Entropietemp = NULL
-                            fitting = NULL
-                            fitting2 = NULL
-                            fittingplus = NULL
-                            fittingminus = NULL
-                            Entropietemp2 = NULL
-                            found = 0
-                            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-                            Liste = NULL
-                            foundit = 0
-                            ## prediction for all not-answerd questions
-                            if (file.exists('database.dat')) {
-                                for (m in 1:length(schongerechnet[,1])) {
-        #                            foundit=0
-                                    #for (z in ((1:length(fragen))*2-1)) {
-                                    #    for (y in ((1:length(fragen))*2-1)) {
-                                    #        if (sum((antwortmuster[z:(z+1)] == schongerechnet[m,y:(y+1)])*1) == 2) {
-                                    #            foundit = foundit + 1
-                                    #        }
-                                    #    }
-                                    #    if (foundit != ((z+2)/3)) {
-                                    #        break
-                                    #    }
-                                    #}
-                                    if (sum((sort(antwortmuster[1:length(fragen)]) == schongerechnet[m,1:length(fragen)])*1) == length(fragen)) {
-    if (schongerechnet[m,(length(fragen)+3)] == 0) {
-                                        found = schongerechnet[m,(length(fragen)+2)]
-                                        Restentropietemp[i-1] = schongerechnet[m,(length(fragen)+1)]
-                                        fragen = c(fragen, found)
-                                    }}
-         #                           if (foundit == length(fragen) && length(schongerechnet[m,]) > (length(fragen)*3) && schongerechnet[m,(length(fragen)*3+1)] != 0) {
-          #                              found = schongerechnet[m,(length(fragen)*3+1)]
-           #                             Restentropietemp[i-1] = schongerechnet[m,(length(fragen)*3)]
-            #                            fragen = c(fragen, found)
-             #                       }
-                                    
-                                    if (found != 0) {
-                                        break
-                                    }
-                                }
-                            }
-                            if (found == 0) {
-                                Liste =foreach(j=1:length(komusmult[-fragen])) %dopar% {
-                                    if (j %in% multifragen) {
-                                        fitting = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
-                                    } else {
-                                        fitting = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
-                                    }
-                                    
-                                    ## prediction for all not-answered questions after prediction
-                                    if (length(komusmult[-fragen]) > 1) {
-                                        multifragen2 = c(0,which(names(komusmult[-fragen][-j]) %in% names(komusmult[multifragenalt])))
-                                        for (n in 1:length(komusmult[-fragen][-j])) {
-                                            if (n %in% multifragen2) {
-                                                fitting2[[n]] = polr(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult)
-                                            } else {
-                                                fitting2[[n]] = glm(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult, family = "binomial"(link=logit))
-                                            }
-                                        }
-                                        
-                                        ## calculation of rest entropie for each possibility
-                                        tempdata = komusmult[k,]
-                                        ##tempdata[-fragen][j] = 0 #dies muss noch bearbeitet werden (chancen...)
-                                        <<fitting>>
-                                            
-                                            Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)
-                                        Restentropietemp2 = sum(Entropietemp)
-                                    } else {
-                                        Restentropietemp2 = 0 
-                                    }
-                                    return(c(list(fitting), list(Restentropietemp2)))   
-                                }
-                            }
-                                if (found == 0) {
-                                    Liste = unlist(Liste, recursive = FALSE)
-                                    
-                                    Restentropietemp2 = unlist(Liste[(1:(length(Liste)/2))*2])
-                                    fitting = Liste[(1:(length(Liste)/2))*2-1]
-                                                    #            fitting = Liste[1:length(komusmult[-fragen])]
-                                                    #            Restentropietemp2 =unlist(Liste[(length(komusmult[-fragen])+1):length(Liste)])
-                                    fragen = c(fragen, which(names(komusmult[-fragen][which(Restentropietemp2 == min(Restentropietemp2))[1]]) == names(komusmult))[1])
-                                    modell[[i]] = fitting[[which(Restentropietemp2 == min(Restentropietemp2))[1]]]
-                                    
-                                    <<fitting>>
-                                        chances = fitting
-                                    
-                                    Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-                                    Restentropietemp[i-1] = sum(Entropietemp)
-                                    
-                                } #else {
-                                                    #    fitting = Liste
-                                                    #                    modell[[i]] = fitting[[which(names(komusmult[found]) == names(komusmult[-fragen])) ]]
-                            
-                            
-                                                    #                }
-                            
-                            
-              #              antwortmuster[i*3-3] = Restentropietemp[i-1]
-                            antwortmuster[i] = fragen[i] + as.numeric(as.character(komusmult[k,fragen[i]]))/100
-        #                    antwortmuster[i*3-1] = komusmult[k,fragen[i]]
-                            if (found == 0) {
-                                temp = antwortmuster
-                                temp[1:(i-1)] = sort(antwortmuster[1:(i-1)])
-                                temp[i] = Restentropietemp[i-1]
-                                temp[i+1] = fragen[i]
-                                write(temp, file='database.dat', append=TRUE, ncolumns=length(antwortmuster))
-                            }
-                            plot(Restentropietemp, type='l', col=rgb(0,0.7,0.7))
-                        }
-                        ## calculation of last rest entropie
-                        if (length(komusmult) == items) {
-                            Restentropietemp[items] = 0
-                        } else {
-                            fitting = NULL
-                            multifragen = 0
-                            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-                            for (j in 1:length(komusmult[-fragen])) {
-                                if (j %in% multifragen) {
-                                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
-                                } else {
-                                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
-                                }
-                            }
-                            
-                            <<fitting>>
-                                
-                                Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-                            Restentropietemp[items] = sum(Entropietemp)
-                        }
-                        
-                        ## calculation of choosen modell
-                        multifragen = 0
-                        multifragen = c(multifragen,which(fragen %in% multifragenalt))
-                
-                        #Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], modell)
-                    #    return(c(Entropietemp, Restentropietemp))    
-                    }#})
-                    
-                    #Restentropietemp = (Entropieall[(items+1):(items*2),])
-                    #Entropieall = Entropieall[1:items,]
-                    
-                    SumSDtemp = sd(Entropieall[1,])
-                    for (i in 2:length(Entropieall[,1])) {
-                        SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
-                    }
-                    
-                    SumSD$indivbedsortpred = c(0,SumSDtemp)
-                    EEE$indivbedsortpred = c(0,rowMeans(Entropieall))
-                    RestEntropie$indivbedsortpred = c(0,rowMeans(Restentropietemp))
-                    RestEntropieSD$indivbedsortpred = c(0,apply(Restentropietemp, 1, sd))
-                    
-                    multifragen = multifragenalt
-                    EEE
-                    SumSD
-                    RestEntropie
-                    RestEntropieSD
+                                 calculationtime <- proc.time()
+                                 
+                                     ## initializing
+                                     fitting = NULL
+                                     Entropieall = NULL
+                                     chances = NULL
+                                     Restentropietemp = NULL
+                                     fragen = NULL
+                                     modell = NULL
+                                     Restentropietemp = NULL
+                                     multifragen = multifragenalt
+                                     
+                                     ## first item
+                                     for (i in 1:length(komusmult)) {
+                                         if (i %in% multifragen) {
+                                             fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+                                         } else {
+                                             fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+                                         }
+                                     }
+                                     
+                                     chances = fitting
+                                     chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
+                                     chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
+                                     Entropietemp = FUN.Entropietemp.IND(chances)
+                                     fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))[1]]) == names(komusmult))[1]
+                                     
+                                     modell[[1]] = fitting[[fragen]]
+                                     frageninit = fragen
+                                     fitting = NULL
+                                     Restentropie2 = NULL
+             Entropieall = matrix(nrow=persons,ncol=items)
+                                     ## multicore calculation
+                                 #    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
+                                     for (k in 1:persons) {
+                                         fragen = frageninit
+                                         Restentropie = NULL
+                                         Restentropietemp2 = NULL
+                                         Restentropietemp = NULL
+                                         calcu = 0
+                                         calcutime = proc.time()
+                                         antwortmuster = vector(length=(length(komusmult)+2))
+                                         if (file.exists('database.dat')) {
+                                             schongerechnet = read.table('database.dat')
+                                         }
+                                         antwortmuster[1] = fragen[1] + as.numeric(as.character(komusmult[k,fragen[1]]))/100
+                                                             #                antwortmuster[2] = komusmult[k,fragen[1]]
+                                         for (i in 2:items) {
+                                             chances = NULL
+                                             Entropietemp = NULL
+                                             fitting = NULL
+                                             fitting2 = NULL
+                                             fittingplus = NULL
+                                             fittingminus = NULL
+                                             Entropietemp2 = NULL
+                                             found = 0
+                                             multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+                                             Liste = NULL
+                                             foundit = 0
+                                             ## prediction for all not-answerd questions
+                                             if (exists("schongerechnet")) {
+                                                 for (m in 1:length(schongerechnet[,1])) {
+                                                     for (u in 1:length(fragen)) {
+                                                         if (sort(antwortmuster[1:length(fragen)])[u] != schongerechnet[m,u]) {
+                                                             break
+                                                         }
+                                                         if (schongerechnet[m,(length(fragen)+3)] == 0 && u == length(fragen)) {
+                                                             found = schongerechnet[m,(length(fragen)+2)]
+                                                             Restentropietemp[i-1] = schongerechnet[m,(length(fragen)+1)]
+                                                             fragen = c(fragen, found)
+                                                         }
+                                                     }
+                                                     if (found != 0) {
+                                                         break
+                                                     }
+                                                 }
+                                             }
+                                             if (found == 0) {
+                                                 calcu = calcu+1
+        isgood = NULL
+                                                 for (q in 1:length(komusmult[-fragen])) {
+                                                 if (q %in% multifragen) {
+                                                     fitting[[q]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][q])), data = komusmult)
+                                                 } else {
+                                                     fitting[[q]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][q])), data = komusmult, family = "binomial"(link=logit))
+                                                 }
+                                                 
+                                             }
+        Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
+    isgood = Entropietemp == max(Entropietemp)[1]
+        
+        
+                                                 Liste =foreach(j=1:length(komusmult[-fragen])) %dopar% {
+chance = NULL
+                                                    if (j %in% multifragen) {
+                                                    #    fitting = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+                                                        chance = predict(fitting[[j]], komusmult[k,], type="probs")
+                                                    } else {
+    #                                                    fitting = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                                                        chance = predict(fitting[[j]], komusmult[k,], type="response")
+                                                        chance[2] = 1-chance[1]
+                                                    }
+        #                                             Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
+                                               #      tempdata = komusmult[k,]
+                                               #          if (j %in% multifragen) {
+                                               #              for (s in 1:length(chance)) {
+                                               #                  tempdata[-fragen][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
+                                               #                  Entropietemp = FUN.EntroMC(multifragen,tempdata, fitting)*chance[s]
+                                               #                  Restentropietemp2[s] = sum(Entropietemp)
+                                               #              }
+                                               #              Restentropietemp2 = sum(Restentropietemp2)
+                                               #          } else {
+                                               #              tempdata[-fragen][j] = 1
+                                               #              Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[1]
+                                               #              Restentropietemp2 = sum(Entropietemp)
+                                               #              tempdata[-fragen][j] = 0
+                                               #              Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[2]
+                                               #              Restentropietemp2[2] = sum(Entropietemp)
+                                               #              Restentropietemp2 = sum(Restentropietemp2)
+                                               #          }
+                                               #          fitting2=NULL
+           
+           
+           
+                                                         Restentropietemp2 = NULL       
+                                                    ## prediction for all not-answered questions after prediction
+                                                    if (length(komusmult[-fragen]) > 1 && isgood[j]) {
+                                                        multifragen2 = c(0,which(names(komusmult[-fragen][-j]) %in% names(komusmult[multifragenalt])))
+                                                        for (n in 1:length(komusmult[-fragen][-j])) {
+                                                            if (n %in% multifragen2) {
+                                                                fitting2[[n]] = polr(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult)
+                                                            } else {
+                                                                fitting2[[n]] = glm(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult, family = "binomial"(link=logit))
+                                                            }
+                                                        }
+                                                        
+                                                        ## calculation of rest entropie for each possibility
+                                                        tempdata = komusmult[k,]
+                                                        if (j %in% multifragen) {
+                                                            for (s in 1:length(chance)) {
+                                                                tempdata[-fragen][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
+                                                                Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[s]
+                                                                Restentropietemp2[s] = sum(Entropietemp)
+                                                            }
+                                                            Restentropietemp2 = sum(Restentropietemp2)
+                                                        } else {
+                                                            tempdata[-fragen][j] = 1
+                                                            Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[1]
+                                                            Restentropietemp2 = sum(Entropietemp)
+                                                            tempdata[-fragen][j] = 0
+                                                            Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[2]
+                                                            Restentropietemp2[2] = sum(Entropietemp)
+                                                            Restentropietemp2 = sum(Restentropietemp2)
+                                                        }
+                                                        fitting2=NULL
+                                                    } else { 
+                                                        if (isgood[j]) {
+                                                            Restentropietemp2 = 0 
+                                                        } else {
+                                                            Restentropietemp2 = 55555555
+                                                        }
+                                                    }
+                                                    return(Restentropietemp2)   
+                                                }
+                                                 
+    #                                             Liste = unlist(Liste, recursive = FALSE)
+    #                                             
+    #                                             Restentropietemp2 = unlist(Liste[(1:(length(Liste)/2))*2])
+    #                                             fitting = Liste[(1:(length(Liste)/2))*2-1]
+     Restentropietemp2 = simplify2array(Liste)                                                       
+                                                 fragen = c(fragen, which(names(komusmult[-fragen][which(Restentropietemp2 == min(Restentropietemp2))[1]]) == names(komusmult))[1])
+                                                 modell[[i]] = fitting[[which(Restentropietemp2 == min(Restentropietemp2))[1]]]
+    
+    
+                                                 <<fitting>>
+                                                     chances = fitting
+                                                 
+                                                 Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
+                                                 Restentropietemp[i-1] = sum(Entropietemp)
+                                                 
+                                             } 
+                                             antwortmuster[i] = fragen[i] + as.numeric(as.character(komusmult[k,fragen[i]]))/100
+                                                          
+                                             if (found == 0) {
+                                                 temp = antwortmuster
+                                                 temp[1:(i-1)] = sort(antwortmuster[1:(i-1)])
+                                                 temp[i] = Restentropietemp[i-1]
+                                                 temp[i+1] = fragen[i]
+                                                 write(temp, file='database.dat', append=TRUE, ncolumns=length(antwortmuster))
+                                             }
+                                             plot(Restentropietemp, type='l', col=rgb(0,0.7,0.7))
+                                         }
+                                         ## calculation of last rest entropie
+                                         if (length(komusmult) == items) {
+                                             Restentropietemp[items] = 0
+                                         } else {
+                                             fitting = NULL
+                                             multifragen = 0
+                                             multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+                                             for (j in 1:length(komusmult[-fragen])) {
+                                                 if (j %in% multifragen) {
+                                                     fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+                                                 } else {
+                                                     fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                                                 }
+                                             }
+                                             
+                                             <<fitting>>
+                                                 
+                                                 Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
+                                             Restentropietemp[items] = sum(Entropietemp)
+                                         }
+                                         
+                                         ## calculation of choosen modell
+                                         multifragen = 0
+                                         multifragen = c(multifragen,which(fragen %in% multifragenalt))
+                                         if (calcu != 0) {
+                                             temp = vector(length=(length(komusmult)+2))
+                                             temp[2] = k
+                                             temp[3] = (proc.time() - calcutime)[3]
+                                             temp[4] = calcu
+                                             write(temp, file='database.dat', append=TRUE, ncolumns=length(antwortmuster))
+                                         }
+                                                         #Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], modell)
+                                                         #    return(c(Entropietemp, Restentropietemp))
+                                         Entropieall[k,] = Restentropietemp
+                                     }#})
+                 
+                                                         #Restentropietemp = (Entropieall[(items+1):(items*2),])
+                                                         #Entropieall = Entropieall[1:items,]
+                 
+             #    SumSDtemp = sd(Entropieall[1,])
+              #   for (i in 2:length(Entropieall[,1])) {
+               #      SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
+                # }
+                 
+                 #SumSD$indivbedsortpred = c(0,SumSDtemp)
+                 #EEE$indivbedsortpred = c(0,rowMeans(Entropieall))
+                 RestEntropie$indivbedsortpred = c(0,colMeans(Entropieall))
+                 RestEntropieSD$indivbedsortpred = c(0,apply(Entropieall, 2, sd))
+                 
+                 multifragen = multifragenalt
+                 #EEE
+                 #SumSD
+                 RestEntropie
+                 RestEntropieSD
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
- Fehler in if (sum((sort(antwortmuster[1:length(fragen)]) == schongerechnet[m,  (von #40) : 
-  Fehlender Wert, wo TRUE/FALSE nötig ist
-Fehler in var(as.vector(x), na.rm = na.rm) : 'x' ist NULL
- Fehler in colSums(Entropieall[1:i, ]) (von #2) : 
-  'x' must be an array of at least two dimensions
-Fehler: Objekt 'SumSDtemp' nicht gefunden
-Fehler in rowMeans(Entropieall) : 
-  'x' muss ein Array mit mindestens zwei Dimensionen sein
-Fehler in rowMeans(Restentropietemp) : 
-  'x' muss ein Array mit mindestens zwei Dimensionen sein
-Fehler in apply(Restentropietemp, 1, sd) : 
-  dim(X) muss positive Länge haben
-   kill
-1    NA
-2    NA
-3    NA
-4    NA
-5    NA
-6    NA
-7    NA
-8    NA
-9    NA
-10   NA
-11   NA
-12   NA
-13   NA
-14   NA
-15   NA
-16   NA
-17   NA
-18   NA
-19   NA
-20   NA
-21   NA
-22   NA
-23   NA
-24   NA
-25   NA
-26   NA
-27   NA
-28   NA
-29   NA
-30   NA
-31   NA
-32   NA
-33   NA
-34   NA
-35   NA
-36   NA
-37   NA
-38   NA
-39   NA
-40   NA
-41   NA
-42   NA
-43   NA
-44   NA
-45   NA
-46   NA
-47   NA
-48   NA
-49   NA
-50   NA
-51   NA
-52   NA
-53   NA
-54   NA
-55   NA
-   kill
-1    NA
-2    NA
-3    NA
-4    NA
-5    NA
-6    NA
-7    NA
-8    NA
-9    NA
-10   NA
-11   NA
-12   NA
-13   NA
-14   NA
-15   NA
-16   NA
-17   NA
-18   NA
-19   NA
-20   NA
-21   NA
-22   NA
-23   NA
-24   NA
-25   NA
-26   NA
-27   NA
-28   NA
-29   NA
-30   NA
-31   NA
-32   NA
-33   NA
-34   NA
-35   NA
-36   NA
-37   NA
-38   NA
-39   NA
-40   NA
-41   NA
-42   NA
-43   NA
-44   NA
-45   NA
-46   NA
-47   NA
-48   NA
-49   NA
-50   NA
-51   NA
-52   NA
-53   NA
-54   NA
-55   NA
-   kill
-1    NA
-2    NA
-3    NA
-4    NA
-5    NA
-6    NA
-7    NA
-8    NA
-9    NA
-10   NA
-11   NA
-12   NA
-13   NA
-14   NA
-15   NA
-16   NA
-17   NA
-18   NA
-19   NA
-20   NA
-21   NA
-22   NA
-23   NA
-24   NA
-25   NA
-26   NA
-27   NA
-28   NA
-29   NA
-30   NA
-31   NA
-32   NA
-33   NA
-34   NA
-35   NA
-36   NA
-37   NA
-38   NA
-39   NA
-40   NA
-41   NA
-42   NA
-43   NA
-44   NA
-45   NA
-46   NA
-47   NA
-48   NA
-49   NA
-50   NA
-51   NA
-52   NA
-53   NA
-54   NA
-55   NA
-   kill
-1    NA
-2    NA
-3    NA
-4    NA
-5    NA
-6    NA
-7    NA
-8    NA
-9    NA
-10   NA
-11   NA
-12   NA
-13   NA
-14   NA
-15   NA
-16   NA
-17   NA
-18   NA
-19   NA
-20   NA
-21   NA
-22   NA
-23   NA
-24   NA
-25   NA
-26   NA
-27   NA
-28   NA
-29   NA
-30   NA
-31   NA
-32   NA
-33   NA
-34   NA
-35   NA
-36   NA
-37   NA
-38   NA
-39   NA
-40   NA
-41   NA
-42   NA
-43   NA
-44   NA
-45   NA
-46   NA
-47   NA
-48   NA
-49   NA
-50   NA
-51   NA
-52   NA
-53   NA
-54   NA
-55   NA
+   indivbedsortpred  indivbedsort
+1        0.00000000  5.512415e+01
+2       51.35907667  5.135908e+01
+3       48.81582000  4.881582e+01
+4       46.75794333  4.562663e+01
+5       45.51642000  4.325132e+01
+6       43.51850333  4.112426e+01
+7       42.37757333  4.042258e+01
+8       40.79356000  3.854947e+01
+9       39.57111000  3.716378e+01
+10      38.85900000  3.618153e+01
+11      38.49110333  3.519636e+01
+12      37.39650667  3.388109e+01
+13      36.53168000  3.279737e+01
+14      35.12376000  3.180080e+01
+15      34.01320667  3.026254e+01
+16      33.22901667  2.864349e+01
+17      32.61010000  2.724371e+01
+18      31.95430667  2.623535e+01
+19      31.09503667  2.508785e+01
+20      29.53204333  2.405066e+01
+21      28.77588667  2.277454e+01
+22      27.71298667  2.177713e+01
+23      26.92562000  2.034057e+01
+24      26.31079000  1.946257e+01
+25      25.54026333  1.803385e+01
+26      24.33001333  1.721388e+01
+27      22.75637333  1.597181e+01
+28      21.28342667  1.498193e+01
+29      20.29931333  1.396405e+01
+30      19.24166667  1.307385e+01
+31      18.20082333  1.191703e+01
+32      17.75165667  1.097635e+01
+33      16.88355000  1.016586e+01
+34      15.95108333  9.202684e+00
+35      15.69948333  7.899795e+00
+36      14.97986333  7.097354e+00
+37      14.29918667  6.081928e+00
+38      13.74156000  5.460851e+00
+39      12.78344000  4.772650e+00
+40      11.90049333  4.067948e+00
+41      11.14289667  3.413253e+00
+42      10.60420000  2.846556e+00
+43       9.76043400  2.350530e+00
+44       8.00142567  1.769718e+00
+45       7.27654133  1.480445e+00
+46       7.18327067  1.097974e+00
+47       6.65206400  7.927647e-01
+48       5.28410967  5.259278e-01
+49       4.85331833  3.187139e-01
+50       3.26410533  1.914815e-01
+51       2.61981200  6.822902e-02
+52       1.88945100  1.518414e-02
+53       0.63633380  3.023751e-03
+54       0.01750709 -5.770756e-06
+55       0.00000000  0.000000e+00
+   indivbedsortpred indivbedsort
+1        0.00000000 0.000000e+00
+2        0.73626593 7.362653e-01
+3        0.31769969 3.176987e-01
+4        0.58883257 4.793886e-01
+5        0.47281875 5.785675e-01
+6        1.03360931 6.393388e-01
+7        1.35424266 9.577214e-01
+8        1.21930633 1.274269e+00
+9        1.32488984 2.027016e+00
+10       1.30099273 1.909940e+00
+11       0.80615468 1.643141e+00
+12       0.95669944 1.960404e+00
+13       0.90708640 1.964451e+00
+14       0.62132121 1.529076e+00
+15       1.18971368 1.878734e+00
+16       0.44513378 2.053826e+00
+17       0.45204319 2.220281e+00
+18       0.36223211 2.052133e+00
+19       0.33878530 1.876594e+00
+20       0.32835853 2.009701e+00
+21       0.56435673 1.974349e+00
+22       0.83285755 1.933595e+00
+23       0.34692387 2.002850e+00
+24       0.35767683 1.692322e+00
+25       0.50423868 1.799258e+00
+26       0.54804700 1.725785e+00
+27       0.45201665 1.812078e+00
+28       1.05109429 1.929145e+00
+29       0.96785497 1.743920e+00
+30       1.13072874 1.755639e+00
+31       1.21593032 1.502964e+00
+32       1.81961329 1.570259e+00
+33       1.79432292 1.452640e+00
+34       1.49351920 1.378060e+00
+35       1.41433285 1.133211e+00
+36       0.79995535 1.130159e+00
+37       0.52543705 9.339317e-01
+38       0.14859745 7.751506e-01
+39       0.11536975 9.749697e-01
+40       0.28325276 8.970542e-01
+41       0.40936682 8.093955e-01
+42       0.34851890 6.485482e-01
+43       0.19618676 6.307331e-01
+44       0.44100079 5.379630e-01
+45       0.10431056 6.920624e-01
+46       0.36854398 5.264797e-01
+47       0.37862328 3.919423e-01
+48       0.46464706 2.473037e-01
+49       0.68695282 2.055540e-01
+50       0.50191052 1.517166e-01
+51       0.61925114 3.453077e-02
+52       0.88309830 7.483717e-03
+53       0.32651072 4.935855e-03
+54       0.01060055 7.496422e-06
+55       0.00000000 0.000000e+00
 #+end_example
 
 
@@ -1399,63 +1303,63 @@ mup = c(fragen, 0:(length(komusmult)-length(fragen))*0)
 
 #+RESULTS: statisticend
 #+begin_example
-    indivbedsort
-1   0.000000e+00
-2   2.721777e+00
-3   2.427458e+00
-4   2.126014e+00
-5   1.992156e+00
-6   1.575451e+00
-7   9.999204e-01
-8   9.998602e-01
-9   9.989127e-01
-10  9.991282e-01
-11  9.995284e-01
-12  9.999209e-01
-13  9.972336e-01
-14  9.984596e-01
-15  9.969846e-01
-16  9.931958e-01
-17  9.923221e-01
-18  9.995902e-01
-19  9.992221e-01
-20  9.993786e-01
-21  9.875261e-01
-22  9.788383e-01
-23  9.863772e-01
-24  9.813786e-01
-25  9.838993e-01
-26  9.762137e-01
-27  9.867093e-01
-28  9.616413e-01
-29  9.840549e-01
-30  9.854389e-01
-31  9.882042e-01
-32  9.831196e-01
-33  9.113060e-01
-34  9.166238e-01
-35  9.292785e-01
-36  8.245181e-01
-37  7.587426e-01
-38  7.680600e-01
-39  6.930407e-01
-40  6.497156e-01
-41  6.146780e-01
-42  6.153897e-01
-43  4.743017e-01
-44  4.623109e-01
-45  3.508635e-01
-46  4.273289e-01
-47  3.170230e-01
-48  3.310405e-01
-49  2.412251e-01
-50  1.647116e-01
-51  1.622951e-01
-52  5.534671e-02
-53  9.756421e-03
-54  4.359435e-03
-55 -7.934786e-06
-[1] 129.069 116.294 137.056 278.572 294.585 227.430 234.996 540.810
+    indivbedsort indivbedsortpred
+1   0.000000e+00                0
+2   2.721777e+00                1
+3   2.432670e+00                1
+4   2.154384e+00                1
+5   1.975223e+00                1
+6   1.645492e+00                1
+7   9.998728e-01                1
+8   1.002401e+00                1
+9   9.992680e-01                1
+10  9.992376e-01                1
+11  9.996730e-01                1
+12  9.999130e-01                1
+13  9.981415e-01                1
+14  9.989579e-01                1
+15  9.971855e-01                1
+16  9.948196e-01                1
+17  9.901890e-01                1
+18  9.884324e-01                1
+19  9.968586e-01                1
+20  9.905953e-01                1
+21  9.822517e-01                1
+22  9.740095e-01                1
+23  9.781170e-01                1
+24  9.703556e-01                1
+25  9.709585e-01                1
+26  9.744011e-01                1
+27  9.852493e-01                1
+28  9.480422e-01                1
+29  9.207892e-01                1
+30  9.091900e-01                1
+31  9.027296e-01                1
+32  8.991390e-01                1
+33  8.393290e-01                1
+34  8.459918e-01                1
+35  8.447474e-01                1
+36  7.623495e-01                1
+37  7.030355e-01                1
+38  6.906098e-01                1
+39  6.707320e-01                1
+40  6.275486e-01                1
+41  5.542715e-01                1
+42  5.458267e-01                1
+43  4.408620e-01                1
+44  4.240422e-01                1
+45  3.365356e-01                1
+46  3.718148e-01                1
+47  2.759980e-01                1
+48  2.811121e-01                1
+49  1.985363e-01                1
+50  1.345265e-01                1
+51  1.214295e-01                1
+52  5.141231e-02                1
+53  1.179508e-02                1
+54  3.029522e-03                1
+55 -5.770756e-06                1
+[1]  843.260 1022.777 1015.817  635.640  463.285
 #+end_example
 
 **** Formel für die Modellanpassung
