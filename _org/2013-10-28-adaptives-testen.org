@@ -10,7 +10,7 @@ Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung 
 Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
 um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
 
-#+BEGIN_SRC ditaa :file /images/adaptiveditaa.png :exports code
+#+BEGIN_SRC ditaa :file /images/adaptiveditaa.png :exports results
 
 +---------+   +-----------------+   +---------------+
 | Item    |-->| Modellschätzung |-->|   Schätzung   |
@@ -130,17 +130,21 @@ Verfahren direkt einen Nutzen erbringt, sollte daran sichtbar sein, dass die Lö
 retrospektiv vorhergesagt werden können und somit davon außgegangen werden kann, dass auch bei aktuellen Testungen
 die Schätzungen besser sind und somit effektiver gemessen werden kann.
 
-* Nicht adaptives Testen
- 
-* Adaptives Testen
-
 ** Umsetzung
+Die Umsetzung wurde mit R bewerkstelligt. Hier traten auch schnell Probleme auf. So wurde die Rechenzeit bei etwas komplizierteren Modellen sehr lang,
+was natürlich auch an meinem Computer liegt. Nichts desto trotz ergaben sich Situationen, in denen der Computer 5 Tage lang rechnen hätte müssen.
+
+In anderen Situationen wurde das komplette Ram des Computers aufgezehrt usw.
    
 *** Programmierung
    
 **** Initialisierung
+
+Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um grundlegende Dinge, wie Funktionen, die an vielen Stellen benötigt werden, die
+Daten usw. bereitgestellt werden. Ferner werden, wo möglich, Berechnungen mit dieser Initialisierung parallelisiert.
+
 #+NAME: statistic
-#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+#+BEGIN_SRC R :exports code :results none :noweb yes
 require(MASS)
 library(multicore)
 library(foreach)
@@ -243,62 +247,114 @@ names(RestEntropieSD) = 'kill'
 #+END_SRC
 
 #+RESULTS: statistic
+#+begin_example
+Lade nötiges Paket: MASS
+foreach: simple, scalable parallel programming from Revolution Analytics
+Use Revolution R for scalability, fault tolerance and more.
+http://www.revolutionanalytics.com
+Lade nötiges Paket: iterators
+Lade nötiges Paket: parallel
+
+Attache Paket: ‘parallel’
+
+The following object(s) are masked from ‘package:multicore’:
+
+    mclapply, mcparallel, pvec
+#+end_example
 
 **** Unbedingte und bedingte Entropie in normaler Reihenfolge
+Dieser verhältnismäßig simple Code berechnet die Entropie über die klassische Itemschwierigkeit und die Entropie über die durch binärlogistische
+Regressionen vorhergesagte Itemschwierigkeit in der ursprünglichen Reihenfolge.
+Zudem wird bei zweiter Berechnung noch angegeben, wie viel Restentropie nach jeder Antwort noch zu erwarten ist.
 #+NAME: statistic1
-#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
-    modell = NULL
-    
-    multifragen = multifragen[multifragen <= items]
-    if (1 %in% multifragen) {
-        modell[[1]] = polr(reformulate('1', names(komusmult[1])), data = komusmult)
-    } else {
-        modell[[1]] = glm(reformulate('1', names(komusmult[1])), data = komusmult, family = "binomial"(link=logit))
-    }
-    
-    for (i in 2:items) {
-        if (i %in% multifragen) {
-            modell[[i]] = polr(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult)
+#+BEGIN_SRC R :exports code :results output :noweb yes
+        modell = NULL
+        
+        multifragen = multifragen[multifragen <= items]
+        if (1 %in% multifragen) {
+            modell[[1]] = polr(reformulate('1', names(komusmult[1])), data = komusmult)
         } else {
-            modell[[i]] = glm(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+            modell[[1]] = glm(reformulate('1', names(komusmult[1])), data = komusmult, family = "binomial"(link=logit))
         }
-    }
+        
+        for (i in 2:items) {
+            if (i %in% multifragen) {
+                modell[[i]] = polr(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult)
+            } else {
+                modell[[i]] = glm(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+            }
+        }
+        
+        fitting = modell
+        <<fitting>>
+        chances = FUN.Chances(fitting)
+        
+        Entropietemp = FUN.Entropietemp(chances)
+        
+        ### Without relations ###
+        fitting = lapply(fitting, update, ~ 1)
+        chances2 = FUN.Chances(fitting)
+        
+        Entropietemp2 = FUN.Entropietemp(chances2)
+        
+        multifragen = multifragenalt
+        
+    fragen = NULL
+    Restentropietemp = NULL
+        for (i in 1:items) {
+            Entropietemp3 = NULL
+            fitting3 = NULL
+            if (i == length(komusmult)) {
+                Restentropietemp[[i]] = Restentropietemp[[1]]*0
+            } else {
+                fragen = 1:i
+                multifragen = which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt]))
+                
+                for (j in 1:length(komusmult[-fragen])) {
+                    if (j %in% multifragen) {
+                        fitting3[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+                    } else {
+                        fitting3[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                    }
+                }
+                <<fitting>>
+                    chances3 = FUN.Chances(fitting3)
+                
+                Entropietemp3 = FUN.Entropietemp(chances3)
+                Restentropietemp[[i]] = rowSums(Entropietemp3)
+            }
+            
+        }
     
-    fitting = modell
-    <<fitting>>
-    chances = FUN.Chances(fitting)
+        Restentropietemp = simplify2array(Restentropietemp)
+        
+        RestEntropie$bedunsort = c(0,colMeans(Restentropietemp))
+        RestEntropieSD$bedunsort = c(0,apply(Restentropietemp, 2, sd))
     
-    Entropietemp = FUN.Entropietemp(chances)
     
-    ### Without relations ###
-    fitting = lapply(fitting, update, ~ 1)
-    chances2 = FUN.Chances(fitting)
     
-    Entropietemp2 = FUN.Entropietemp(chances2)
-    
-    multifragen = multifragenalt
-    
-    SumSDtemp = sd(Entropietemp[,1])
-    for (i in 2:length(Entropietemp[1,])) {
-        SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
-    }
-    
-    SumSD$bedunsort = c(0,SumSDtemp)
-    
-    EEE$bedunsort = c(0,colMeans(Entropietemp))
-    EEE$unbedunsort = c(0,colMeans(Entropietemp2))
-    EEE$unbedsort = c(0,sort(colMeans(Entropietemp2), decreasing =TRUE))
-    Entropietemp2 = data.frame(Entropietemp2)
-    names(Entropietemp2) = names(komusmult[1:length(Entropietemp2)])    
+        SumSDtemp = sd(Entropietemp[,1])
+        for (i in 2:length(Entropietemp[1,])) {
+            SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+        }
+        
+        SumSD$bedunsort = c(0,SumSDtemp)
+        
+        EEE$bedunsort = c(0,colMeans(Entropietemp))
+        EEE$unbedunsort = c(0,colMeans(Entropietemp2))
+        EEE$unbedsort = c(0,sort(colMeans(Entropietemp2), decreasing =TRUE))
+        Entropietemp2 = data.frame(Entropietemp2)
+        names(Entropietemp2) = names(komusmult[1:length(Entropietemp2)])    
+    EEE
+    RestEntropie
 #+END_SRC
 
-#+RESULTS: statistic1
-:  Warnmeldung:
-: glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1 aufgetreten
-
 **** Bedingte, sortierte Entropie
+Hier werden die Items schlicht nach dem durchschnittlichen Entropiegehalt sortiert, bevor die bedingte Entropie mit Regressionen berechnet wird.
+Dies verbessert die resultierende Kurve schon um einiges, der Entropiegewinn ist so tendenziell am Anfang weit höher als am Ende, trotz dass gleich
+viel Entropie innerhalb des kompletten Durchlaufes ermittelt wurde.
 #+NAME: statistic2
-#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
     modell = NULL
     chances = NULL
     fitting = NULL
@@ -365,31 +421,12 @@ names(RestEntropieSD) = 'kill'
     multifragen = multifragen.alt
 #+END_SRC
 
-#+RESULTS: statistic2
-#+begin_example
- [1] "D34a"     "D41d"     "D32"      "D21d"     "D23b"     "D4235"   
- [7] "D119b13"  "D11613"   "D114a"    "D41f1"    "D113a56"  "D110b12b"
-[13] "D113a16"  "D25a"     "D114d"    "D21c22"   "D113a26"  "D114c"   
-[19] "D36a"     "D24b"     "D115a23"  "D17"      "D37c"     "D110a35" 
-[25] "D41f2"    "D110a25"  "D21c12"   "D26a55"   "D41f3"    "D43a33"  
-[31] "D36b"     "D1916"    "D4215"    "D31a"     "D118eMCe" "D24e"    
-[37] "D110a15"  "D45a14"   "D12022"   "D12012"   "D119a"    "D37b"    
-[43] "D44a44"   "D1926"    "X.D1124"  "D31b"     "D24a"     "D43a23"  
-[49] "D45a24"   "D45b26"   "D26b2"    "D115c12"  "D26b1"    "D24h"
-[1] 18 24 25 37 38 43
- Warnmeldungen:
-1: glm.fit: fitted probabilities numerically 0 or 1 occurred 
-2: glm.fit: fitted probabilities numerically 0 or 1 occurred 
-3: glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1 aufgetreten 
-4: glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1 aufgetreten 
-5: glm.fit: Algorithmus konvergierte nicht 
-6: glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1 aufgetreten 
-7: glm.fit: Angepasste Wahrscheinlichkeiten mit numerischem Wert 0 oder 1 aufgetreten
-#+end_example
-
 **** Durchschnittlich bedingtsortierte Entropie
+Dieses Verfahren ist bereits weit rechenintensiver, es wird nacheinander das Item ausgewählt, welches durchschnittlich die Entropie am meisten senkt.
+Es wird also nach der Erfassung eines Items dieses miteinbezogen für kommende Regressionen. Insgesamt ist dies aber noch nicht individualisiert und
+dementsprechen nicht adaptiv.
 #+NAME: statistic3
-#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
     fragen = NULL
     modell = NULL
     Restentropietemp = NULL
@@ -472,13 +509,15 @@ names(RestEntropieSD) = 'kill'
     RestEntropieSD$durchschbedsort = c(0,apply(Restentropietemp, 2, sd))
 #+END_SRC
 
-#+RESULTS: statistic3
-: [1] 38
-:  Es gab 50 oder mehr Warnungen (Anzeige der ersten 50 mit warnings())
-
 **** Individuellbedingtsortierte Entropie
+Hier wird das zuletzt genannte Verfahren individualisiert, was den Rechenaufwand in diesem Fall 319 mal höher macht. Das Ergebniss ist jedoch bereits
+ein echt adaptiver Test. Somit ist die Entropiekurve nun auch viel stärker gekrümmt (hat also eine größere zweite Ableitung). Somit kann unter kleinem
+Informationsverlust der Test stark verkürzt werden.
+
+Ideal wäre ein Itempool, der nicht komplett erschöpft wird in einer Testung. Somit könnte man berechnen, wie lang ein nichtadaptiver im Vergleich zu einem 
+gleichpräzisen adaptiven Test ist.
 #+NAME: statistic4
-#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
     ## initializing
     Entropieall = NULL
     chances = NULL
@@ -578,11 +617,13 @@ names(RestEntropieSD) = 'kill'
     multifragen = multifragenalt
 #+END_SRC
 
-#+RESULTS: statistic4
-
 **** Individuellbedingtsortierte Entropie mit Trennschärfe
+Ein nicht gut gelungener Versuch, nicht nur die Entropie als Auswahlkriterium zu nehmen. Dies ist deswegen sinnvoll, da Items vorstellbar sind mit hoher
+Entropie, die aber mit dem Test wenig zu tun haben (z.B. eine Frage nach der Schuhgröße hat vermutlich eine sehr hohe Entropie, hat aber vermutlich wenig
+mit musikalischer Kompetenz zu tun). Somit macht das bisherige Verfahren die Annahme, dass der Itempool sehr gut konstruiert ist. Dementsprechend kann 
+man das bisherige Verfahren sicher nicht als robust bezeichnen.
 #+NAME: statistic5
-#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
     Entropieall = NULL
     chances = NULL
     beta = NULL
@@ -669,11 +710,26 @@ names(RestEntropieSD) = 'kill'
     RestEntropieSD$indivbedsorttrenn = c(0,apply(Restentropietemp,1 ,sd))
 #+END_SRC
 
-#+RESULTS: statistic5
-
 **** Individuellbedingtsortierte Entropie mit Prädiktion
+Hier wird nun die Entropie rekursiv berechnet. Es wird nicht nur geschaut, welches Item die meiste Entropie besitzt, sondern es werden für jedes Item alle
+Antwortmöglichkeiten simuliert und mit dieser Simulation die verbleibende Entropie im gesamten Test
+errechnet, diese mit der Chance der simulierten Antwort gewichtet und aufaddiert mit den gewichteten anderen Antwortmöglichkeiten.
+
+Dieses Modell umgeht also das Problem der vorherigen beiden. Es ist sehr robust, weil immer auch berechnet wird, wie sehr sich das auserwählte Item mit all
+seinen Antwortmöglichkeiten auf die gesamte Restentropie auswirkt. Dies ist eine mächtigere Form der Trennschärfe, weil sie nicht starr, sondern
+antwortmusterspezifisch ist.
+
+Dieses Modell bringt die rechnerischen Anforderungen auf ein neues Niveau, sie werden nochmals ungefähr 30 mal höher. Als Konsequenz daraus habe ich hier
+eine Datenbank mit implementiert, die einerseits bereits berechnetes speichert um mir wiederholte Arbeit zu ersparen und andererseits stets schaut,
+ob Frage-Antwort-Kombinationen bereits bei anderen Schülern vorgekommen ist, um mit Hilfe dieses Wissens hin und wieder einzelne Rechnungen zu ersparen.
+
+Zunächst könnte man denken, dass es bei rund 50 binären Items $2^50$ Möglichkeiten der Antwortmuster gibt, was die Datenbank als sinnlos erscheinen lässt.
+Jedoch muss bedacht werden, dass die Antwort Reihenfolge in der aktuellen Regression keine Rolle spielt. Beantwortet man Item a, b, und c richtig und
+bekommt daraufhin Item c, so würde man dies genauso bekommen, wenn man b, c und dann erst a richtig beantwortet, was die Sinnhaftigkeit der Datenbank
+deutlich steigert. Zudem werden manche Antwortmuster und manche Items gehäuft vorkommen, weil sie entweder besonders qualitativ, oder besonders »normal« sind.
+Im Moment fangen beispielsweise alle Schüler mit dem gleichen, maximal informativen Item an, weil noch keine Vorinformation über die Schüler vorhanden ist.
 #+NAME: statistic6
-#+BEGIN_SRC R :session stat :exports code :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
     ## initializing
     fitting = NULL
     Entropieall = NULL
@@ -878,7 +934,7 @@ names(RestEntropieSD) = 'kill'
 #+END_SRC
 
 **** Experimenteller Code
-#+BEGIN_SRC R :session stat :exports code :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
                                  calculationtime <- proc.time()
                                  
                                      ## initializing
@@ -1018,12 +1074,15 @@ chance = NULL
                                                         ## calculation of rest entropie for each possibility
                                                         tempdata = komusmult[k,]
                                                         if (j %in% multifragen) {
-                                                            for (s in 1:length(chance)) {
-                                                                tempdata[-fragen][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
-                                                                Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[s]
-                                                                Restentropietemp2[s] = sum(Entropietemp)
-                                                            }
-                                                            Restentropietemp2 = sum(Restentropietemp2)
+                                                #            for (s in 1:length(chance)) {
+                                                #                tempdata[-fragen][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
+                                                #                Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[s]
+                                                #                Restentropietemp2[s] = sum(Entropietemp)
+#                                                            }
+                                                #            Restentropietemp2 = sum(Restentropietemp2)
+Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)
+Restentropietemp2 = sum(Entropietemp)
+
                                                         } else {
                                                             tempdata[-fragen][j] = 1
                                                             Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[1]
@@ -1043,6 +1102,7 @@ chance = NULL
                                                     }
                                                     return(Restentropietemp2)   
                                                 }
+                                                 
                                                  
     #                                             Liste = unlist(Liste, recursive = FALSE)
     #                                             
@@ -1244,17 +1304,10 @@ chance = NULL
 #+end_example
 
 
-**** Exp2
-#+BEGIN_SRC R :session stat :results output
-
-mupp = vector(length = length(komusmult)*2)
-mup = c(fragen, 0:(length(komusmult)-length(fragen))*0)
-
-#+END_SRC
-
 **** Schlussberechnungen
+Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um diese dann gut zeichnen zu können.
 #+NAME: statisticend
-#+BEGIN_SRC R :session stat :exports both :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
     if (names(EEE[1]) == 'kill') {
         EEE = EEE[-1]
     }
@@ -1297,80 +1350,23 @@ mup = c(fragen, 0:(length(komusmult)-length(fragen))*0)
     } else {
         benchmark = (proc.time() - calculationtime)[3]
     }
-    EEE
-    benchmark
 #+END_SRC
 
-#+RESULTS: statisticend
-#+begin_example
-    indivbedsort indivbedsortpred
-1   0.000000e+00                0
-2   2.721777e+00                1
-3   2.432670e+00                1
-4   2.154384e+00                1
-5   1.975223e+00                1
-6   1.645492e+00                1
-7   9.998728e-01                1
-8   1.002401e+00                1
-9   9.992680e-01                1
-10  9.992376e-01                1
-11  9.996730e-01                1
-12  9.999130e-01                1
-13  9.981415e-01                1
-14  9.989579e-01                1
-15  9.971855e-01                1
-16  9.948196e-01                1
-17  9.901890e-01                1
-18  9.884324e-01                1
-19  9.968586e-01                1
-20  9.905953e-01                1
-21  9.822517e-01                1
-22  9.740095e-01                1
-23  9.781170e-01                1
-24  9.703556e-01                1
-25  9.709585e-01                1
-26  9.744011e-01                1
-27  9.852493e-01                1
-28  9.480422e-01                1
-29  9.207892e-01                1
-30  9.091900e-01                1
-31  9.027296e-01                1
-32  8.991390e-01                1
-33  8.393290e-01                1
-34  8.459918e-01                1
-35  8.447474e-01                1
-36  7.623495e-01                1
-37  7.030355e-01                1
-38  6.906098e-01                1
-39  6.707320e-01                1
-40  6.275486e-01                1
-41  5.542715e-01                1
-42  5.458267e-01                1
-43  4.408620e-01                1
-44  4.240422e-01                1
-45  3.365356e-01                1
-46  3.718148e-01                1
-47  2.759980e-01                1
-48  2.811121e-01                1
-49  1.985363e-01                1
-50  1.345265e-01                1
-51  1.214295e-01                1
-52  5.141231e-02                1
-53  1.179508e-02                1
-54  3.029522e-03                1
-55 -5.770756e-06                1
-[1]  843.260 1022.777 1015.817  635.640  463.285
-#+end_example
-
 **** Formel für die Modellanpassung
+Hier kann noch bestimmt werden, ob die binärlogistischen Regressionen noch schlechte Items verwerfen, oder einfach mit allen rechnen.
+Änderungen, die hier gemacht werden, werden automatisch im gesamten Code angepasst, da dieser Teil mit noweb-syntax eingebunden ist.
+
+Aus statistischer Sicht ist es natürlich viel besser, wenn schlechte Items noch verworfen und noch Interaktionen hinzugefügt werden. 
+Was hier aber dagegen spricht, ist die dadurch resultierende Berechnungsdauer.
+So sind selbst die einfacheren obigen Modell auch nach Stunden nicht fertig.
 #+NAME: fitting
-#+BEGIN_SRC R
+#+BEGIN_SRC R :exports code
 #fitting = mclapply(fitting, step, trace = 0)
 #fitting = mclapply(fitting, step, ~.^2, trace = 0)
 #+END_SRC
 
 **** Benchmark
-#+BEGIN_SRC R :session stat :noweb yes :results output graphics :file /images/benchmark.png :exports both
+#+BEGIN_SRC R :noweb yes :results output graphics :file /images/benchmark.png :exports code
 plot(benchmark, type="l", col=rgb(0,0,0), ann=F)
 title(xlab="Durchlauf")
 title(ylab="Dauer")
@@ -1380,8 +1376,10 @@ title(ylab="Dauer")
 [[file:/images/benchmark.png]]
 
 **** Entropiegrafik
+Hier ist noch ein letztes kleines Bisschen an Code, welches die derzeit kalkulierten Ergebnisse in eine Grafik packt. Zudem werden
+eine Legende generiert und die Berechnungsdauer angegeben.
 #+NAME: grafik
-#+BEGIN_SRC R :session stat :noweb yes :results output graphics :file /images/entropie2.png :exports both
+#+BEGIN_SRC R :noweb yes :results output graphics :file /images/entropie2.png :exports code
     
     farbe = NULL
     farbeSD = NULL
@@ -1414,3 +1412,4 @@ title(ylab="Dauer")
 
 #+RESULTS: grafik
 [[file:/images/entropie2.png]]
+

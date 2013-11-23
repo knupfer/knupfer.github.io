@@ -17,14 +17,24 @@
 </li>
 </ul>
 </li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2">1.2. Umsetzung</a>
+<ul>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1">1.2.1. Programmierung</a>
+<ul>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-1">1.2.1.1. Initialisierung</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-2">1.2.1.2. Unbedingte und bedingte Entropie in normaler Reihenfolge</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-3">1.2.1.3. Bedingte, sortierte Entropie</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-4">1.2.1.4. Durchschnittlich bedingtsortierte Entropie</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-5">1.2.1.5. Individuellbedingtsortierte Entropie</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-6">1.2.1.6. Individuellbedingtsortierte Entropie mit Trennschärfe</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-7">1.2.1.7. Individuellbedingtsortierte Entropie mit Prädiktion</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-8">1.2.1.8. Experimenteller Code</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-9">1.2.1.9. Schlussberechnungen</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-10">1.2.1.10. Formel für die Modellanpassung</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-11">1.2.1.11. Benchmark</a></li>
+<li><a href="/2013/10/28/adaptives-testen.html#sec-1-2-1-12">1.2.1.12. Entropiegrafik</a></li>
 </ul>
 </li>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-2">2. Nicht adaptives Testen</a></li>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-3">3. Adaptives Testen</a>
-<ul>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-3-1">3.1. Umsetzung</a>
-<ul>
-<li><a href="/2013/10/28/adaptives-testen.html#sec-3-1-1">3.1.1. Programmierung</a></li>
 </ul>
 </li>
 </ul>
