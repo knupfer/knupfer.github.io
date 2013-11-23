@@ -5,24 +5,23 @@ title: Adaptives Testen
 father: Wissenschaft
 ---
 #+END_COMMENT
-* Adaptives Testen
 Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung in erweitertem Maße ausgenutzt.
 Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
 um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
 
 #+BEGIN_SRC ditaa :file /images/adaptiveditaa.png :exports results
 
-+---------+   +-----------------+   +---------------+
-| Item    |-->| Modellschätzung |-->|   Schätzung   |
-| Antwort |   +-----------------+   | nächstes Item |
-+---------+                         +---------------+
-    ^                                       |
-    |                                       |
-    +---------------------------------------+
++---------+   +--------+   +---------------+
+|  Item-  |-->| Modell |-->|   Schätzung   |
+| antwort |   +--------+   | nächstes Item |
++---------+                +-------+-------+
+    ^                              |
+    |                              |
+    +------------------------------+
 
 #+END_SRC 
 
-** Kriterien
+* Kriterien
 Wie genau die Frage ausgewählt wird hängt vornehmlich von den Zielen der Testung und den Nebenwirkungen, die man ggf. 
 vermeiden möchte, ab. So wäre eine Frage, die der Proband mit einer Chance von 50% lösen kann ideal im Sinne eines 
 Informationsgewinnes über den Probanden, da die Entropie maximal ist. 
@@ -67,13 +66,13 @@ Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten. Gibt es nun b
 gibt es eine maximale Entropie von $H_{max} = - \log_2{0.25} = 2 \mathrm{bit}$. Somit kann man einen Test auch um $R/2$ solcher
 Fragen ohne Informationsverlust verkleinern.
 
-*** Informationsgehalt in KoMus
+** Informationsgehalt in KoMus
 Im August diesen Jahres habe ich mit Teilen des KoMus-Testes für musikalische Kompetenz eine empirische Studie
 durchgeführt. Der KoMus-Test liegt in einem nicht adaptiven Format vor.
 
 Interessant ist nun, die Überlegung, wieviel der Test von einer Überführung in einen adaptiven Test profitieren würde.
 
-**** Durchschnittlicher Schüler
+*** Durchschnittlicher Schüler
 Der Simplizität halber können wir annehmen, dass ein Schüler genau die durchschnittlichen Lösungswahrscheinlichkeiten
 für ein Item aufweist.
 
@@ -84,7 +83,7 @@ $$ H = \sum_{i=1}^n(- P_i \cdot \log_2{P_i} - (1 - P_i) \cdot \log_2(1 - P_i)) $
 Hierbei ist $P_i$ die klassische Itemschwierigkeit des Items $i$ und $n$ die Anzahl der Items. Ferner nimmt diese Formel
 nur dichotome Items an.
 
-**** Vierdimensional
+*** Vierdimensional
 Die Entropie ist jedoch eigentlich noch niedriger, wenn man die Schwierigkeiten adaptiv berechnet. Es handelt sich aber
 immernoch um einen nicht adaptiven Test mit fester Reihenfolge. Es wird nur eine spezialform der Entropie, die bedingte
 Entropie, benutzt (vgl. [[http://de.wikipedia.org/wiki/Bedingte_Entropie][Wikipedia]]).
@@ -98,7 +97,7 @@ $$ R = Reg_2(P_{ivD}|\sum_{m=1}^{i(D)-1}P_{vmD}) $$
 
 Hierbei ist $Reg_2(a|b)$ die binärlogistische Regression mit der AV $a$ und den UV $b$.
 
-**** n-Dimensional
+*** n-Dimensional
 Das obige Modell nimmt jedoch an, dass die einzelnen Dimensionen nicht korrelieren und somit Itemantworten einer Dimension 
 keine Information (also Entropiesenkung) über andere Dimensionen zulassen.
 
@@ -112,7 +111,7 @@ Fragen ist.
 $$ H = \sum_{i=1}^n(- R \cdot \log_2{R} - (1 - R) \cdot \log_2(1 - R)) $$
 $$ R = Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) $$
 
-***** Probleme
+**** Probleme
 Mögliche Probleme dieser Methode sind fehlende Datensätze, da die binärlogistische Regression normalerweise alle Fälle
 ausschließt, die auch nur bei einem der UV keinen Wert hat. Durch den maßgeschneiderten Testweg ist es bei einem 
 Itempool, der nicht komplett erschöpft wird, unmöglich diese Regression so durchzuführen. Dementsprechend müssen
@@ -130,15 +129,15 @@ Verfahren direkt einen Nutzen erbringt, sollte daran sichtbar sein, dass die Lö
 retrospektiv vorhergesagt werden können und somit davon außgegangen werden kann, dass auch bei aktuellen Testungen
 die Schätzungen besser sind und somit effektiver gemessen werden kann.
 
-** Umsetzung
+* Umsetzung
 Die Umsetzung wurde mit R bewerkstelligt. Hier traten auch schnell Probleme auf. So wurde die Rechenzeit bei etwas komplizierteren Modellen sehr lang,
 was natürlich auch an meinem Computer liegt. Nichts desto trotz ergaben sich Situationen, in denen der Computer 5 Tage lang rechnen hätte müssen.
 
 In anderen Situationen wurde das komplette Ram des Computers aufgezehrt usw.
    
-*** Programmierung
-   
-**** Initialisierung
+** Programmierung
+  
+*** Initialisierung
 
 Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um grundlegende Dinge, wie Funktionen, die an vielen Stellen benötigt werden, die
 Daten usw. bereitgestellt werden. Ferner werden, wo möglich, Berechnungen mit dieser Initialisierung parallelisiert.
@@ -262,6 +261,7 @@ The following object(s) are masked from ‘package:multicore’:
     mclapply, mcparallel, pvec
 #+end_example
 
+*** Nichtadaptiv
 **** Unbedingte und bedingte Entropie in normaler Reihenfolge
 Dieser verhältnismäßig simple Code berechnet die Entropie über die klassische Itemschwierigkeit und die Entropie über die durch binärlogistische
 Regressionen vorhergesagte Itemschwierigkeit in der ursprünglichen Reihenfolge.
@@ -509,6 +509,7 @@ dementsprechen nicht adaptiv.
     RestEntropieSD$durchschbedsort = c(0,apply(Restentropietemp, 2, sd))
 #+END_SRC
 
+*** Adaptiv
 **** Individuellbedingtsortierte Entropie
 Hier wird das zuletzt genannte Verfahren individualisiert, was den Rechenaufwand in diesem Fall 319 mal höher macht. Das Ergebniss ist jedoch bereits
 ein echt adaptiver Test. Somit ist die Entropiekurve nun auch viel stärker gekrümmt (hat also eine größere zweite Ableitung). Somit kann unter kleinem
@@ -723,7 +724,7 @@ Dieses Modell bringt die rechnerischen Anforderungen auf ein neues Niveau, sie w
 eine Datenbank mit implementiert, die einerseits bereits berechnetes speichert um mir wiederholte Arbeit zu ersparen und andererseits stets schaut,
 ob Frage-Antwort-Kombinationen bereits bei anderen Schülern vorgekommen ist, um mit Hilfe dieses Wissens hin und wieder einzelne Rechnungen zu ersparen.
 
-Zunächst könnte man denken, dass es bei rund 50 binären Items $2^50$ Möglichkeiten der Antwortmuster gibt, was die Datenbank als sinnlos erscheinen lässt.
+Zunächst könnte man denken, dass es bei rund 50 binären Items $2^{50}$ Möglichkeiten der Antwortmuster gibt, was die Datenbank als sinnlos erscheinen lässt.
 Jedoch muss bedacht werden, dass die Antwort Reihenfolge in der aktuellen Regression keine Rolle spielt. Beantwortet man Item a, b, und c richtig und
 bekommt daraufhin Item c, so würde man dies genauso bekommen, wenn man b, c und dann erst a richtig beantwortet, was die Sinnhaftigkeit der Datenbank
 deutlich steigert. Zudem werden manche Antwortmuster und manche Items gehäuft vorkommen, weil sie entweder besonders qualitativ, oder besonders »normal« sind.
@@ -933,7 +934,7 @@ Im Moment fangen beispielsweise alle Schüler mit dem gleichen, maximal informat
     RestEntropieSD
 #+END_SRC
 
-**** Experimenteller Code
+*** Experimenteller Code
 #+BEGIN_SRC R :exports code :results output :noweb yes
                                  calculationtime <- proc.time()
                                  
@@ -1303,8 +1304,7 @@ Restentropietemp2 = sum(Entropietemp)
 55       0.00000000 0.000000e+00
 #+end_example
 
-
-**** Schlussberechnungen
+*** Schlussberechnungen
 Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um diese dann gut zeichnen zu können.
 #+NAME: statisticend
 #+BEGIN_SRC R :exports code :results output :noweb yes
@@ -1352,7 +1352,7 @@ Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um d
     }
 #+END_SRC
 
-**** Formel für die Modellanpassung
+*** Formel für die Modellanpassung
 Hier kann noch bestimmt werden, ob die binärlogistischen Regressionen noch schlechte Items verwerfen, oder einfach mit allen rechnen.
 Änderungen, die hier gemacht werden, werden automatisch im gesamten Code angepasst, da dieser Teil mit noweb-syntax eingebunden ist.
 
@@ -1365,7 +1365,7 @@ So sind selbst die einfacheren obigen Modell auch nach Stunden nicht fertig.
 #fitting = mclapply(fitting, step, ~.^2, trace = 0)
 #+END_SRC
 
-**** Benchmark
+*** Benchmark
 #+BEGIN_SRC R :noweb yes :results output graphics :file /images/benchmark.png :exports code
 plot(benchmark, type="l", col=rgb(0,0,0), ann=F)
 title(xlab="Durchlauf")
@@ -1375,7 +1375,7 @@ title(ylab="Dauer")
 #+RESULTS:
 [[file:/images/benchmark.png]]
 
-**** Entropiegrafik
+*** Entropiegrafik
 Hier ist noch ein letztes kleines Bisschen an Code, welches die derzeit kalkulierten Ergebnisse in eine Grafik packt. Zudem werden
 eine Legende generiert und die Berechnungsdauer angegeben.
 #+NAME: grafik

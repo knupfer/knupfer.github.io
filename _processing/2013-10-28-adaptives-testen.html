@@ -2,41 +2,45 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Adaptives Testen</a>
+<li><a href="#sec-1">1. Kriterien</a>
 <ul>
-<li><a href="#sec-1-1">1.1. Kriterien</a>
+<li><a href="#sec-1-1">1.1. Informationsgehalt in KoMus</a>
 <ul>
-<li><a href="#sec-1-1-1">1.1.1. Informationsgehalt in KoMus</a>
+<li><a href="#sec-1-1-1">1.1.1. Durchschnittlicher Schüler</a></li>
+<li><a href="#sec-1-1-2">1.1.2. Vierdimensional</a></li>
+<li><a href="#sec-1-1-3">1.1.3. n-Dimensional</a>
 <ul>
-<li><a href="#sec-1-1-1-1">1.1.1.1. Durchschnittlicher Schüler</a></li>
-<li><a href="#sec-1-1-1-2">1.1.1.2. Vierdimensional</a></li>
-<li><a href="#sec-1-1-1-3">1.1.1.3. n-Dimensional</a>
-<ul>
-<li><a href="#sec-1-1-1-3-1">1.1.1.3.1. Probleme</a></li>
+<li><a href="#sec-1-1-3-1">1.1.3.1. Probleme</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2. Umsetzung</a>
+<li><a href="#sec-2">2. Umsetzung</a>
 <ul>
-<li><a href="#sec-1-2-1">1.2.1. Programmierung</a>
+<li><a href="#sec-2-1">2.1. Programmierung</a>
 <ul>
-<li><a href="#sec-1-2-1-1">1.2.1.1. Initialisierung</a></li>
-<li><a href="#sec-1-2-1-2">1.2.1.2. Unbedingte und bedingte Entropie in normaler Reihenfolge</a></li>
-<li><a href="#sec-1-2-1-3">1.2.1.3. Bedingte, sortierte Entropie</a></li>
-<li><a href="#sec-1-2-1-4">1.2.1.4. Durchschnittlich bedingtsortierte Entropie</a></li>
-<li><a href="#sec-1-2-1-5">1.2.1.5. Individuellbedingtsortierte Entropie</a></li>
-<li><a href="#sec-1-2-1-6">1.2.1.6. Individuellbedingtsortierte Entropie mit Trennschärfe</a></li>
-<li><a href="#sec-1-2-1-7">1.2.1.7. Individuellbedingtsortierte Entropie mit Prädiktion</a></li>
-<li><a href="#sec-1-2-1-8">1.2.1.8. Experimenteller Code</a></li>
-<li><a href="#sec-1-2-1-9">1.2.1.9. Schlussberechnungen</a></li>
-<li><a href="#sec-1-2-1-10">1.2.1.10. Formel für die Modellanpassung</a></li>
-<li><a href="#sec-1-2-1-11">1.2.1.11. Benchmark</a></li>
-<li><a href="#sec-1-2-1-12">1.2.1.12. Entropiegrafik</a></li>
+<li><a href="#sec-2-1-1">2.1.1. Initialisierung</a></li>
+<li><a href="#sec-2-1-2">2.1.2. Nichtadaptiv</a>
+<ul>
+<li><a href="#sec-2-1-2-1">2.1.2.1. Unbedingte und bedingte Entropie in normaler Reihenfolge</a></li>
+<li><a href="#sec-2-1-2-2">2.1.2.2. Bedingte, sortierte Entropie</a></li>
+<li><a href="#sec-2-1-2-3">2.1.2.3. Durchschnittlich bedingtsortierte Entropie</a></li>
 </ul>
 </li>
+<li><a href="#sec-2-1-3">2.1.3. Adaptiv</a>
+<ul>
+<li><a href="#sec-2-1-3-1">2.1.3.1. Individuellbedingtsortierte Entropie</a></li>
+<li><a href="#sec-2-1-3-2">2.1.3.2. Individuellbedingtsortierte Entropie mit Trennschärfe</a></li>
+<li><a href="#sec-2-1-3-3">2.1.3.3. Individuellbedingtsortierte Entropie mit Prädiktion</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-1-4">2.1.4. Experimenteller Code</a></li>
+<li><a href="#sec-2-1-5">2.1.5. Schlussberechnungen</a></li>
+<li><a href="#sec-2-1-6">2.1.6. Formel für die Modellanpassung</a></li>
+<li><a href="#sec-2-1-7">2.1.7. Benchmark</a></li>
+<li><a href="#sec-2-1-8">2.1.8. Entropiegrafik</a></li>
 </ul>
 </li>
 </ul>
@@ -44,9 +48,6 @@
 </ul>
 </div>
 </div>
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Adaptives Testen</h2>
-<div class="outline-text-2" id="text-1">
 <p>
 Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung in erweitertem Maße ausgenutzt.
 Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
@@ -58,11 +59,10 @@ um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
 <p><img src="file:///images/adaptiveditaa.png" alt="adaptiveditaa.png" />
 </p>
 </div>
-</div>
 
-<div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Kriterien</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Kriterien</h2>
+<div class="outline-text-2" id="text-1">
 <p>
 Wie genau die Frage ausgewählt wird hängt vornehmlich von den Zielen der Testung und den Nebenwirkungen, die man ggf. 
 vermeiden möchte, ab. So wäre eine Frage, die der Proband mit einer Chance von 50% lösen kann ideal im Sinne eines 
@@ -127,9 +127,9 @@ Fragen ohne Informationsverlust verkleinern.
 </p>
 </div>
 
-<div id="outline-container-sec-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Informationsgehalt in KoMus</h4>
-<div class="outline-text-4" id="text-1-1-1">
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Informationsgehalt in KoMus</h3>
+<div class="outline-text-3" id="text-1-1">
 <p>
 Im August diesen Jahres habe ich mit Teilen des KoMus-Testes für musikalische Kompetenz eine empirische Studie
 durchgeführt. Der KoMus-Test liegt in einem nicht adaptiven Format vor.
@@ -140,9 +140,9 @@ Interessant ist nun, die Überlegung, wieviel der Test von einer Überführung i
 </p>
 </div>
 
-<div id="outline-container-sec-1-1-1-1" class="outline-5">
-<h5 id="sec-1-1-1-1"><span class="section-number-5">1.1.1.1</span> Durchschnittlicher Schüler</h5>
-<div class="outline-text-5" id="text-1-1-1-1">
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Durchschnittlicher Schüler</h4>
+<div class="outline-text-4" id="text-1-1-1">
 <p>
 Der Simplizität halber können wir annehmen, dass ein Schüler genau die durchschnittlichen Lösungswahrscheinlichkeiten
 für ein Item aufweist.
@@ -162,9 +162,9 @@ nur dichotome Items an.
 </p>
 </div>
 </div>
-<div id="outline-container-sec-1-1-1-2" class="outline-5">
-<h5 id="sec-1-1-1-2"><span class="section-number-5">1.1.1.2</span> Vierdimensional</h5>
-<div class="outline-text-5" id="text-1-1-1-2">
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Vierdimensional</h4>
+<div class="outline-text-4" id="text-1-1-2">
 <p>
 Die Entropie ist jedoch eigentlich noch niedriger, wenn man die Schwierigkeiten adaptiv berechnet. Es handelt sich aber
 immernoch um einen nicht adaptiven Test mit fester Reihenfolge. Es wird nur eine spezialform der Entropie, die bedingte
@@ -187,9 +187,9 @@ Hierbei ist \(Reg_2(a|b)\) die binärlogistische Regression mit der AV \(a\) und
 </p>
 </div>
 </div>
-<div id="outline-container-sec-1-1-1-3" class="outline-5">
-<h5 id="sec-1-1-1-3"><span class="section-number-5">1.1.1.3</span> n-Dimensional</h5>
-<div class="outline-text-5" id="text-1-1-1-3">
+<div id="outline-container-sec-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> n-Dimensional</h4>
+<div class="outline-text-4" id="text-1-1-3">
 <p>
 Das obige Modell nimmt jedoch an, dass die einzelnen Dimensionen nicht korrelieren und somit Itemantworten einer Dimension 
 keine Information (also Entropiesenkung) über andere Dimensionen zulassen.
@@ -212,9 +212,9 @@ $$ R = Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) $$
 </p>
 </div>
 
-<div id="outline-container-sec-1-1-1-3-1" class="outline-6">
-<h6 id="sec-1-1-1-3-1"><span class="section-number-6">1.1.1.3.1</span> Probleme</h6>
-<div class="outline-text-6" id="text-1-1-1-3-1">
+<div id="outline-container-sec-1-1-3-1" class="outline-5">
+<h5 id="sec-1-1-3-1"><span class="section-number-5">1.1.3.1</span> Probleme</h5>
+<div class="outline-text-5" id="text-1-1-3-1">
 <p>
 Mögliche Probleme dieser Methode sind fehlende Datensätze, da die binärlogistische Regression normalerweise alle Fälle
 ausschließt, die auch nur bei einem der UV keinen Wert hat. Durch den maßgeschneiderten Testweg ist es bei einem 
@@ -244,9 +244,9 @@ die Schätzungen besser sind und somit effektiver gemessen werden kann.
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Umsetzung</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Umsetzung</h2>
+<div class="outline-text-2" id="text-2">
 <p>
 Die Umsetzung wurde mit R bewerkstelligt. Hier traten auch schnell Probleme auf. So wurde die Rechenzeit bei etwas komplizierteren Modellen sehr lang,
 was natürlich auch an meinem Computer liegt. Nichts desto trotz ergaben sich Situationen, in denen der Computer 5 Tage lang rechnen hätte müssen.
@@ -257,12 +257,12 @@ In anderen Situationen wurde das komplette Ram des Computers aufgezehrt usw.
 </p>
 </div>
 
-<div id="outline-container-sec-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> Programmierung</h4>
-<div class="outline-text-4" id="text-1-2-1">
-</div><div id="outline-container-sec-1-2-1-1" class="outline-5">
-<h5 id="sec-1-2-1-1"><span class="section-number-5">1.2.1.1</span> Initialisierung</h5>
-<div class="outline-text-5" id="text-1-2-1-1">
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Programmierung</h3>
+<div class="outline-text-3" id="text-2-1">
+</div><div id="outline-container-sec-2-1-1" class="outline-4">
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> Initialisierung</h4>
+<div class="outline-text-4" id="text-2-1-1">
 <p>
 Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um grundlegende Dinge, wie Funktionen, die an vielen Stellen benötigt werden, die
 Daten usw. bereitgestellt werden. Ferner werden, wo möglich, Berechnungen mit dieser Initialisierung parallelisiert.
@@ -373,9 +373,12 @@ names(RestEntropieSD) = <span style="color: #deb887;">'kill'</span>
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-2" class="outline-5">
-<h5 id="sec-1-2-1-2"><span class="section-number-5">1.2.1.2</span> Unbedingte und bedingte Entropie in normaler Reihenfolge</h5>
-<div class="outline-text-5" id="text-1-2-1-2">
+<div id="outline-container-sec-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Nichtadaptiv</h4>
+<div class="outline-text-4" id="text-2-1-2">
+</div><div id="outline-container-sec-2-1-2-1" class="outline-5">
+<h5 id="sec-2-1-2-1"><span class="section-number-5">2.1.2.1</span> Unbedingte und bedingte Entropie in normaler Reihenfolge</h5>
+<div class="outline-text-5" id="text-2-1-2-1">
 <p>
 Dieser verhältnismäßig simple Code berechnet die Entropie über die klassische Itemschwierigkeit und die Entropie über die durch binärlogistische
 Regressionen vorhergesagte Itemschwierigkeit in der ursprünglichen Reihenfolge.
@@ -468,9 +471,9 @@ RestEntropie
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-3" class="outline-5">
-<h5 id="sec-1-2-1-3"><span class="section-number-5">1.2.1.3</span> Bedingte, sortierte Entropie</h5>
-<div class="outline-text-5" id="text-1-2-1-3">
+<div id="outline-container-sec-2-1-2-2" class="outline-5">
+<h5 id="sec-2-1-2-2"><span class="section-number-5">2.1.2.2</span> Bedingte, sortierte Entropie</h5>
+<div class="outline-text-5" id="text-2-1-2-2">
 <p>
 Hier werden die Items schlicht nach dem durchschnittlichen Entropiegehalt sortiert, bevor die bedingte Entropie mit Regressionen berechnet wird.
 Dies verbessert die resultierende Kurve schon um einiges, der Entropiegewinn ist so tendenziell am Anfang weit höher als am Ende, trotz dass gleich
@@ -547,9 +550,9 @@ multifragen = multifragen.alt
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-4" class="outline-5">
-<h5 id="sec-1-2-1-4"><span class="section-number-5">1.2.1.4</span> Durchschnittlich bedingtsortierte Entropie</h5>
-<div class="outline-text-5" id="text-1-2-1-4">
+<div id="outline-container-sec-2-1-2-3" class="outline-5">
+<h5 id="sec-2-1-2-3"><span class="section-number-5">2.1.2.3</span> Durchschnittlich bedingtsortierte Entropie</h5>
+<div class="outline-text-5" id="text-2-1-2-3">
 <p>
 Dieses Verfahren ist bereits weit rechenintensiver, es wird nacheinander das Item ausgewählt, welches durchschnittlich die Entropie am meisten senkt.
 Es wird also nach der Erfassung eines Items dieses miteinbezogen für kommende Regressionen. Insgesamt ist dies aber noch nicht individualisiert und
@@ -643,9 +646,13 @@ RestEntropieSD$durchschbedsort = c(0,apply(Restentropietemp, 2, sd))
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-5" class="outline-5">
-<h5 id="sec-1-2-1-5"><span class="section-number-5">1.2.1.5</span> Individuellbedingtsortierte Entropie</h5>
-<div class="outline-text-5" id="text-1-2-1-5">
+</div>
+<div id="outline-container-sec-2-1-3" class="outline-4">
+<h4 id="sec-2-1-3"><span class="section-number-4">2.1.3</span> Adaptiv</h4>
+<div class="outline-text-4" id="text-2-1-3">
+</div><div id="outline-container-sec-2-1-3-1" class="outline-5">
+<h5 id="sec-2-1-3-1"><span class="section-number-5">2.1.3.1</span> Individuellbedingtsortierte Entropie</h5>
+<div class="outline-text-5" id="text-2-1-3-1">
 <p>
 Hier wird das zuletzt genannte Verfahren individualisiert, was den Rechenaufwand in diesem Fall 319 mal höher macht. Das Ergebniss ist jedoch bereits
 ein echt adaptiver Test. Somit ist die Entropiekurve nun auch viel stärker gekrümmt (hat also eine größere zweite Ableitung). Somit kann unter kleinem
@@ -761,9 +768,9 @@ multifragen = multifragenalt
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-6" class="outline-5">
-<h5 id="sec-1-2-1-6"><span class="section-number-5">1.2.1.6</span> Individuellbedingtsortierte Entropie mit Trennschärfe</h5>
-<div class="outline-text-5" id="text-1-2-1-6">
+<div id="outline-container-sec-2-1-3-2" class="outline-5">
+<h5 id="sec-2-1-3-2"><span class="section-number-5">2.1.3.2</span> Individuellbedingtsortierte Entropie mit Trennschärfe</h5>
+<div class="outline-text-5" id="text-2-1-3-2">
 <p>
 Ein nicht gut gelungener Versuch, nicht nur die Entropie als Auswahlkriterium zu nehmen. Dies ist deswegen sinnvoll, da Items vorstellbar sind mit hoher
 Entropie, die aber mit dem Test wenig zu tun haben (z.B. eine Frage nach der Schuhgröße hat vermutlich eine sehr hohe Entropie, hat aber vermutlich wenig
@@ -863,9 +870,9 @@ RestEntropieSD$indivbedsorttrenn = c(0,apply(Restentropietemp,1 ,sd))
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-7" class="outline-5">
-<h5 id="sec-1-2-1-7"><span class="section-number-5">1.2.1.7</span> Individuellbedingtsortierte Entropie mit Prädiktion</h5>
-<div class="outline-text-5" id="text-1-2-1-7">
+<div id="outline-container-sec-2-1-3-3" class="outline-5">
+<h5 id="sec-2-1-3-3"><span class="section-number-5">2.1.3.3</span> Individuellbedingtsortierte Entropie mit Prädiktion</h5>
+<div class="outline-text-5" id="text-2-1-3-3">
 <p>
 Hier wird nun die Entropie rekursiv berechnet. Es wird nicht nur geschaut, welches Item die meiste Entropie besitzt, sondern es werden für jedes Item alle
 Antwortmöglichkeiten simuliert und mit dieser Simulation die verbleibende Entropie im gesamten Test
@@ -885,7 +892,7 @@ ob Frage-Antwort-Kombinationen bereits bei anderen Schülern vorgekommen ist, um
 </p>
 
 <p>
-Zunächst könnte man denken, dass es bei rund 50 binären Items \(2^50\) Möglichkeiten der Antwortmuster gibt, was die Datenbank als sinnlos erscheinen lässt.
+Zunächst könnte man denken, dass es bei rund 50 binären Items \(2^{50}\) Möglichkeiten der Antwortmuster gibt, was die Datenbank als sinnlos erscheinen lässt.
 Jedoch muss bedacht werden, dass die Antwort Reihenfolge in der aktuellen Regression keine Rolle spielt. Beantwortet man Item a, b, und c richtig und
 bekommt daraufhin Item c, so würde man dies genauso bekommen, wenn man b, c und dann erst a richtig beantwortet, was die Sinnhaftigkeit der Datenbank
 deutlich steigert. Zudem werden manche Antwortmuster und manche Items gehäuft vorkommen, weil sie entweder besonders qualitativ, oder besonders »normal« sind.
@@ -1101,9 +1108,10 @@ Im Moment fangen beispielsweise alle Schüler mit dem gleichen, maximal informat
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-8" class="outline-5">
-<h5 id="sec-1-2-1-8"><span class="section-number-5">1.2.1.8</span> Experimenteller Code</h5>
-<div class="outline-text-5" id="text-1-2-1-8">
+</div>
+<div id="outline-container-sec-2-1-4" class="outline-4">
+<h4 id="sec-2-1-4"><span class="section-number-4">2.1.4</span> Experimenteller Code</h4>
+<div class="outline-text-4" id="text-2-1-4">
 <div class="org-src-container">
 
 <pre class="src src-R"><span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>    calculationtime <span style="color: #a2cd5a;">&lt;-</span> proc.time()
@@ -1362,10 +1370,9 @@ Restentropietemp2 = sum(Entropietemp)
 </div>
 </div>
 </div>
-
-<div id="outline-container-sec-1-2-1-9" class="outline-5">
-<h5 id="sec-1-2-1-9"><span class="section-number-5">1.2.1.9</span> Schlussberechnungen</h5>
-<div class="outline-text-5" id="text-1-2-1-9">
+<div id="outline-container-sec-2-1-5" class="outline-4">
+<h4 id="sec-2-1-5"><span class="section-number-4">2.1.5</span> Schlussberechnungen</h4>
+<div class="outline-text-4" id="text-2-1-5">
 <p>
 Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um diese dann gut zeichnen zu können.
 </p>
@@ -1417,9 +1424,9 @@ names(summe) = names(EEE)
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-10" class="outline-5">
-<h5 id="sec-1-2-1-10"><span class="section-number-5">1.2.1.10</span> Formel für die Modellanpassung</h5>
-<div class="outline-text-5" id="text-1-2-1-10">
+<div id="outline-container-sec-2-1-6" class="outline-4">
+<h4 id="sec-2-1-6"><span class="section-number-4">2.1.6</span> Formel für die Modellanpassung</h4>
+<div class="outline-text-4" id="text-2-1-6">
 <p>
 Hier kann noch bestimmt werden, ob die binärlogistischen Regressionen noch schlechte Items verwerfen, oder einfach mit allen rechnen.
 Änderungen, die hier gemacht werden, werden automatisch im gesamten Code angepasst, da dieser Teil mit noweb-syntax eingebunden ist.
@@ -1438,9 +1445,9 @@ So sind selbst die einfacheren obigen Modell auch nach Stunden nicht fertig.
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-11" class="outline-5">
-<h5 id="sec-1-2-1-11"><span class="section-number-5">1.2.1.11</span> Benchmark</h5>
-<div class="outline-text-5" id="text-1-2-1-11">
+<div id="outline-container-sec-2-1-7" class="outline-4">
+<h4 id="sec-2-1-7"><span class="section-number-4">2.1.7</span> Benchmark</h4>
+<div class="outline-text-4" id="text-2-1-7">
 <div class="org-src-container">
 
 <pre class="src src-R">plot(benchmark, type=<span style="color: #deb887;">"l"</span>, col=rgb(0,0,0), ann=F)
@@ -1450,9 +1457,9 @@ title(ylab=<span style="color: #deb887;">"Dauer"</span>)
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-2-1-12" class="outline-5">
-<h5 id="sec-1-2-1-12"><span class="section-number-5">1.2.1.12</span> Entropiegrafik</h5>
-<div class="outline-text-5" id="text-1-2-1-12">
+<div id="outline-container-sec-2-1-8" class="outline-4">
+<h4 id="sec-2-1-8"><span class="section-number-4">2.1.8</span> Entropiegrafik</h4>
+<div class="outline-text-4" id="text-2-1-8">
 <p>
 Hier ist noch ein letztes kleines Bisschen an Code, welches die derzeit kalkulierten Ergebnisse in eine Grafik packt. Zudem werden
 eine Legende generiert und die Berechnungsdauer angegeben.
@@ -1487,7 +1494,6 @@ title(xlab=<span style="color: #deb887;">"Anzahl der beantworteten Fragen"</span
 title(ylab=<span style="color: #deb887;">"Entropie in bit"</span>)
 legend(length(komusmult)/4, length(komusmult), c(names(summe), round(benchmark[length(benchmark)])), cex=0.9, col=c(farbe, rgb(1,1,1)), lty=1);
 </pre>
-</div>
 </div>
 </div>
 </div>
