@@ -27,7 +27,7 @@ Informationsgewinnes über den Probanden, da die Entropie maximal ist.
 
 Entropie stellt nicht nur Chaos, sondern auch Informationsdichte nach Shannon dar
 (vgl. [[http://de.wikipedia.org/wiki/Entropie_%28Informationstheorie%29][Wikipedia]]).
-Die folgende Formel ergiebt die Entropie eines Ereignisses. Hierbei ist $n$ die Anzahl der Möglichkeiten und $p_i$ 
+Die folgende Formel ergibt die Entropie eines Ereignisses. Hierbei ist $n$ die Anzahl der Möglichkeiten und $p_i$ 
 die jeweiligen Wahrscheinlichkeiten dieser (sich ausschließender) Möglichkeiten.
 
 $$ H = - \sum_{i=1}^n p_i \cdot \log_2{p_i} $$
@@ -37,7 +37,7 @@ werden können, so haben wir $n = 2$ und $p_2 = 1 - p_1$.
 
 $$ H_2 = - p \cdot \log_2{p} - (1 - p) \cdot \log_2(1 - p) $$
 
-Hieraus ergiebt sich, dass der Informationsgewinn bei $p = .5$ (im binären) maximal ist, da die Funktion symmetrisch ist und bei
+Hieraus ergibt sich, dass der Informationsgewinn bei $p = .5$ (im binären) maximal ist, da die Funktion symmetrisch ist und bei
 $p = 0$ auf beiden Seiten $0$ ergibt.
 
 $$ H_{max} = - 0.5 \cdot \log_2{0.5} - 0.5 \cdot \log_2{0.5} = 1 \mathrm{bit} $$
@@ -59,7 +59,7 @@ Testkonstruktion als Indikator für das Potential der Verbesserung durch ein ada
 
 $$ R = H_{max} - H $$
 
-Somit kann im binären ein Test im idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen. 
+Somit kann im binären ein Test im Idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen. 
 Befinden sich im Test auch Fragen, die nicht binär sind, so verändert sich die Situation ein wenig.
 Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten. Gibt es nun bei einer Frage z.B. 0, 1, 2 oder 3 Punkte
 gibt es eine maximale Entropie von $H_{max} = - \log_2{0.25} = 2 \mathrm{bit}$. Somit kann man einen Test auch um $R/2$ solcher
@@ -111,8 +111,8 @@ $$ H = \sum_{i=1}^n(- R \cdot \log_2{R} - (1 - R) \cdot \log_2(1 - R)) $$
 $$ R = Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) $$
 
 **** Probleme
-Mögliche Probleme dieser Methode sind fehlende Datensätze, da die binärlogistische Regression normalerweise alle Fälle
-ausschließt, die auch nur bei einem der UV keinen Wert hat. Durch den maßgeschneiderten Testweg ist es bei einem 
+Mögliche Probleme dieser Methode sind fehlende Datensätze, da die binär-logistische Regression normalerweise alle Fälle
+ausschließt, die auch nur bei einem der UV keinen Wert hat. Durch den maßgeschneiderten Test-weg ist es bei einem 
 Itempool, der nicht komplett erschöpft wird, unmöglich diese Regression so durchzuführen. Dementsprechend müssen
 andere Methoden gewählt werden, um mit fehlenden Daten umzugehen.
 
@@ -125,14 +125,14 @@ Schätzungen erleichtert.
 
 Die Simulation sollte nach jeder Testung durchgeführt werden, um die Simulation mehr und mehr zu verbessern. Das dieses
 Verfahren direkt einen Nutzen erbringt, sollte daran sichtbar sein, dass die Lösungen der alten Datensätze immer besser
-retrospektiv vorhergesagt werden können und somit davon außgegangen werden kann, dass auch bei aktuellen Testungen
+retrospektiv vorhergesagt werden können und somit davon ausgegangen werden kann, dass auch bei aktuellen Testungen
 die Schätzungen besser sind und somit effektiver gemessen werden kann.
 
 * Umsetzung
 Die Umsetzung wurde mit R bewerkstelligt. Hier traten auch schnell Probleme auf. So wurde die Rechenzeit bei etwas komplizierteren Modellen sehr lang,
 was natürlich auch an meinem Computer liegt. Nichts desto trotz ergaben sich Situationen, in denen der Computer 5 Tage lang rechnen hätte müssen.
 
-In anderen Situationen wurde das komplette Ram des Computers aufgezehrt usw.
+In anderen Situationen wurde das komplette RAM des Computers aufgezehrt usw.
 
 ** Programmierung
 
