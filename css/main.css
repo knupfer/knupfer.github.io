@@ -139,14 +139,14 @@ border-bottom:5px #add solid;
     border-left:5px #deefef solid;
 
 
-  -webkit-transition: border-color .8s linear;   
-       -moz-transition: border-color .8s linear; 
-            transition: border-color .8s linear;  
+  -webkit-transition: border-color 2s linear;   
+       -moz-transition: border-color 2s linear; 
+            transition: border-color 2s linear;  
 }
 
 
 #table-of-contents ul:hover {
-    border-left:5px #a5dada solid;
+    border-left:5px #0bb solid;
 
 
 }
