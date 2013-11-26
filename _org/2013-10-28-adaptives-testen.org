@@ -6,44 +6,38 @@ father: Wissenschaft
 ---
 #+END_COMMENT
 Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung in erweitertem Maße ausgenutzt.
-Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt,
-um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
+Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt, um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
 
 #+BEGIN_SRC ditaa :file /images/adaptiveditaa.png :exports results
 
-+---------+   +--------+   +---------------+
-|  Item-  |-->| Modell |-->|   Schätzung   |
-| antwort |   +--------+   | nächstes Item |
-+---------+                +-------+-------+
-    ^                              |
-    |                              |
-    +------------------------------+
-
+    +---------+   +--------+   +---------------+
+    |  Item-  |-->| Modell |-->|   Schätzung   |
+    | antwort |   +--------+   | nächstes Item |
+    +---------+                +-------+-------+
+        ^                              |
+        |                              |
+        +------------------------------+
+    
 #+END_SRC
 
 * Kriterien
-Wie genau die Frage ausgewählt wird hängt vornehmlich von den Zielen der Testung und den Nebenwirkungen, die man ggf. vermeiden möchte, ab. So wäre eine Frage, die der Proband mit einer Chance von 50% lösen kann ideal im Sinne eines
-Informationsgewinnes über den Probanden, da die Entropie maximal ist.
+Wie genau die Frage ausgewählt wird hängt vornehmlich von den Zielen der Testung und den Nebenwirkungen, die man ggf. vermeiden möchte, ab.
+So wäre eine Frage, die der Proband mit einer Chance von 50% lösen kann ideal im Sinne eines Informationsgewinnes über den Probanden, da die Entropie maximal ist.
 
-Entropie stellt nicht nur Chaos, sondern auch Informationsdichte nach Shannon dar
-(vgl. [[http://de.wikipedia.org/wiki/Entropie_%28Informationstheorie%29][Wikipedia]]).
-Die folgende Formel ergiebt die Entropie eines Ereignisses. Hierbei ist $n$ die Anzahl der Möglichkeiten und $p_i$ 
-die jeweiligen Wahrscheinlichkeiten dieser (sich ausschließender) Möglichkeiten.
+Entropie stellt nicht nur Chaos, sondern auch Informationsdichte nach Shannon dar (vgl. [[http://de.wikipedia.org/wiki/Entropie_%28Informationstheorie%29][Wikipedia]]).
+Die folgende Formel ergiebt die Entropie eines Ereignisses. Hierbei ist $n$ die Anzahl der Möglichkeiten und $p_i$ die jeweiligen Wahrscheinlichkeiten dieser (sich ausschließender) Möglichkeiten.
 
 $$ H = - \sum_{i=1}^n p_i \cdot \log_2{p_i} $$
 
-Betrachten wir ein binäres System, also nur Fragen die entweder vollständig falsch oder vollständig richtig beantwortet
-werden können, so haben wir $n = 2$ und $p_2 = 1 - p_1$.
+Betrachten wir ein binäres System, also nur Fragen die entweder vollständig falsch oder vollständig richtig beantwortet werden können, so haben wir $n = 2$ und $p_2 = 1 - p_1$.
 
 $$ H_2 = - p \cdot \log_2{p} - (1 - p) \cdot \log_2(1 - p) $$
 
-Hieraus ergiebt sich, dass der Informationsgewinn bei $p = .5$ (im binären) maximal ist, da die Funktion symmetrisch ist und bei
-$p = 0$ auf beiden Seiten $0$ ergibt.
+Hieraus ergiebt sich, dass der Informationsgewinn bei $p = .5$ (im binären) maximal ist, da die Funktion symmetrisch ist und bei $p = 0$ auf beiden Seiten $0$ ergibt.
 
 $$ H_{max} = - 0.5 \cdot \log_2{0.5} - 0.5 \cdot \log_2{0.5} = 1 \mathrm{bit} $$
 
-Hierbei ist $bit$ die übliche Einheit des Informationsgehaltes, auf Grund des $\log_2$. Es kann also ein Informationsgehalt
-von 8 bit mit Hilfe eines bytes dargestellt werden, sprich mit 8 Nullen oder Einsen (z.B. 10101010).
+Hierbei ist $bit$ die übliche Einheit des Informationsgehaltes, auf Grund des $\log_2$. Es kann also ein Informationsgehalt von 8 bit mit Hilfe eines bytes dargestellt werden, sprich mit 8 Nullen oder Einsen (z.B. 10101010).
 
 #+BEGIN_SRC R :results output graphics :file /images/entropie.png :exports results
 x = (0:100)/100
@@ -54,42 +48,36 @@ plot(x,y,type="l",xlab=expression(Lösungswahrscheinlichkeit),ylab=expression("E
 #+RESULTS:
 [[file:/images/entropie.png]]
 
-Mit der Formel für tatsächliche und für maximale Entropie kann die Redundanz ausgerechnet werden, welche in einer 
-Testkonstruktion als Indikator für das Potential der Verbesserung durch ein adaptives Testverfahren benutzt werden kann.
+Mit der Formel für tatsächliche und für maximale Entropie kann die Redundanz ausgerechnet werden, welche in einer Testkonstruktion als Indikator für das Potential der Verbesserung durch ein adaptives Testverfahren benutzt werden kann.
 
 $$ R = H_{max} - H $$
 
-Somit kann im binären ein Test im idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen. 
+Somit kann im binären ein Test im idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen.
 Befinden sich im Test auch Fragen, die nicht binär sind, so verändert sich die Situation ein wenig.
-Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten. Gibt es nun bei einer Frage z.B. 0, 1, 2 oder 3 Punkte
-gibt es eine maximale Entropie von $H_{max} = - \log_2{0.25} = 2 \mathrm{bit}$. Somit kann man einen Test auch um $R/2$ solcher
-Fragen ohne Informationsverlust verkleinern.
+Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten.
+Gibt es nun bei einer Frage z.B. 0, 1, 2 oder 3 Punkte gibt es eine maximale Entropie von $H_{max} = - \log_2{0.25} = 2 \mathrm{bit}$. Somit kann man einen Test auch um $R/2$ solcher Fragen ohne Informationsverlust verkleinern.
 
 ** Informationsgehalt in KoMus
-Im August diesen Jahres habe ich mit Teilen des KoMus-Testes für musikalische Kompetenz eine empirische Studie
-durchgeführt. Der KoMus-Test liegt in einem nicht adaptiven Format vor.
+Im August diesen Jahres habe ich mit Teilen des KoMus-Testes für musikalische Kompetenz eine empirische Studie durchgeführt.
+Der KoMus-Test liegt in einem nicht adaptiven Format vor.
 
 Interessant ist nun, die Überlegung, wieviel der Test von einer Überführung in einen adaptiven Test profitieren würde.
 
 *** Durchschnittlicher Schüler
-Der Simplizität halber können wir annehmen, dass ein Schüler genau die durchschnittlichen Lösungswahrscheinlichkeiten
-für ein Item aufweist.
+Der Simplizität halber können wir annehmen, dass ein Schüler genau die durchschnittlichen Lösungswahrscheinlichkeiten für ein Item aufweist.
 
 So muss man nur die Entropie mit den klassischen Itemschwierigkeiten der Items berechnen:
 
 $$ H = \sum_{i=1}^n(- P_i \cdot \log_2{P_i} - (1 - P_i) \cdot \log_2(1 - P_i)) $$
 
-Hierbei ist $P_i$ die klassische Itemschwierigkeit des Items $i$ und $n$ die Anzahl der Items. Ferner nimmt diese Formel
-nur dichotome Items an.
+Hierbei ist $P_i$ die klassische Itemschwierigkeit des Items $i$ und $n$ die Anzahl der Items.
+Ferner nimmt diese Formel nur dichotome Items an.
 
 *** Vierdimensional
-Die Entropie ist jedoch eigentlich noch niedriger, wenn man die Schwierigkeiten adaptiv berechnet. Es handelt sich aber
-immernoch um einen nicht adaptiven Test mit fester Reihenfolge. Es wird nur eine spezialform der Entropie, die bedingte
-Entropie, benutzt (vgl. [[http://de.wikipedia.org/wiki/Bedingte_Entropie][Wikipedia]]).
+Die Entropie ist jedoch eigentlich noch niedriger, wenn man die Schwierigkeiten adaptiv berechnet. 
+Es handelt sich aber immernoch um einen nicht adaptiven Test mit fester Reihenfolge. Es wird nur eine spezialform der Entropie, die bedingte Entropie, benutzt (vgl. [[http://de.wikipedia.org/wiki/Bedingte_Entropie][Wikipedia]]).
 
-Um die bedingte Lösungschance und somit auch die bedingte Entropie zu berechnen, werden alle Items der selben Dimension
-einer logistisch binären Regression verwendet um die individuell Itemschwierigkeit eines Items der gleichen Dimension zu
-berechnen.
+Um die bedingte Lösungschance und somit auch die bedingte Entropie zu berechnen, werden alle Items der selben Dimension einer logistisch binären Regression verwendet um die individuell Itemschwierigkeit eines Items der gleichen Dimension zu berechnen.
 
 $$ H = \sum_{D=1}^4(\sum_{i=1}^{n(D)}(- R \cdot \log_2{R}) - (1 - R) \cdot \log_2(1- R))$$
 $$ R = Reg_2(P_{ivD}|\sum_{m=1}^{i(D)-1}P_{vmD}) $$
@@ -97,40 +85,32 @@ $$ R = Reg_2(P_{ivD}|\sum_{m=1}^{i(D)-1}P_{vmD}) $$
 Hierbei ist $Reg_2(a|b)$ die binärlogistische Regression mit der AV $a$ und den UV $b$.
 
 *** n-Dimensional
-Das obige Modell nimmt jedoch an, dass die einzelnen Dimensionen nicht korrelieren und somit Itemantworten einer Dimension 
-keine Information (also Entropiesenkung) über andere Dimensionen zulassen.
+Das obige Modell nimmt jedoch an, dass die einzelnen Dimensionen nicht korrelieren und somit Itemantworten einer Dimension keine Information (also Entropiesenkung) über andere Dimensionen zulassen.
 
-Dies ist aber eine nicht notwendige Einschränkung, die die Berechnung nicht nur weniger effektiv, sondern auch
-komplizierter macht.
+Dies ist aber eine nicht notwendige Einschränkung, die die Berechnung nicht nur weniger effektiv, sondern auch komplizierter macht.
 
-Berücksichtigen wir unabhängig von der Dimensionszugehörigkeit einfach alle bereits beantworteten Items, die einen
-signifikanten Einfluss auf die Frage haben, haben wir im Endeffekt ein n-dimensionales Modell, wobei $n$ die Anzahl der
-Fragen ist.
+Berücksichtigen wir unabhängig von der Dimensionszugehörigkeit einfach alle bereits beantworteten Items, die einen signifikanten Einfluss auf die Frage haben, haben wir im Endeffekt ein n-dimensionales Modell, wobei $n$ die Anzahl der Fragen ist.
 
 $$ H = \sum_{i=1}^n(- R \cdot \log_2{R} - (1 - R) \cdot \log_2(1 - R)) $$
 $$ R = Reg_2(P_{iv}|\sum_{m=1}^{i-1}P_{vm}) $$
 
 **** Probleme
-Mögliche Probleme dieser Methode sind fehlende Datensätze, da die binärlogistische Regression normalerweise alle Fälle
-ausschließt, die auch nur bei einem der UV keinen Wert hat. Durch den maßgeschneiderten Testweg ist es bei einem 
-Itempool, der nicht komplett erschöpft wird, unmöglich diese Regression so durchzuführen. Dementsprechend müssen
-andere Methoden gewählt werden, um mit fehlenden Daten umzugehen.
+Mögliche Probleme dieser Methode sind fehlende Datensätze, da die binärlogistische Regression normalerweise alle Fälle ausschließt, die auch nur bei einem der UV keinen Wert hat.
+Durch den maßgeschneiderten Testweg ist es bei einem Itempool, der nicht komplett erschöpft wird, unmöglich diese Regression so durchzuführen.
+Dementsprechend müssen andere Methoden gewählt werden, um mit fehlenden Daten umzugehen.
 
-Eine Möglichkeit wäre, nicht vorhandene Antworten in den Datensätzen zu simulieren. Diese Simulation würde von den Items
-die am sichersten geschätzt werden können zu den Items, die schwer geschätzt werden können stattfinden.
+Eine Möglichkeit wäre, nicht vorhandene Antworten in den Datensätzen zu simulieren.
+Diese Simulation würde von den Items die am sichersten geschätzt werden können zu den Items, die schwer geschätzt werden können stattfinden.
 
-Der Grund hierfür liegt daran, dass bei einer sehr sicheren Schätzung der Entropiegehalt sich nur wenig ändert, 
-aber es gleich viel mehr Personen gibt, die seriös für schwerere Schätzungen verwendet werden können, was diese
-Schätzungen erleichtert.
+Der Grund hierfür liegt daran, dass bei einer sehr sicheren Schätzung der Entropiegehalt sich nur wenig ändert, aber es gleich viel mehr Personen gibt, die seriös für schwerere Schätzungen verwendet werden können, was diese Schätzungen erleichtert.
 
-Die Simulation sollte nach jeder Testung durchgeführt werden, um die Simulation mehr und mehr zu verbessern. Das dieses
-Verfahren direkt einen Nutzen erbringt, sollte daran sichtbar sein, dass die Lösungen der alten Datensätze immer besser
-retrospektiv vorhergesagt werden können und somit davon außgegangen werden kann, dass auch bei aktuellen Testungen
-die Schätzungen besser sind und somit effektiver gemessen werden kann.
+Die Simulation sollte nach jeder Testung durchgeführt werden, um die Simulation mehr und mehr zu verbessern.
+Das dieses Verfahren direkt einen Nutzen erbringt, sollte daran sichtbar sein, dass die Lösungen der alten Datensätze immer besser retrospektiv vorhergesagt werden können und somit davon außgegangen werden kann, dass auch bei aktuellen Testungen die Schätzungen besser sind und somit effektiver gemessen werden kann.
 
 * Umsetzung
-Die Umsetzung wurde mit R bewerkstelligt. Hier traten auch schnell Probleme auf. So wurde die Rechenzeit bei etwas komplizierteren Modellen sehr lang,
-was natürlich auch an meinem Computer liegt. Nichts desto trotz ergaben sich Situationen, in denen der Computer 5 Tage lang rechnen hätte müssen.
+Die Umsetzung wurde mit R bewerkstelligt. Hier traten auch schnell Probleme auf.
+So wurde die Rechenzeit bei etwas komplizierteren Modellen sehr lang, was natürlich auch an meinem Computer liegt.
+Nichts desto trotz ergaben sich Situationen, in denen der Computer 5 Tage lang rechnen hätte müssen.
 
 In anderen Situationen wurde das komplette Ram des Computers aufgezehrt usw.
 
@@ -138,8 +118,8 @@ In anderen Situationen wurde das komplette Ram des Computers aufgezehrt usw.
 
 *** Initialisierung
 
-Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um grundlegende Dinge, wie Funktionen, die an vielen Stellen benötigt werden, die
-Daten usw. bereitgestellt werden. Ferner werden, wo möglich, Berechnungen mit dieser Initialisierung parallelisiert.
+Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um grundlegende Dinge, wie Funktionen, die an vielen Stellen benötigt werden, die Daten usw. bereitgestellt werden.
+Ferner werden, wo möglich, Berechnungen mit dieser Initialisierung parallelisiert.
 
 #+NAME: statistic
 #+BEGIN_SRC R :exports code :results none :noweb yes
@@ -151,69 +131,67 @@ Daten usw. bereitgestellt werden. Ferner werden, wo möglich, Berechnungen mit d
     
     calculationtime <- proc.time()
     komus = read.table("data/data_komus_bin2.dat",header=TRUE)
-    komusmult = data.frame(read.table("data/komus.csv",header=TRUE, sep=','))
-    multifragen = array(which(sapply(komusmult, max) > 1))
-    multifragenalt = multifragen
-    komusmult[multifragen] = lapply(komusmult[multifragen],factor)
-    
-    FUN.EntropieMC = function(x) {return(rowSums(-x*log(x+0.00000001, 2)))}
-    FUN.EntropieMC.IND = function(x) {return(sum(-x*log(x+0.00000001, 2)))}
-    FUN.Entropie = function(x) {return(-x*log(x+0.000001, 2)-(1-x)*log(1-x+0.00001, 2))}
-    FUN.Chances = function(x) {
-      if (length(multifragen) > 0) {
-        x[-multifragen] = lapply(x[-multifragen], predict, type="response")
-        x[multifragen] = lapply(x[multifragen], predict, type="probs")
-      } else {
-        x = lapply(x, predict, type="response")
-      }
-      return(x)
-    }
-    FUN.Chances.IND = function(x,y) {
-        x[-multifragen] = lapply(x[-multifragen], predict, data = komusmult[y,], type="response")
-        x[multifragen] = lapply(x[multifragen], predict, data = komusmult[y,], type="probs")
+    test = data.frame(read.table("data/komus.csv",header=TRUE, sep=','))
+    pcitems = array(which(sapply(test, max) > 1))
+    pcitemsalt = pcitems
+    test[pcitems] = lapply(test[pcitems],factor)
+
+    FUN.infoMC = function(x) {return(rowSums(-x*log(x+0.00000001, 2)))}
+    FUN.infoMC.IND = function(x) {return(sum(-x*log(x+0.00000001, 2)))}
+    FUN.info = function(x) {return(-x*log(x+0.000001, 2)-(1-x)*log(1-x+0.00001, 2))}
+    FUN.Odds = function(x) {
+        if (length(pcitems) > 0) {
+            x[-pcitems] = lapply(x[-pcitems], predict, type="response")
+            x[pcitems] = lapply(x[pcitems], predict, type="probs")
+        } else {
+            x = lapply(x, predict, type="response")
+        }
         return(x)
     }
-    FUN.Entropietemp = function(x) {
-        if (length(multifragen) > 0) {
-            x[multifragen] = lapply(x[multifragen], FUN.EntropieMC)
-            x[-multifragen] =lapply(x[-multifragen], FUN.Entropie)
+    FUN.Odds.IND = function(x,y) {
+        x[-pcitems] = lapply(x[-pcitems], predict, data = test[y,], type="response")
+        x[pcitems] = lapply(x[pcitems], predict, data = test[y,], type="probs")
+        return(x)
+    }
+    FUN.infotemp = function(x) {
+        if (length(pcitems) > 0) {
+            x[pcitems] = lapply(x[pcitems], FUN.infoMC)
+            x[-pcitems] =lapply(x[-pcitems], FUN.info)
         } else {
-            x =lapply(x, FUN.Entropie)
+            x =lapply(x, FUN.info)
         }
         x = simplify2array(x)
         return(x)
     }
-    FUN.Entropietemp.IND = function(x) {
-        if (length(multifragen) > 0) {
-            x[multifragen] = lapply(x[multifragen], FUN.EntropieMC.IND)
-            x[-multifragen] =lapply(x[-multifragen], FUN.Entropie)
+    FUN.infotemp.IND = function(x) {
+        if (length(pcitems) > 0) {
+            x[pcitems] = lapply(x[pcitems], FUN.infoMC.IND)
+            x[-pcitems] =lapply(x[-pcitems], FUN.info)
         } else {
-            x =lapply(x, FUN.Entropie)
+            x =lapply(x, FUN.info)
         }
         x = simplify2array(x)
         return(x)
     }
+    FUN.EntroMC = function(funpcitems, fundata, funmod) {
     
+        if (length(funpcitems) == 1) {
+            odds = lapply(funmod, predict, fundata, type="response")
+            infotemp = odds
+            infotemp = lapply(odds, FUN.info)
+            infotemp = simplify2array(infotemp)
+        } else {
+            funpcitems = funpcitems[2:length(funpcitems)]
+            odds = funmod
+            odds[-funpcitems] = lapply(funmod[-funpcitems], predict, fundata, type="response")
+            odds[funpcitems] = lapply(funmod[funpcitems], predict, fundata, type="probs")
+            infotemp = odds
     
-    FUN.EntroMC = function(funmultifragen, fundata, funmod) {
-    
-                if (length(funmultifragen) == 1) {
-                    chances = lapply(funmod, predict, fundata, type="response")
-                    Entropietemp = chances
-                    Entropietemp = lapply(chances, FUN.Entropie)
-                    Entropietemp = simplify2array(Entropietemp)
-                } else {
-                    funmultifragen = funmultifragen[2:length(funmultifragen)]
-                    chances = funmod
-                    chances[-funmultifragen] = lapply(funmod[-funmultifragen], predict, fundata, type="response")
-                    chances[funmultifragen] = lapply(funmod[funmultifragen], predict, fundata, type="probs")
-                    Entropietemp = chances
-    
-                    Entropietemp[funmultifragen] = lapply(chances[funmultifragen], FUN.EntropieMC.IND)
-                    Entropietemp[-funmultifragen] = lapply(chances[-funmultifragen], FUN.Entropie)
-                    Entropietemp = simplify2array(Entropietemp)
-                }
-    return(Entropietemp)
+            infotemp[funpcitems] = lapply(odds[funpcitems], FUN.infoMC.IND)
+            infotemp[-funpcitems] = lapply(odds[-funpcitems], FUN.info)
+            infotemp = simplify2array(infotemp)
+        }
+        return(infotemp)
     }
     
     
@@ -221,424 +199,406 @@ Daten usw. bereitgestellt werden. Ferner werden, wo möglich, Berechnungen mit d
     
     
     
-    Entropie = NULL
-    chances = NULL
-    fitting = NULL
+    info = NULL
+    odds = NULL
+    fit = NULL
     modell = NULL
     summe = data.frame()
     ############
-    items = length(komusmult)
-    #persons = length(komusmult[,1])
+    items = length(test)
+    #persons = length(test[,1])
     #items = 50
     persons = 3
     ############
     
     EEE = data.frame(matrix(ncol = 1, nrow = items+1))
     SumSD = data.frame(matrix(ncol = 1, nrow = items+1))
-    RestEntropie = data.frame(matrix(ncol = 1, nrow = items+1))
-    RestEntropieSD = data.frame(matrix(ncol = 1, nrow = items+1))
+    Restinfo = data.frame(matrix(ncol = 1, nrow = items+1))
+    RestinfoSD = data.frame(matrix(ncol = 1, nrow = items+1))
     names(EEE) = 'kill'
     names(SumSD) = 'kill'
-    names(RestEntropie) = 'kill'
-    names(RestEntropieSD) = 'kill'
+    names(Restinfo) = 'kill'
+    names(RestinfoSD) = 'kill'
 #+END_SRC
 
-#+RESULTS: statistic
-#+begin_example
-Lade nötiges Paket: MASS
-foreach: simple, scalable parallel programming from Revolution Analytics
-Use Revolution R for scalability, fault tolerance and more.
-http://www.revolutionanalytics.com
-Lade nötiges Paket: iterators
-Lade nötiges Paket: parallel
-
-Attache Paket: ‘parallel’
-
-The following object(s) are masked from ‘package:multicore’:
-
-    mclapply, mcparallel, pvec
-#+end_example
-
 *** Nichtadaptiv
-**** Unbedingte und bedingte Entropie in normaler Reihenfolge
-Dieser verhältnismäßig simple Code berechnet die Entropie über die klassische Itemschwierigkeit und die Entropie über die durch binärlogistische
+**** Unbedingte und bedingte info in normaler Reihenfolge
+Dieser verhältnismäßig simple Code berechnet die info über die klassische Itemschwierigkeit und die info über die durch binärlogistische
 Regressionen vorhergesagte Itemschwierigkeit in der ursprünglichen Reihenfolge.
 Zudem wird bei zweiter Berechnung noch angegeben, wie viel Restentropie nach jeder Antwort noch zu erwarten ist.
 #+NAME: statistic1
 #+BEGIN_SRC R :exports code :results output :noweb yes
         modell = NULL
         
-        multifragen = multifragen[multifragen <= items]
-        if (1 %in% multifragen) {
-            modell[[1]] = polr(reformulate('1', names(komusmult[1])), data = komusmult)
+        pcitems = pcitems[pcitems <= items]
+        if (1 %in% pcitems) {
+            modell[[1]] = polr(reformulate('1', names(test[1])), data = test)
         } else {
-            modell[[1]] = glm(reformulate('1', names(komusmult[1])), data = komusmult, family = "binomial"(link=logit))
+            modell[[1]] = glm(reformulate('1', names(test[1])), data = test, family = "binomial"(link=logit))
         }
         
         for (i in 2:items) {
-            if (i %in% multifragen) {
-                modell[[i]] = polr(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult)
+            if (i %in% pcitems) {
+                modell[[i]] = polr(reformulate(names(test[1:i-1]), names(test[i])), data = test)
             } else {
-                modell[[i]] = glm(reformulate(names(komusmult[1:i-1]), names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+                modell[[i]] = glm(reformulate(names(test[1:i-1]), names(test[i])), data = test, family = "binomial"(link=logit))
             }
         }
         
-        fitting = modell
-        <<fitting>>
-        chances = FUN.Chances(fitting)
+        fit = modell
+        <<fit>>
+        odds = FUN.Odds(fit)
         
-        Entropietemp = FUN.Entropietemp(chances)
+        infotemp = FUN.infotemp(odds)
         
         ### Without relations ###
-        fitting = lapply(fitting, update, ~ 1)
-        chances2 = FUN.Chances(fitting)
+        fit = lapply(fit, update, ~ 1)
+        odds2 = FUN.Odds(fit)
         
-        Entropietemp2 = FUN.Entropietemp(chances2)
+        infotemp2 = FUN.infotemp(odds2)
         
-        multifragen = multifragenalt
+        pcitems = pcitemsalt
         
-    fragen = NULL
-    Restentropietemp = NULL
+    query = NULL
+    resttemp = NULL
         for (i in 1:items) {
-            Entropietemp3 = NULL
-            fitting3 = NULL
-            if (i == length(komusmult)) {
-                Restentropietemp[[i]] = Restentropietemp[[1]]*0
+            infotemp3 = NULL
+            fit3 = NULL
+            if (i == length(test)) {
+                resttemp[[i]] = resttemp[[1]]*0
             } else {
-                fragen = 1:i
-                multifragen = which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt]))
+                query = 1:i
+                pcitems = which(names(test[-query]) %in% names(test[pcitemsalt]))
                 
-                for (j in 1:length(komusmult[-fragen])) {
-                    if (j %in% multifragen) {
-                        fitting3[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+                for (j in 1:length(test[-query])) {
+                    if (j %in% pcitems) {
+                        fit3[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
                     } else {
-                        fitting3[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                        fit3[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
                     }
                 }
-                <<fitting>>
-                    chances3 = FUN.Chances(fitting3)
+                <<fit>>
+                    odds3 = FUN.Odds(fit3)
                 
-                Entropietemp3 = FUN.Entropietemp(chances3)
-                Restentropietemp[[i]] = rowSums(Entropietemp3)
+                infotemp3 = FUN.infotemp(odds3)
+                resttemp[[i]] = rowSums(infotemp3)
             }
             
         }
     
-        Restentropietemp = simplify2array(Restentropietemp)
+        resttemp = simplify2array(resttemp)
         
-        RestEntropie$bedunsort = c(0,colMeans(Restentropietemp))
-        RestEntropieSD$bedunsort = c(0,apply(Restentropietemp, 2, sd))
+        Restinfo$bedunsort = c(0,colMeans(resttemp))
+        RestinfoSD$bedunsort = c(0,apply(resttemp, 2, sd))
     
     
     
-        SumSDtemp = sd(Entropietemp[,1])
-        for (i in 2:length(Entropietemp[1,])) {
-            SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+        SumSDtemp = sd(infotemp[,1])
+        for (i in 2:length(infotemp[1,])) {
+            SumSDtemp[i] = sd(rowSums(infotemp[,1:i]))
         }
         
         SumSD$bedunsort = c(0,SumSDtemp)
         
-        EEE$bedunsort = c(0,colMeans(Entropietemp))
-        EEE$unbedunsort = c(0,colMeans(Entropietemp2))
-        EEE$unbedsort = c(0,sort(colMeans(Entropietemp2), decreasing =TRUE))
-        Entropietemp2 = data.frame(Entropietemp2)
-        names(Entropietemp2) = names(komusmult[1:length(Entropietemp2)])    
+        EEE$bedunsort = c(0,colMeans(infotemp))
+        EEE$unbedunsort = c(0,colMeans(infotemp2))
+        EEE$unbedsort = c(0,sort(colMeans(infotemp2), decreasing =TRUE))
+        infotemp2 = data.frame(infotemp2)
+        names(infotemp2) = names(test[1:length(infotemp2)])    
     EEE
-    RestEntropie
+    Restinfo
 #+END_SRC
 
-**** Bedingte, sortierte Entropie
-Hier werden die Items schlicht nach dem durchschnittlichen Entropiegehalt sortiert, bevor die bedingte Entropie mit Regressionen berechnet wird.
-Dies verbessert die resultierende Kurve schon um einiges, der Entropiegewinn ist so tendenziell am Anfang weit höher als am Ende, trotz dass gleich
-viel Entropie innerhalb des kompletten Durchlaufes ermittelt wurde.
+**** Bedingte, sortierte info
+Hier werden die Items schlicht nach dem durchschnittlichen infogehalt sortiert, bevor die bedingte info mit Regressionen berechnet wird.
+Dies verbessert die resultierende Kurve schon um einiges, der infogewinn ist so tendenziell am Anfang weit höher als am Ende, trotz dass gleich viel info innerhalb des kompletten Durchlaufes ermittelt wurde.
 #+NAME: statistic2
 #+BEGIN_SRC R :exports code :results output :noweb yes
     modell = NULL
-    chances = NULL
-    fitting = NULL
+    odds = NULL
+    fit = NULL
     
     ############## sortierte Reihenfolge
     for (i in 1:items) {
-        if (i %in% multifragen) {
-            modell[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+        if (i %in% pcitems) {
+            modell[[i]] = polr(reformulate('1', names(test[i])), data = test)
         } else {
-            modell[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+            modell[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
         }
     }
     
-    chances = FUN.Chances(modell)
-    Entropietemp = FUN.Entropietemp(chances)
-    Entropietemp = data.frame(Entropietemp)
-    names(Entropietemp) = names(komusmult[1:length(Entropietemp)])
-    komus2 = komusmult[c(names(sort(colMeans(Entropietemp), decreasing=TRUE)))]
+    odds = FUN.Odds(modell)
+    infotemp = FUN.infotemp(odds)
+    infotemp = data.frame(infotemp)
+    names(infotemp) = names(test[1:length(infotemp)])
+    komus2 = test[c(names(sort(colMeans(infotemp), decreasing=TRUE)))]
     #########
     
-    names(sort(colMeans(Entropietemp), decreasing=TRUE))
-    multifragen.alt = multifragen
-    multifragen.alt
-    multifragen = which(names(komus2) %in% names(komusmult[multifragen.alt]))
+    names(sort(colMeans(infotemp), decreasing=TRUE))
+    pcitems.alt = pcitems
+    pcitems.alt
+    pcitems = which(names(komus2) %in% names(test[pcitems.alt]))
     modell = NULL
-    fitting = NULL
-    chances = NULL
+    fit = NULL
+    odds = NULL
     
-    if (1 %in% multifragen) {
+    if (1 %in% pcitems) {
         modell[[1]] = polr(reformulate('1', names(komus2[1])), data = komus2)
     } else {
         modell[[1]] = glm(reformulate('1', names(komus2[1])), data = komus2, family = "binomial"(link=logit))
     }
     
     for (i in 2:items) {
-        if (i %in% multifragen) {
+        if (i %in% pcitems) {
             modell[[i]] = polr(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2)
         } else {
             modell[[i]] = glm(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2, family = "binomial"(link=logit))
         }
     }
     
-    fitting = modell
-    <<fitting>>
-    chances = FUN.Chances(fitting)
-    #chances[-multifragen] = mclapply(fitting[-multifragen], predict, type="response")
-    #chances[multifragen] = mclapply(fitting[multifragen], predict, type="probs")
+    fit = modell
+    <<fit>>
+    odds = FUN.Odds(fit)
+    #odds[-pcitems] = mclapply(fit[-pcitems], predict, type="response")
+    #odds[pcitems] = mclapply(fit[pcitems], predict, type="probs")
     
-    #Entropietemp = fitting
-    Entropietemp = FUN.Entropietemp(chances)
-    #Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC)
-    #Entropietemp[-multifragen] =lapply(chances[-multifragen], FUN.Entropie)
-    #Entropietemp = simplify2array(Entropietemp)
+    #infotemp = fit
+    infotemp = FUN.infotemp(odds)
+    #infotemp[pcitems] = lapply(odds[pcitems], FUN.infoMC)
+    #infotemp[-pcitems] =lapply(odds[-pcitems], FUN.info)
+    #infotemp = simplify2array(infotemp)
     
-    SumSDtemp = sd(Entropietemp[,1])
-    for (i in 2:length(Entropietemp[1,])) {
-        SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+    SumSDtemp = sd(infotemp[,1])
+    for (i in 2:length(infotemp[1,])) {
+        SumSDtemp[i] = sd(rowSums(infotemp[,1:i]))
     }
     
     SumSD$sortbed = c(0,SumSDtemp)
     
-    EEE$sortbed = c(0,colMeans(Entropietemp))
+    EEE$sortbed = c(0,colMeans(infotemp))
     
-    multifragen = multifragen.alt
+    pcitems = pcitems.alt
 #+END_SRC
 
-**** Durchschnittlich bedingtsortierte Entropie
-Dieses Verfahren ist bereits weit rechenintensiver, es wird nacheinander das Item ausgewählt, welches durchschnittlich die Entropie am meisten senkt.
-Es wird also nach der Erfassung eines Items dieses miteinbezogen für kommende Regressionen. Insgesamt ist dies aber noch nicht individualisiert und
-dementsprechen nicht adaptiv.
+**** Durchschnittlich bedingtsortierte info
+Dieses Verfahren ist bereits weit rechenintensiver, es wird nacheinander das Item ausgewählt, welches durchschnittlich die info am meisten senkt.
+Es wird also nach der Erfassung eines Items dieses miteinbezogen für kommende Regressionen.
+Insgesamt ist dies aber noch nicht individualisiert und dementsprechen nicht adaptiv.
 #+NAME: statistic3
 #+BEGIN_SRC R :exports code :results output :noweb yes
-    fragen = NULL
+    query = NULL
     modell = NULL
-    Restentropietemp = NULL
-    multifragenalt = multifragen
+    resttemp = NULL
+    pcitemsalt = pcitems
     ############## sortierte Reihenfolge
-    for (i in 1:length(komusmult)) {
-        if (i %in% multifragen) {
-            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+    for (i in 1:length(test)) {
+        if (i %in% pcitems) {
+            fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
         } else {
-            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+            fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
         }
     }
     #modell
-    chances = FUN.Chances(fitting)
+    odds = FUN.Odds(fit)
+
+    infotemp = FUN.infotemp(odds)
     
-    Entropietemp = FUN.Entropietemp(chances)
-    
-    fragen = which(names(komusmult[which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))[1]]) == names(komusmult))[1]
-    fragen
+    query = which(names(test[which(colMeans(infotemp) == max(colMeans(infotemp)))[1]]) == names(test))[1]
+    query
     #########
-    modell[[1]] = fitting[[fragen]]
+    modell[[1]] = fit[[query]]
     
     for (i in 2:items) {
-        Entropietemp = NULL
-        fitting = NULL
+        infotemp = NULL
+        fit = NULL
     
-        multifragen = which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt]))
+        pcitems = which(names(test[-query]) %in% names(test[pcitemsalt]))
     
-        for (j in 1:length(komusmult[-fragen])) {
-            if (j %in% multifragen) {
-                fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+        for (j in 1:length(test[-query])) {
+            if (j %in% pcitems) {
+                fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
             } else {
-                fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
             }
         }
-        <<fitting>>
-        chances = FUN.Chances(fitting)
+        <<fit>>
+        odds = FUN.Odds(fit)
     
-        Entropietemp = FUN.Entropietemp(chances)
-        Restentropietemp[[i-1]] = rowSums(Entropietemp)
+        infotemp = FUN.infotemp(odds)
+        resttemp[[i-1]] = rowSums(infotemp)
     
-        fragen = c(fragen, which(names(komusmult[-fragen][which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))[1]]) == names(komusmult))[1])
-        modell[[i]] = fitting[[which(colMeans(Entropietemp) == max(colMeans(Entropietemp)))[1]]]
+        query = c(query, which(names(test[-query][which(colMeans(infotemp) == max(colMeans(infotemp)))[1]]) == names(test))[1])
+        modell[[i]] = fit[[which(colMeans(infotemp) == max(colMeans(infotemp)))[1]]]
     }
     
-    if (length(komusmult) == items) {
-        Restentropietemp[[items]] = Restentropietemp[[1]]*0
+    if (length(test) == items) {
+        resttemp[[items]] = resttemp[[1]]*0
     } else {
-        fitting = NULL
+        fit = NULL
     
-        multifragen = which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt]))
+        pcitems = which(names(test[-query]) %in% names(test[pcitemsalt]))
     
-        for (j in 1:length(komusmult[-fragen])) {
-            if (j %in% multifragen) {
-                fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+        for (j in 1:length(test[-query])) {
+            if (j %in% pcitems) {
+                fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
             } else {
-                fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
             }
         }
-        <<fitting>>
-        chances = FUN.Chances(fitting)
-        Entropietemp = FUN.Entropietemp(chances)
-        Restentropietemp[[items]] = rowSums(Entropietemp)
+        <<fit>>
+        odds = FUN.Odds(fit)
+        infotemp = FUN.infotemp(odds)
+        resttemp[[items]] = rowSums(infotemp)
     }
-    multifragen = which(fragen %in% multifragenalt)
+    pcitems = which(query %in% pcitemsalt)
     
-    Restentropietemp = simplify2array(Restentropietemp)
+    resttemp = simplify2array(resttemp)
     
-    chances = FUN.Chances(modell)
-    Entropietemp = FUN.Entropietemp(chances)
+    odds = FUN.Odds(modell)
+    infotemp = FUN.infotemp(odds)
     
-    SumSDtemp = sd(Entropietemp[,1])
-    for (i in 2:length(Entropietemp[1,])) {
-    SumSDtemp[i] = sd(rowSums(Entropietemp[,1:i]))
+    SumSDtemp = sd(infotemp[,1])
+    for (i in 2:length(infotemp[1,])) {
+    SumSDtemp[i] = sd(rowSums(infotemp[,1:i]))
     }
     
     SumSD$durchschbedsort = c(0,SumSDtemp)
-    EEE$durchschbedsort = c(0,colMeans(Entropietemp))
-    RestEntropie$durchschbedsort = c(0,colMeans(Restentropietemp))
-    RestEntropieSD$durchschbedsort = c(0,apply(Restentropietemp, 2, sd))
+    EEE$durchschbedsort = c(0,colMeans(infotemp))
+    Restinfo$durchschbedsort = c(0,colMeans(resttemp))
+    RestinfoSD$durchschbedsort = c(0,apply(resttemp, 2, sd))
 #+END_SRC
 
 *** Adaptiv
-**** Individuellbedingtsortierte Entropie
-Hier wird das zuletzt genannte Verfahren individualisiert, was den Rechenaufwand in diesem Fall 319 mal höher macht. Das Ergebniss ist jedoch bereits
-ein echt adaptiver Test. Somit ist die Entropiekurve nun auch viel stärker gekrümmt (hat also eine größere zweite Ableitung). Somit kann unter kleinem
-Informationsverlust der Test stark verkürzt werden.
+**** Individuellbedingtsortierte info
+Hier wird das zuletzt genannte Verfahren individualisiert, was den Rechenaufwand in diesem Fall 319 mal höher macht.
+Das Ergebniss ist jedoch bereits ein echt adaptiver Test.
+Somit ist die infokurve nun auch viel stärker gekrümmt (hat also eine größere zweite Ableitung).
+Somit kann unter kleinem Informationsverlust der Test stark verkürzt werden.
 
-Ideal wäre ein Itempool, der nicht komplett erschöpft wird in einer Testung. Somit könnte man berechnen, wie lang ein nichtadaptiver im Vergleich zu einem 
-gleichpräzisen adaptiven Test ist.
+Ideal wäre ein Itempool, der nicht komplett erschöpft wird in einer Testung. Somit könnte man berechnen, wie lang ein nichtadaptiver im Vergleich zu einem gleichpräzisen adaptiven Test ist.
 #+NAME: statistic4
 #+BEGIN_SRC R :exports code :results output :noweb yes
     ## initializing
-    Entropieall = NULL
-    chances = NULL
-    Restentropietemp = NULL
-    fragen = NULL
+    infoall = NULL
+    odds = NULL
+    resttemp = NULL
+    query = NULL
     modell = NULL
-    Restentropietemp = NULL
-    multifragen = multifragenalt
-    fitting = NULL
+    resttemp = NULL
+    pcitems = pcitemsalt
+    fit = NULL
     
     ## first item
-    for (i in 1:length(komusmult)) {
-        if (i %in% multifragen) {
-            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+    for (i in 1:length(test)) {
+        if (i %in% pcitems) {
+            fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
         } else {
-            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+            fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
         }
     }
     
-    chances = fitting
-    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
-    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
-    Entropietemp = FUN.Entropietemp.IND(chances)
-    fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))[1]]) == names(komusmult))[1]
+    odds = fit
+    odds[-pcitems] = lapply(fit[-pcitems], predict, test[1,], type="response")
+    odds[pcitems] = lapply(fit[pcitems], predict, test[1,], type="probs")
+    infotemp = FUN.infotemp.IND(odds)
+    query = which(names(test[which(infotemp == max(infotemp))[1]]) == names(test))[1]
     
-    modell[[1]] = fitting[[fragen]]
-    frageninit = fragen
-    fitting = NULL
+    modell[[1]] = fit[[query]]
+    queryinit = query
+    fit = NULL
     
     ## multicorecalculation for every person
-    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
-        fragen = frageninit
+    infoall = simplify2array(foreach(k=1:persons) %dopar% {
+        query = queryinit
         Restentropie = NULL
         for (i in 2:items) {
-            chances = NULL
-            Entropietemp = NULL
-            fitting = NULL
-            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-            for (j in 1:length(komusmult[-fragen])) {
-                if (j %in% multifragen) {
-                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+            odds = NULL
+            infotemp = NULL
+            fit = NULL
+            pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
+            for (j in 1:length(test[-query])) {
+                if (j %in% pcitems) {
+                    fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
                 } else {
-                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                    fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
                 }
             }
             
-            <<fitting>>
-            chances = fitting
+            <<fit>>
+            odds = fit
             
-            Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
+            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
             
-            Restentropietemp[i-1] = sum(Entropietemp) #rest of entropie before this item
-            fragen = c(fragen, which(names(komusmult[-fragen][which(Entropietemp == max(Entropietemp))[1]]) == names(komusmult))[1])
-            modell[[i]] = fitting[[which(Entropietemp == max(Entropietemp))[1]]]
+            resttemp[i-1] = sum(infotemp) #rest of entropie before this item
+            query = c(query, which(names(test[-query][which(infotemp == max(infotemp))[1]]) == names(test))[1])
+            modell[[i]] = fit[[which(infotemp == max(infotemp))[1]]]
         }
         
         ## calculation of last rest entropie
-        if (length(komusmult) == items) {
-            Restentropietemp[items] = 0
+        if (length(test) == items) {
+            resttemp[items] = 0
         } else {
-            fitting = NULL
-            multifragen = 0
-            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-            for (j in 1:length(komusmult[-fragen])) {
-                if (j %in% multifragen) {
-                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+            fit = NULL
+            pcitems = 0
+            pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
+            for (j in 1:length(test[-query])) {
+                if (j %in% pcitems) {
+                    fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
                 } else {
-                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                    fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
                 }
             }
-            <<fitting>>
+            <<fit>>
                 
-            Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-            Restentropietemp[items] = sum(Entropietemp)
+            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
+            resttemp[items] = sum(infotemp)
         }
         
         ## calculation of the choosen modell
-        multifragen = c(0,which(fragen %in% multifragenalt))
+        pcitems = c(0,which(query %in% pcitemsalt))
 
-        Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], modell)
-        return(c(Entropietemp, Restentropietemp))    
+        infotemp = FUN.EntroMC(pcitems,test[k,], modell)
+        return(c(infotemp, resttemp))    
     })
     
-    Restentropietemp = (Entropieall[(items+1):(items*2),])
-    Entropieall = Entropieall[1:items,]
+    resttemp = (infoall[(items+1):(items*2),])
+    infoall = infoall[1:items,]
      
-    SumSDtemp = sd(Entropieall[1,])
-    for (i in 2:length(Entropieall[,1])) {
-        SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
+    SumSDtemp = sd(infoall[1,])
+    for (i in 2:length(infoall[,1])) {
+        SumSDtemp[i] = sd(colSums(infoall[1:i,]))
     }
      
     SumSD$indivbedsort = c(0,SumSDtemp)
-    EEE$indivbedsort = c(0,rowMeans(Entropieall))
-    RestEntropie$indivbedsort = c(0,rowMeans(Restentropietemp))
-    RestEntropieSD$indivbedsort = c(0,apply(Restentropietemp, 1, sd))
+    EEE$indivbedsort = c(0,rowMeans(infoall))
+    Restinfo$indivbedsort = c(0,rowMeans(resttemp))
+    RestinfoSD$indivbedsort = c(0,apply(resttemp, 1, sd))
     
-    multifragen = multifragenalt
+    pcitems = pcitemsalt
 #+END_SRC
 
-**** Individuellbedingtsortierte Entropie mit Trennschärfe
-Ein nicht gut gelungener Versuch, nicht nur die Entropie als Auswahlkriterium zu nehmen. Dies ist deswegen sinnvoll, da Items vorstellbar sind mit hoher
-Entropie, die aber mit dem Test wenig zu tun haben (z.B. eine Frage nach der Schuhgröße hat vermutlich eine sehr hohe Entropie, hat aber vermutlich wenig
-mit musikalischer Kompetenz zu tun). Somit macht das bisherige Verfahren die Annahme, dass der Itempool sehr gut konstruiert ist. Dementsprechend kann 
-man das bisherige Verfahren sicher nicht als robust bezeichnen.
+**** Individuellbedingtsortierte info mit Trennschärfe
+Ein nicht gut gelungener Versuch, nicht nur die info als Auswahlkriterium zu nehmen. Dies ist deswegen sinnvoll, da Items vorstellbar sind mit hoher info, die aber mit dem Test wenig zu tun haben (z.B. eine Frage nach der Schuhgröße hat vermutlich eine sehr hohe info, hat aber vermutlich wenig mit musikalischer Kompetenz zu tun).
+Somit macht das bisherige Verfahren die Annahme, dass der Itempool sehr gut konstruiert ist.
+Dementsprechend kann man das bisherige Verfahren sicher nicht als robust bezeichnen.
 #+NAME: statistic5
 #+BEGIN_SRC R :exports code :results output :noweb yes
-    Entropieall = NULL
-    chances = NULL
+    infoall = NULL
+    odds = NULL
     beta = NULL
-    Restentropietemp = NULL
-    Entropietemp = NULL
-    fitting = NULL
+    resttemp = NULL
+    infotemp = NULL
+    fit = NULL
     
     if (!exists("information")) {
         information = simplify2array(foreach(m=1:length(komus)) %dopar% {
             for (n in 1:(length(komus)-1)) {
                 beta[[n]] = glm(reformulate(names(komus[m]), names(komus[-m][n])), data = komus, family = "binomial"(link=logit))
             }
-            chances = simplify2array(lapply(beta, predict, type="response"))
+            odds = simplify2array(lapply(beta, predict, type="response"))
             chancetemp = unlist(lapply(komus[m],mean))
-            Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
-            information = sum(colMeans(Entropietemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
+            infotemp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2))
+            information = sum(colMeans(infotemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
             return(information)
         })
         information = -(information - sum(-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)))
@@ -649,287 +609,284 @@ man das bisherige Verfahren sicher nicht als robust bezeichnen.
     
     
     for (j in 1:length(komus)) {
-        fitting[[j]] = glm(reformulate('1', names(komus[j])), data = komus, family = "binomial"(link=logit))
+        fit[[j]] = glm(reformulate('1', names(komus[j])), data = komus, family = "binomial"(link=logit))
     }
-    <<fitting>>
-    chances = simplify2array(lapply(fitting, predict, komus[1,], type="response"))
-    Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + (information)
-    frageninit = which(names(komus[which((Entropietemp) == max((Entropietemp)))[1]]) == names(komus))[1]
+    <<fit>>
+    odds = simplify2array(lapply(fit, predict, komus[1,], type="response"))
+    infotemp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2)) + (information)
+    queryinit = which(names(komus[which((infotemp) == max((infotemp)))[1]]) == names(komus))[1]
     
      
     
-    modell[[1]] = fitting[[which((Entropietemp) == max((Entropietemp)))[1]]]
+    modell[[1]] = fit[[which((infotemp) == max((infotemp)))[1]]]
     
-    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
-        fragen = frageninit
+    infoall = simplify2array(foreach(k=1:persons) %dopar% {
+        query = queryinit
         for (i in 2:items) {
-            Entropietemp = NULL
-            fitting = NULL
-            for (j in 1:length(komus[-fragen])) {
-                fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+            infotemp = NULL
+            fit = NULL
+            for (j in 1:length(komus[-query])) {
+                fit[[j]] = glm(reformulate(names(komus[query]), names(komus[-query][j])), data = komus, family = "binomial"(link=logit))
             }
     
-            <<fitting>>
+            <<fit>>
             ## TODO stimmt das so?
-            chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
-            Restentropietemp[i-1] = sum(-chances*log(chances,2)-(1-chances)*log(1-chances,2)) 
-            Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2)) + (information[-fragen]*(1 - (length(fragen)+1)/items))
-            fragen = c(fragen, which(names(komus[-fragen][which((Entropietemp) == max((Entropietemp)))[1]]) == names(komus))[1])
-            modell[[i]] = fitting[[which((Entropietemp) == max((Entropietemp)))[1]]]
+            odds = simplify2array(lapply(fit, predict, komus[k,], type="response"))
+            resttemp[i-1] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2)) 
+            infotemp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2)) + (information[-query]*(1 - (length(query)+1)/items))
+            query = c(query, which(names(komus[-query][which((infotemp) == max((infotemp)))[1]]) == names(komus))[1])
+            modell[[i]] = fit[[which((infotemp) == max((infotemp)))[1]]]
         }
     
         if (length(komus) == items) {
-            Restentropietemp[items] = 0
+            resttemp[items] = 0
         } else {
-            fitting = NULL
-            for (j in 1:length(komus[-fragen])) {
-                fitting[[j]] = glm(reformulate(names(komus[fragen]), names(komus[-fragen][j])), data = komus, family = "binomial"(link=logit))
+            fit = NULL
+            for (j in 1:length(komus[-query])) {
+                fit[[j]] = glm(reformulate(names(komus[query]), names(komus[-query][j])), data = komus, family = "binomial"(link=logit))
             }
-            <<fitting>>
-            chances = simplify2array(lapply(fitting, predict, komus[k,], type="response"))
-            Restentropietemp[length(fragen)] = sum(-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+            <<fit>>
+            odds = simplify2array(lapply(fit, predict, komus[k,], type="response"))
+            resttemp[length(query)] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2))
         }
     
-        chances = simplify2array(lapply(modell, predict, komus[k,], type="response"))
-        Entropietemp = (-chances*log(chances,2)-(1-chances)*log(1-chances,2))
+        odds = simplify2array(lapply(modell, predict, komus[k,], type="response"))
+        infotemp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2))
         
-        return(c(Entropietemp, Restentropietemp))
+        return(c(infotemp, resttemp))
     })
     
-    Restentropietemp = (Entropieall[(items+1):(items*2),])
-    Entropieall = Entropieall[1:items,]
-    SumSDtemp = sd(Entropieall[1,])
-    for (i in 2:length(Entropieall[,1])) {
-    SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
+    resttemp = (infoall[(items+1):(items*2),])
+    infoall = infoall[1:items,]
+    SumSDtemp = sd(infoall[1,])
+    for (i in 2:length(infoall[,1])) {
+    SumSDtemp[i] = sd(colSums(infoall[1:i,]))
     }
     
     SumSD$indivbedsorttrenn = c(0,SumSDtemp )
-    EEE$indivbedsorttrenn = c(0,rowMeans(Entropieall))
-    RestEntropie$indivbedsorttrenn = c(0,rowMeans(Restentropietemp))
-    RestEntropieSD$indivbedsorttrenn = c(0,apply(Restentropietemp,1 ,sd))
+    EEE$indivbedsorttrenn = c(0,rowMeans(infoall))
+    Restinfo$indivbedsorttrenn = c(0,rowMeans(resttemp))
+    RestinfoSD$indivbedsorttrenn = c(0,apply(resttemp,1 ,sd))
 #+END_SRC
 
-**** Individuellbedingtsortierte Entropie mit Prädiktion
-Hier wird nun die Entropie rekursiv berechnet. Es wird nicht nur geschaut, welches Item die meiste Entropie besitzt, sondern es werden für jedes Item alle
-Antwortmöglichkeiten simuliert und mit dieser Simulation die verbleibende Entropie im gesamten Test
-errechnet, diese mit der Chance der simulierten Antwort gewichtet und aufaddiert mit den gewichteten anderen Antwortmöglichkeiten.
+**** Individuellbedingtsortierte info mit Prädiktion
+Hier wird nun die info rekursiv berechnet.
+Es wird nicht nur geschaut, welches Item die meiste info besitzt, sondern es werden für jedes Item alle Antwortmöglichkeiten simuliert und mit dieser Simulation die verbleibende info im gesamten Test errechnet, diese mit der Chance der simulierten Antwort gewichtet und aufaddiert mit den gewichteten anderen Antwortmöglichkeiten.
 
-Dieses Modell umgeht also das Problem der vorherigen beiden. Es ist sehr robust, weil immer auch berechnet wird, wie sehr sich das auserwählte Item mit all
-seinen Antwortmöglichkeiten auf die gesamte Restentropie auswirkt. Dies ist eine mächtigere Form der Trennschärfe, weil sie nicht starr, sondern
-antwortmusterspezifisch ist.
+Dieses Modell umgeht also das Problem der vorherigen beiden.
+Es ist sehr robust, weil immer auch berechnet wird, wie sehr sich das auserwählte Item mit all seinen Antwortmöglichkeiten auf die gesamte Restentropie auswirkt.
+Dies ist eine mächtigere Form der Trennschärfe, weil sie nicht starr, sondern antwortmusterspezifisch ist.
 
-Dieses Modell bringt die rechnerischen Anforderungen auf ein neues Niveau, sie werden nochmals ungefähr 30 mal höher. Als Konsequenz daraus habe ich hier
-eine Datenbank mit implementiert, die einerseits bereits berechnetes speichert um mir wiederholte Arbeit zu ersparen und andererseits stets schaut,
-ob Frage-Antwort-Kombinationen bereits bei anderen Schülern vorgekommen ist, um mit Hilfe dieses Wissens hin und wieder einzelne Rechnungen zu ersparen.
+Dieses Modell bringt die rechnerischen Anforderungen auf ein neues Niveau, sie werden nochmals ungefähr 30 mal höher.
+Als Konsequenz daraus habe ich hier eine Datenbank mit implementiert, die einerseits bereits berechnetes speichert um mir wiederholte Arbeit zu ersparen und andererseits stets schaut, ob Frage-Antwort-Kombinationen bereits bei anderen Schülern vorgekommen ist, um mit Hilfe dieses Wissens hin und wieder einzelne Rechnungen zu ersparen.
 
 Zunächst könnte man denken, dass es bei rund 50 binären Items $2^{50}$ Möglichkeiten der Antwortmuster gibt, was die Datenbank als sinnlos erscheinen lässt.
-Jedoch muss bedacht werden, dass die Antwort Reihenfolge in der aktuellen Regression keine Rolle spielt. Beantwortet man Item a, b, und c richtig und
-bekommt daraufhin Item c, so würde man dies genauso bekommen, wenn man b, c und dann erst a richtig beantwortet, was die Sinnhaftigkeit der Datenbank
-deutlich steigert. Zudem werden manche Antwortmuster und manche Items gehäuft vorkommen, weil sie entweder besonders qualitativ, oder besonders »normal« sind.
+Jedoch muss bedacht werden, dass die Antwort Reihenfolge in der aktuellen Regression keine Rolle spielt. Beantwortet man Item a, b, und c richtig und bekommt daraufhin Item c, so würde man dies genauso bekommen, wenn man b, c und dann erst a richtig beantwortet, was die Sinnhaftigkeit der Datenbank deutlich steigert.
+Zudem werden manche Antwortmuster und manche Items gehäuft vorkommen, weil sie entweder besonders qualitativ, oder besonders »normal« sind.
 Im Moment fangen beispielsweise alle Schüler mit dem gleichen, maximal informativen Item an, weil noch keine Vorinformation über die Schüler vorhanden ist.
 #+NAME: statistic6
 #+BEGIN_SRC R :exports code :results output :noweb yes
     ## initializing
-    fitting = NULL
-    Entropieall = NULL
-    chances = NULL
-    Restentropietemp = NULL
-    fragen = NULL
+    fit = NULL
+    infoall = NULL
+    odds = NULL
+    resttemp = NULL
+    query = NULL
     modell = NULL
-    Restentropietemp = NULL
-    multifragen = multifragenalt
+    resttemp = NULL
+    pcitems = pcitemsalt
     
     ## first item
-    for (i in 1:length(komusmult)) {
-        if (i %in% multifragen) {
-            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+    for (i in 1:length(test)) {
+        if (i %in% pcitems) {
+            fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
         } else {
-            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+            fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
         }
     }
     
-    chances = fitting
-    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
-    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
-    Entropietemp = FUN.Entropietemp.IND(chances)
-    fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))[1]]) == names(komusmult))[1]
+    odds = fit
+    odds[-pcitems] = lapply(fit[-pcitems], predict, test[1,], type="response")
+    odds[pcitems] = lapply(fit[pcitems], predict, test[1,], type="probs")
+    infotemp = FUN.infotemp.IND(odds)
+    query = which(names(test[which(infotemp == max(infotemp))[1]]) == names(test))[1]
     
-    modell[[1]] = fitting[[fragen]]
-    frageninit = fragen
-    fitting = NULL
+    modell[[1]] = fit[[query]]
+    queryinit = query
+    fit = NULL
     Restentropie2 = NULL
     
     ## multicore calculation
-    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
-        fragen = frageninit
+    infoall = simplify2array(foreach(k=1:persons) %dopar% {
+        query = queryinit
         Restentropie = NULL
-        Restentropietemp2 = NULL
-        Restentropietemp = NULL
-        for (i in 2:items) {
-            chances = NULL
-            Entropietemp = NULL
-            fitting = NULL
-            fitting2 = NULL
-            fittingplus = NULL
-            fittingminus = NULL
-            Entropietemp2 = NULL
-            multifragen = 0
-            multifragen = c(multifragen,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+        resttemp2 = NULL
+        resttemp = NULL
+          for (i in 2:items) {
+            odds = NULL
+            infotemp = NULL
+            fit = NULL
+            fit2 = NULL
+            fitplus = NULL
+            fitminus = NULL
+            infotemp2 = NULL
+            pcitems = 0
+            pcitems = c(pcitems,which(names(test[-query]) %in% names(test[pcitemsalt])))
             
             ## prediction for all not-answerd questions
-            for (j in 1:length(komusmult[-fragen])) {
-                if (j %in% multifragen) {
-                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+            for (j in 1:length(test[-query])) {
+                if (j %in% pcitems) {
+                    fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
                 } else {
-                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                    fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
                 }
                 
                 ## prediction for all not-answered questions after prediction
-                if (length(komusmult[-fragen]) > 1) {
-                    multifragen2 = c(0,which(names(komusmult[-fragen][-j]) %in% names(komusmult[multifragenalt])))
-                    for (n in 1:length(komusmult[-fragen][-j])) {
-                        if (n %in% multifragen2) {
-                            fitting2[[n]] = polr(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult)
+                if (length(test[-query]) > 1) {
+                    pcitems2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitemsalt])))
+                    for (n in 1:length(test[-query][-j])) {
+                        if (n %in% pcitems2) {
+                            fit2[[n]] = polr(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test)
                         } else {
-                            fitting2[[n]] = glm(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult, family = "binomial"(link=logit))
+                            fit2[[n]] = glm(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test, family = "binomial"(link=logit))
                         }
                     }
                     
                     ## calculation of rest entropie for each possibility
-                    tempdata = komusmult[k,]
-                    ##tempdata[-fragen][j] = 0 #dies muss noch bearbeitet werden (chancen...)
-                    <<fitting>>
-#                        chances = fitting2
-#                    if (length(multifragen2) == 1) {
-#                        chances = lapply(fitting2, predict, tempdata, type="response")
-#                        Entropietemp = chances
-#                        Entropietemp = lapply(chances, FUN.Entropie)
-#                        Entropietemp = simplify2array(Entropietemp)
+                    tempdata = test[k,]
+                    ##tempdata[-query][j] = 0 #dies muss noch bearbeitet werden (chancen...)
+                    <<fit>>
+#                        odds = fit2
+#                    if (length(pcitems2) == 1) {
+#                        odds = lapply(fit2, predict, tempdata, type="response")
+#                        infotemp = odds
+#                        infotemp = lapply(odds, FUN.info)
+#                        infotemp = simplify2array(infotemp)
 #                    } else {
-#                        multifragen2 = multifragen2[2:length(multifragen2)]
-#                        chances[-multifragen2] = lapply(fitting2[-multifragen2], predict, tempdata, type="response")
-#                        chances[multifragen2] = lapply(fitting2[multifragen2], predict, tempdata, type="probs")
-#                        Entropietemp = chances
+#                        pcitems2 = pcitems2[2:length(pcitems2)]
+#                        odds[-pcitems2] = lapply(fit2[-pcitems2], predict, tempdata, type="response")
+#                        odds[pcitems2] = lapply(fit2[pcitems2], predict, tempdata, type="probs")
+#                        infotemp = odds
 #                        
-#                        ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-#                        Entropietemp[multifragen2] = lapply(chances[multifragen2], FUN.EntropieMC.IND)
-#                        Entropietemp[-multifragen2] = lapply(chances[-multifragen2], FUN.Entropie)
-#                        Entropietemp = simplify2array(Entropietemp)
+#                        ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems zugreift
+#                        infotemp[pcitems2] = lapply(odds[pcitems2], FUN.infoMC.IND)
+#                        infotemp[-pcitems2] = lapply(odds[-pcitems2], FUN.info)
+#                        infotemp = simplify2array(infotemp)
 #                    }
-                    Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)
-                    Restentropietemp2[j] = sum(Entropietemp)
+                    infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)
+                    resttemp2[j] = sum(infotemp)
                 } else {
-                    Restentropietemp2[j] = 0 
+                    resttemp2[j] = 0 
                 }
             }
             
-            <<fitting>>
-                chances = fitting
+            <<fit>>
+                odds = fit
             
 #            ## calculation of current rest entropie
-#            if (length(multifragen) == 1) {
-#                chances = lapply(fitting, predict, komusmult[k,], type="response")
-#                Entropietemp = chances
-#                Entropietemp = lapply(chances, FUN.Entropie)
-#                Entropietemp = simplify2array(Entropietemp)
+#            if (length(pcitems) == 1) {
+#                odds = lapply(fit, predict, test[k,], type="response")
+#                infotemp = odds
+#                infotemp = lapply(odds, FUN.info)
+#                infotemp = simplify2array(infotemp)
 #            } else {
-#                multifragen = multifragen[2:length(multifragen)]
-#                chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
-#                chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
-#                Entropietemp = chances
+#                pcitems = pcitems[2:length(pcitems)]
+#                odds[-pcitems] = lapply(fit[-pcitems], predict, test[k,], type="response")
+#                odds[pcitems] = lapply(fit[pcitems], predict, test[k,], type="probs")
+#                infotemp = odds
 #                
-#                ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-#                Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
-#                Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
-#                Entropietemp = simplify2array(Entropietemp)
+#                ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems zugreift
+#                infotemp[pcitems] = lapply(odds[pcitems], FUN.infoMC.IND)
+#                infotemp[-pcitems] = lapply(odds[-pcitems], FUN.info)
+#                infotemp = simplify2array(infotemp)
 #            }
-            Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-            Restentropietemp[i-1] = sum(Entropietemp)
-            fragen = c(fragen, which(names(komusmult[-fragen][which(Restentropietemp2 == min(Restentropietemp2))[1]]) == names(komusmult))[1])
-            ## stimmt das? sollte das nicht mit Restentropietemp2 arbeiten?
-            ##        modell[[i]] = fitting[[which(Entropietemp == max(Entropietemp))]]
-            modell[[i]] = fitting[[which(Restentropietemp2 == min(Restentropietemp2))[1]]]
+            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
+            resttemp[i-1] = sum(infotemp)
+            query = c(query, which(names(test[-query][which(resttemp2 == min(resttemp2))[1]]) == names(test))[1])
+            ## stimmt das? sollte das nicht mit resttemp2 arbeiten?
+            ##        modell[[i]] = fit[[which(infotemp == max(infotemp))]]
+            modell[[i]] = fit[[which(resttemp2 == min(resttemp2))[1]]]
         }
         
         ## calculation of last rest entropie
-        if (length(komusmult) == items) {
-            Restentropietemp[items] = 0
+        if (length(test) == items) {
+            resttemp[items] = 0
         } else {
-            fitting = NULL
-            multifragen = 0
-            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-            for (j in 1:length(komusmult[-fragen])) {
-                if (j %in% multifragen) {
-                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+            fit = NULL
+            pcitems = 0
+            pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
+            for (j in 1:length(test[-query])) {
+                if (j %in% pcitems) {
+                    fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
                 } else {
-                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                    fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
                 }
             }
             
-            <<fitting>>
-#                if (length(multifragen) == 1) {
-#                    chances = lapply(fitting, predict, komusmult[k,], type="response")
-#                    Entropietemp = chances
-#                    Entropietemp = lapply(chances, FUN.Entropie)
-#                    Entropietemp = simplify2array(Entropietemp) 
+            <<fit>>
+#                if (length(pcitems) == 1) {
+#                    odds = lapply(fit, predict, test[k,], type="response")
+#                    infotemp = odds
+#                    infotemp = lapply(odds, FUN.info)
+#                    infotemp = simplify2array(infotemp) 
 #                } else {
-#                    multifragen = multifragen[2:length(multifragen)]
-#                    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[k,], type="response")
-#                    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[k,], type="probs")
-#                    Entropietemp = chances
+#                    pcitems = pcitems[2:length(pcitems)]
+#                    odds[-pcitems] = lapply(fit[-pcitems], predict, test[k,], type="response")
+#                    odds[pcitems] = lapply(fit[pcitems], predict, test[k,], type="probs")
+#                    infotemp = odds
 #                    
-#                    ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-#                    Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
-#                    Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
-#                    Entropietemp = simplify2array(Entropietemp)
+#                    ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems zugreift
+#                    infotemp[pcitems] = lapply(odds[pcitems], FUN.infoMC.IND)
+#                    infotemp[-pcitems] = lapply(odds[-pcitems], FUN.info)
+#                    infotemp = simplify2array(infotemp)
 #                }
-            Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-        Restentropietemp[items] = sum(Entropietemp)
+            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
+        resttemp[items] = sum(infotemp)
         }
         
         ## calculation of choosen modell
-        multifragen = 0
-        multifragen = c(multifragen,which(fragen %in% multifragenalt))
-#        if (length(multifragen) == 1) {
-#            chances = modell
-#            chances = lapply(modell, predict, komusmult[k,], type="response")
-#            Entropietemp = chances
-#            Entropietemp = lapply(chances, FUN.Entropie)
-#            Entropietemp = simplify2array(Entropietemp)
+        pcitems = 0
+        pcitems = c(pcitems,which(query %in% pcitemsalt))
+#        if (length(pcitems) == 1) {
+#            odds = modell
+#            odds = lapply(modell, predict, test[k,], type="response")
+#            infotemp = odds
+#            infotemp = lapply(odds, FUN.info)
+#            infotemp = simplify2array(infotemp)
 #        } else {
-#            multifragen = multifragen[2:length(multifragen)]
-#            chances = modell
-#            chances[-multifragen] = lapply(modell[-multifragen], predict, komusmult[k,], type="response")
-#            chances[multifragen] = lapply(modell[multifragen], predict, komusmult[k,], type="probs")
-#            Entropietemp = chances
+#            pcitems = pcitems[2:length(pcitems)]
+#            odds = modell
+#            odds[-pcitems] = lapply(modell[-pcitems], predict, test[k,], type="response")
+#            odds[pcitems] = lapply(modell[pcitems], predict, test[k,], type="probs")
+#            infotemp = odds
 #            
-#            ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte multifragen zugreift
-#            Entropietemp[multifragen] = lapply(chances[multifragen], FUN.EntropieMC.IND)
-#            Entropietemp[-multifragen] = lapply(chances[-multifragen], FUN.Entropie)
-#            Entropietemp = simplify2array(Entropietemp)
+#            ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems zugreift
+#            infotemp[pcitems] = lapply(odds[pcitems], FUN.infoMC.IND)
+#            infotemp[-pcitems] = lapply(odds[-pcitems], FUN.info)
+#            infotemp = simplify2array(infotemp)
 #        }
-        Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], modell)
-        return(c(Entropietemp, Restentropietemp))    
+        infotemp = FUN.EntroMC(pcitems,test[k,], modell)
+        return(c(infotemp, resttemp))    
     })
     
-    Restentropietemp = (Entropieall[(items+1):(items*2),])
-    Entropieall = Entropieall[1:items,]
+    resttemp = (infoall[(items+1):(items*2),])
+    infoall = infoall[1:items,]
     
-    SumSDtemp = sd(Entropieall[1,])
-    for (i in 2:length(Entropieall[,1])) {
-        SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
+    SumSDtemp = sd(infoall[1,])
+    for (i in 2:length(infoall[,1])) {
+        SumSDtemp[i] = sd(colSums(infoall[1:i,]))
     }
     
     SumSD$indivbedsortpred = c(0,SumSDtemp)
-    EEE$indivbedsortpred = c(0,rowMeans(Entropieall))
-    RestEntropie$indivbedsortpred = c(0,rowMeans(Restentropietemp))
-    RestEntropieSD$indivbedsortpred = c(0,apply(Restentropietemp, 1, sd))
+    EEE$indivbedsortpred = c(0,rowMeans(infoall))
+    Restinfo$indivbedsortpred = c(0,rowMeans(resttemp))
+    RestinfoSD$indivbedsortpred = c(0,apply(resttemp, 1, sd))
     
-    multifragen = multifragenalt
+    pcitems = pcitemsalt
     EEE
     SumSD
-    RestEntropie
-    RestEntropieSD
+    Restinfo
+    RestinfoSD
 #+END_SRC
 
 *** Experimenteller Code
@@ -937,73 +894,73 @@ Im Moment fangen beispielsweise alle Schüler mit dem gleichen, maximal informat
     calculationtime <- proc.time()
     
     ## initializing
-    fitting = NULL
-    Entropieall = NULL
-    chances = NULL
-    Restentropietemp = NULL
-    fragen = NULL
+    fit = NULL
+    infoall = NULL
+    odds = NULL
+    resttemp = NULL
+    query = NULL
     modell = NULL
-    Restentropietemp = NULL
-    multifragen = multifragenalt
+    resttemp = NULL
+    pcitems = pcitemsalt
     
     ## first item
-    for (i in 1:length(komusmult)) {
-        if (i %in% multifragen) {
-            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+    for (i in 1:length(test)) {
+        if (i %in% pcitems) {
+            fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
         } else {
-            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+            fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
         }
     }
     
-    chances = fitting
-    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
-    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
-    Entropietemp = FUN.Entropietemp.IND(chances)
-    fragen = which(names(komusmult[which(Entropietemp == max(Entropietemp))[1]]) == names(komusmult))[1]
+    odds = fit
+    odds[-pcitems] = lapply(fit[-pcitems], predict, test[1,], type="response")
+    odds[pcitems] = lapply(fit[pcitems], predict, test[1,], type="probs")
+    infotemp = FUN.infotemp.IND(odds)
+    query = which(names(test[which(infotemp == max(infotemp))[1]]) == names(test))[1]
     
-    modell[[1]] = fitting[[fragen]]
-    frageninit = fragen
-    fitting = NULL
+    modell[[1]] = fit[[query]]
+    queryinit = query
+    fit = NULL
     Restentropie2 = NULL
-    Entropieall = matrix(nrow=persons,ncol=items)
+    infoall = matrix(nrow=persons,ncol=items)
     ## multicore calculation
-                                            #    Entropieall = simplify2array(foreach(k=1:persons) %dopar% {
+    #    infoall = simplify2array(foreach(k=1:persons) %dopar% {
     for (k in 1:persons) {
-        fragen = frageninit
+        query = queryinit
         Restentropie = NULL
-        Restentropietemp2 = NULL
-        Restentropietemp = NULL
+        resttemp2 = NULL
+        resttemp = NULL
         calcu = 0
         calcutime = proc.time()
-        antwortmuster = vector(length=(length(komusmult)+2))
+        antwortmuster = vector(length=(length(test)+2))
         if (file.exists('database.dat')) {
-            schongerechnet = read.table('database.dat')
+            database = read.table('database.dat')
         }
-        antwortmuster[1] = fragen[1] + as.numeric(as.character(komusmult[k,fragen[1]]))/100
-                                            #                antwortmuster[2] = komusmult[k,fragen[1]]
+        antwortmuster[1] = query[1] + as.numeric(as.character(test[k,query[1]]))/100
+        #                antwortmuster[2] = test[k,query[1]]
         for (i in 2:items) {
-            chances = NULL
-            Entropietemp = NULL
-            fitting = NULL
-            fitting2 = NULL
-            fittingplus = NULL
-            fittingminus = NULL
-            Entropietemp2 = NULL
+            odds = NULL
+            infotemp = NULL
+            fit = NULL
+            fit2 = NULL
+            fitplus = NULL
+            fitminus = NULL
+            infotemp2 = NULL
             found = 0
-            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
+            pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
             Liste = NULL
             foundit = 0
             ## prediction for all not-answerd questions
-            if (exists("schongerechnet")) {
-                for (m in 1:length(schongerechnet[,1])) {
-                    for (u in 1:length(fragen)) {
-                        if (sort(antwortmuster[1:length(fragen)])[u] != schongerechnet[m,u]) {
+            if (exists("database")) {
+                for (m in 1:length(database[,1])) {
+                    for (u in 1:length(query)) {
+                        if (sort(antwortmuster[1:length(query)])[u] != database[m,u]) {
                             break
                         }
-                        if (schongerechnet[m,(length(fragen)+3)] == 0 && u == length(fragen)) {
-                            found = schongerechnet[m,(length(fragen)+2)]
-                            Restentropietemp[i-1] = schongerechnet[m,(length(fragen)+1)]
-                            fragen = c(fragen, found)
+                        if (database[m,(length(query)+3)] == 0 && u == length(query)) {
+                            found = database[m,(length(query)+2)]
+                            resttemp[i-1] = database[m,(length(query)+1)]
+                            query = c(query, found)
                         }
                     }
                     if (found != 0) {
@@ -1014,176 +971,176 @@ Im Moment fangen beispielsweise alle Schüler mit dem gleichen, maximal informat
             if (found == 0) {
                 calcu = calcu+1
                 isgood = NULL
-                for (q in 1:length(komusmult[-fragen])) {
-                    if (q %in% multifragen) {
-                        fitting[[q]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][q])), data = komusmult)
+                for (q in 1:length(test[-query])) {
+                    if (q %in% pcitems) {
+                        fit[[q]] = polr(reformulate(names(test[query]), names(test[-query][q])), data = test)
                     } else {
-                        fitting[[q]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][q])), data = komusmult, family = "binomial"(link=logit))
+                        fit[[q]] = glm(reformulate(names(test[query]), names(test[-query][q])), data = test, family = "binomial"(link=logit))
                     }
                     
                 }
-                Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-                isgood = Entropietemp == max(Entropietemp)[1]
+                infotemp = FUN.EntroMC(pcitems,test[k,], fit)
+                isgood = infotemp == max(infotemp)[1]
                 
                 
-                Liste =foreach(j=1:length(komusmult[-fragen])) %dopar% {
+                Liste =foreach(j=1:length(test[-query])) %dopar% {
                     chance = NULL
-                    if (j %in% multifragen) {
-                                            #    fitting = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
-                        chance = predict(fitting[[j]], komusmult[k,], type="probs")
+                    if (j %in% pcitems) {
+                        #    fit = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
+                        chance = predict(fit[[j]], test[k,], type="probs")
                     } else {
-                                            #                                                    fitting = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
-                        chance = predict(fitting[[j]], komusmult[k,], type="response")
+                        #                                                    fit = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
+                        chance = predict(fit[[j]], test[k,], type="response")
                         chance[2] = 1-chance[1]
                     }
-                                            #                                             Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-                                            #      tempdata = komusmult[k,]
-                                            #          if (j %in% multifragen) {
-                                            #              for (s in 1:length(chance)) {
-                                            #                  tempdata[-fragen][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
-                                            #                  Entropietemp = FUN.EntroMC(multifragen,tempdata, fitting)*chance[s]
-                                            #                  Restentropietemp2[s] = sum(Entropietemp)
-                                            #              }
-                                            #              Restentropietemp2 = sum(Restentropietemp2)
-                                            #          } else {
-                                            #              tempdata[-fragen][j] = 1
-                                            #              Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[1]
-                                            #              Restentropietemp2 = sum(Entropietemp)
-                                            #              tempdata[-fragen][j] = 0
-                                            #              Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[2]
-                                            #              Restentropietemp2[2] = sum(Entropietemp)
-                                            #              Restentropietemp2 = sum(Restentropietemp2)
-                                            #          }
-                                            #          fitting2=NULL
+                    #                                             infotemp = FUN.EntroMC(pcitems,test[k,], fit)
+                    #      tempdata = test[k,]
+                    #          if (j %in% pcitems) {
+                    #              for (s in 1:length(chance)) {
+                    #                  tempdata[-query][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
+                    #                  infotemp = FUN.EntroMC(pcitems,tempdata, fit)*chance[s]
+                    #                  resttemp2[s] = sum(infotemp)
+                    #              }
+                    #              resttemp2 = sum(resttemp2)
+                    #          } else {
+                    #              tempdata[-query][j] = 1
+                    #              infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[1]
+                    #              resttemp2 = sum(infotemp)
+                    #              tempdata[-query][j] = 0
+                    #              infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[2]
+                    #              resttemp2[2] = sum(infotemp)
+                    #              resttemp2 = sum(resttemp2)
+                    #          }
+                    #          fit2=NULL
                     
                     
                     
-                    Restentropietemp2 = NULL       
+                    resttemp2 = NULL       
                     ## prediction for all not-answered questions after prediction
-                    if (length(komusmult[-fragen]) > 1 && isgood[j]) {
-                        multifragen2 = c(0,which(names(komusmult[-fragen][-j]) %in% names(komusmult[multifragenalt])))
-                        for (n in 1:length(komusmult[-fragen][-j])) {
-                            if (n %in% multifragen2) {
-                                fitting2[[n]] = polr(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult)
+                    if (length(test[-query]) > 1 && isgood[j]) {
+                        pcitems2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitemsalt])))
+                        for (n in 1:length(test[-query][-j])) {
+                            if (n %in% pcitems2) {
+                                fit2[[n]] = polr(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test)
                             } else {
-                                fitting2[[n]] = glm(reformulate(names(c(komusmult[fragen], komusmult[-fragen][j])), names(komusmult[-fragen][-j][n])), data = komusmult, family = "binomial"(link=logit))
+                                fit2[[n]] = glm(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test, family = "binomial"(link=logit))
                             }
                         }
                         
                         ## calculation of rest entropie for each possibility
-                        tempdata = komusmult[k,]
-                        if (j %in% multifragen) {
-                                            #            for (s in 1:length(chance)) {
-                                            #                tempdata[-fragen][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
-                                            #                Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[s]
-                                            #                Restentropietemp2[s] = sum(Entropietemp)
-                                            #                                                            }
-                                            #            Restentropietemp2 = sum(Restentropietemp2)
-                            Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)
-                            Restentropietemp2 = sum(Entropietemp)
+                        tempdata = test[k,]
+                        if (j %in% pcitems) {
+                            #            for (s in 1:length(chance)) {
+                            #                tempdata[-query][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
+                            #                infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[s]
+                            #                resttemp2[s] = sum(infotemp)
+                            #                                                            }
+                            #            resttemp2 = sum(resttemp2)
+                            infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)
+                            resttemp2 = sum(infotemp)
                             
                         } else {
-                            tempdata[-fragen][j] = 1
-                            Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[1]
-                            Restentropietemp2 = sum(Entropietemp)
-                            tempdata[-fragen][j] = 0
-                            Entropietemp = FUN.EntroMC(multifragen2,tempdata, fitting2)*chance[2]
-                            Restentropietemp2[2] = sum(Entropietemp)
-                            Restentropietemp2 = sum(Restentropietemp2)
+                            tempdata[-query][j] = 1
+                            infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[1]
+                            resttemp2 = sum(infotemp)
+                            tempdata[-query][j] = 0
+                            infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[2]
+                            resttemp2[2] = sum(infotemp)
+                            resttemp2 = sum(resttemp2)
                         }
-                        fitting2=NULL
+                        fit2=NULL
                     } else { 
                         if (isgood[j]) {
-                            Restentropietemp2 = 0 
+                            resttemp2 = 0 
                         } else {
-                            Restentropietemp2 = 55555555
+                            resttemp2 = 55555555
                         }
                     }
-                    return(Restentropietemp2)   
+                    return(resttemp2)   
                 }
                 
                 
-                                            #                                             Liste = unlist(Liste, recursive = FALSE)
-                                            #                                             
-                                            #                                             Restentropietemp2 = unlist(Liste[(1:(length(Liste)/2))*2])
-                                            #                                             fitting = Liste[(1:(length(Liste)/2))*2-1]
-                Restentropietemp2 = simplify2array(Liste)                                                       
-                fragen = c(fragen, which(names(komusmult[-fragen][which(Restentropietemp2 == min(Restentropietemp2))[1]]) == names(komusmult))[1])
-                modell[[i]] = fitting[[which(Restentropietemp2 == min(Restentropietemp2))[1]]]
+                #                                             Liste = unlist(Liste, recursive = FALSE)
+                #                                             
+                #                                             resttemp2 = unlist(Liste[(1:(length(Liste)/2))*2])
+                #                                             fit = Liste[(1:(length(Liste)/2))*2-1]
+                resttemp2 = simplify2array(Liste)                                                       
+                query = c(query, which(names(test[-query][which(resttemp2 == min(resttemp2))[1]]) == names(test))[1])
+                modell[[i]] = fit[[which(resttemp2 == min(resttemp2))[1]]]
                 
                 
-                <<fitting>>
-                    chances = fitting
+                <<fit>>
+                    odds = fit
                 
-                Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-                Restentropietemp[i-1] = sum(Entropietemp)
+                infotemp = FUN.EntroMC(pcitems,test[k,], fit)
+                resttemp[i-1] = sum(infotemp)
                 
             } 
-            antwortmuster[i] = fragen[i] + as.numeric(as.character(komusmult[k,fragen[i]]))/100
+            antwortmuster[i] = query[i] + as.numeric(as.character(test[k,query[i]]))/100
             
             if (found == 0) {
                 temp = antwortmuster
                 temp[1:(i-1)] = sort(antwortmuster[1:(i-1)])
-                temp[i] = Restentropietemp[i-1]
-                temp[i+1] = fragen[i]
+                temp[i] = resttemp[i-1]
+                temp[i+1] = query[i]
                 write(temp, file='database.dat', append=TRUE, ncolumns=length(antwortmuster))
             }
-            plot(Restentropietemp, type='l', col=rgb(0,0.7,0.7))
+            plot(resttemp, type='l', col=rgb(0,0.7,0.7))
         }
         ## calculation of last rest entropie
-        if (length(komusmult) == items) {
-            Restentropietemp[items] = 0
+        if (length(test) == items) {
+            resttemp[items] = 0
         } else {
-            fitting = NULL
-            multifragen = 0
-            multifragen = c(0,which(names(komusmult[-fragen]) %in% names(komusmult[multifragenalt])))
-            for (j in 1:length(komusmult[-fragen])) {
-                if (j %in% multifragen) {
-                    fitting[[j]] = polr(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult)
+            fit = NULL
+            pcitems = 0
+            pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
+            for (j in 1:length(test[-query])) {
+                if (j %in% pcitems) {
+                    fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
                 } else {
-                    fitting[[j]] = glm(reformulate(names(komusmult[fragen]), names(komusmult[-fragen][j])), data = komusmult, family = "binomial"(link=logit))
+                    fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
                 }
             }
             
-            <<fitting>>
+            <<fit>>
                 
-                Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], fitting)
-            Restentropietemp[items] = sum(Entropietemp)
+                infotemp = FUN.EntroMC(pcitems,test[k,], fit)
+            resttemp[items] = sum(infotemp)
         }
         
         ## calculation of choosen modell
-        multifragen = 0
-        multifragen = c(multifragen,which(fragen %in% multifragenalt))
+        pcitems = 0
+        pcitems = c(pcitems,which(query %in% pcitemsalt))
         if (calcu != 0) {
-            temp = vector(length=(length(komusmult)+2))
+            temp = vector(length=(length(test)+2))
             temp[2] = k
             temp[3] = (proc.time() - calcutime)[3]
             temp[4] = calcu
             write(temp, file='database.dat', append=TRUE, ncolumns=length(antwortmuster))
         }
-                                            #Entropietemp = FUN.EntroMC(multifragen,komusmult[k,], modell)
-                                            #    return(c(Entropietemp, Restentropietemp))
-        Entropieall[k,] = Restentropietemp
+        #infotemp = FUN.EntroMC(pcitems,test[k,], modell)
+        #    return(c(infotemp, resttemp))
+        infoall[k,] = resttemp
     }#})
     
-                                            #Restentropietemp = (Entropieall[(items+1):(items*2),])
-                                            #Entropieall = Entropieall[1:items,]
+    #restt = (infoall[(items+1):(items*2),])
+    #infoall = infoall[1:items,]
     
-                                            #    SumSDtemp = sd(Entropieall[1,])
-                                            #   for (i in 2:length(Entropieall[,1])) {
-                                            #      SumSDtemp[i] = sd(colSums(Entropieall[1:i,]))
-                                            # }
+    #    SumSDtemp = sd(infoall[1,])
+    #   for (i in 2:length(infoall[,1])) {
+    #      SumSDtemp[i] = sd(colSums(infoall[1:i,]))
+    # }
     
-                                            #SumSD$indivbedsortpred = c(0,SumSDtemp)
-                                            #EEE$indivbedsortpred = c(0,rowMeans(Entropieall))
-    RestEntropie$indivbedsortpred = c(0,colMeans(Entropieall))
-    RestEntropieSD$indivbedsortpred = c(0,apply(Entropieall, 2, sd))
+    #SumSD$indivbedsortpred = c(0,SumSDtemp)
+    #EEE$indivbedsortpred = c(0,rowMeans(infoall))
+    Restinfo$indivbedsortpred = c(0,colMeans(infoall))
+    RestinfoSD$indivbedsortpred = c(0,apply(infoall, 2, sd))
     
-    multifragen = multifragenalt
-                                            #EEE
-                                            #SumSD
-    RestEntropie
-    RestEntropieSD
+    pcitems = pcitemsalt
+    #EEE
+    #SumSD
+    Restinfo
+    RestinfoSD
 #+END_SRC
 
 #+RESULTS:
@@ -1314,9 +1271,9 @@ Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um d
         SumSD = SumSD[-1]
     }
     
-    if (names(RestEntropie[1]) == 'kill') {
-        RestEntropie = RestEntropie[-1]
-        RestEntropieSD = RestEntropieSD[-1]
+    if (names(Restinfo[1]) == 'kill') {
+        Restinfo = Restinfo[-1]
+        RestinfoSD = RestinfoSD[-1]
     }
     
     for (i in 1:length(EEE[1,])) {
@@ -1325,21 +1282,21 @@ Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um d
         }
     }
     
-    fitting = NULL
-    multifragen = multifragenalt
-    for (i in 1:length(komusmult)) {
-        if (i %in% multifragen) {
-            fitting[[i]] = polr(reformulate('1', names(komusmult[i])), data = komusmult)
+    fit = NULL
+    pcitems = pcitemsalt
+    for (i in 1:length(test)) {
+        if (i %in% pcitems) {
+            fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
         } else {
-            fitting[[i]] = glm(reformulate('1', names(komusmult[i])), data = komusmult, family = "binomial"(link=logit))
+            fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
         }
     }
     
-    chances = fitting
-    chances[-multifragen] = lapply(fitting[-multifragen], predict, komusmult[1,], type="response")
-    chances[multifragen] = lapply(fitting[multifragen], predict, komusmult[1,], type="probs")
-    Entropietemp = FUN.Entropietemp.IND(chances)
-    RestEntropie[1,] = sum(Entropietemp)
+    odds = fit
+    odds[-pcitems] = lapply(fit[-pcitems], predict, test[1,], type="response")
+    odds[pcitems] = lapply(fit[pcitems], predict, test[1,], type="probs")
+    infotemp = FUN.infotemp.IND(odds)
+    Restinfo[1,] = sum(infotemp)
     
     names(summe) = names(EEE)
     
@@ -1354,13 +1311,13 @@ Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um d
 Hier kann noch bestimmt werden, ob die binärlogistischen Regressionen noch schlechte Items verwerfen, oder einfach mit allen rechnen.
 Änderungen, die hier gemacht werden, werden automatisch im gesamten Code angepasst, da dieser Teil mit noweb-syntax eingebunden ist.
 
-Aus statistischer Sicht ist es natürlich viel besser, wenn schlechte Items noch verworfen und noch Interaktionen hinzugefügt werden. 
+Aus statistischer Sicht ist es natürlich viel besser, wenn schlechte Items noch verworfen und noch Interaktionen hinzugefügt werden.
 Was hier aber dagegen spricht, ist die dadurch resultierende Berechnungsdauer.
 So sind selbst die einfacheren obigen Modell auch nach Stunden nicht fertig.
-#+NAME: fitting
+#+NAME: fit
 #+BEGIN_SRC R :exports code
-#fitting = mclapply(fitting, step, trace = 0)
-#fitting = mclapply(fitting, step, ~.^2, trace = 0)
+#fit = mclapply(fit, step, trace = 0)
+#fit = mclapply(fit, step, ~.^2, trace = 0)
 #+END_SRC
 
 *** Benchmark
@@ -1373,12 +1330,11 @@ title(ylab="Dauer")
 #+RESULTS:
 [[file:/images/benchmark.png]]
 
-*** Entropiegrafik
-Hier ist noch ein letztes kleines Bisschen an Code, welches die derzeit kalkulierten Ergebnisse in eine Grafik packt. Zudem werden
-eine Legende generiert und die Berechnungsdauer angegeben.
+*** infografik
+Hier ist noch ein letztes kleines Bisschen an Code, welches die derzeit kalkulierten Ergebnisse in eine Grafik packt.
+Zudem werden eine Legende generiert und die Berechnungsdauer angegeben.
 #+NAME: grafik
 #+BEGIN_SRC R :noweb yes :results output graphics :file /images/entropie2.png :exports code
-    
     farbe = NULL
     farbeSD = NULL
     for (j in 1:(length(summe[1,]))) {
@@ -1389,25 +1345,24 @@ eine Legende generiert und die Berechnungsdauer angegeben.
         farbeSD[j] = rgb(sqrt(r), sqrt(g), sqrt(b))
     }
     
-    plot(0:(length(komusmult)), type="l", col=rgb(0,0,0), ann=F)
+    plot(0:(length(test)), type="l", col=rgb(0,0,0), ann=F)
     for (i in 1:(length(summe[1,]))) {
         lines(summe[,i], col=farbe[i])
         if (dim(SumSD[names(SumSD) == names(summe[i])])[2] != 0) {
             lines(summe[,i]+SumSD[names(summe[i])],lty = 4, col=farbeSD[i])
             lines(summe[,i]-SumSD[names(summe[i])],lty = 4, col=farbeSD[i])
         }
-        if (dim(RestEntropie[names(RestEntropie) == names(summe[i])])[2] != 0) {
-            lines(RestEntropie[names(summe[i])], col=farbe[i])
-            lines(RestEntropie[names(summe[i])]+RestEntropieSD[names(summe[i])],lty = 4, col=farbeSD[i])
-            lines(RestEntropie[names(summe[i])]-RestEntropieSD[names(summe[i])],lty = 4, col=farbeSD[i])
+        if (dim(Restinfo[names(Restinfo) == names(summe[i])])[2] != 0) {
+            lines(Restinfo[names(summe[i])], col=farbe[i])
+            lines(Restinfo[names(summe[i])]+RestinfoSD[names(summe[i])],lty = 4, col=farbeSD[i])
+            lines(Restinfo[names(summe[i])]-RestinfoSD[names(summe[i])],lty = 4, col=farbeSD[i])
         }
     }
     
     title(xlab="Anzahl der beantworteten Fragen")
     title(ylab="Entropie in bit")
-    legend(length(komusmult)/4, length(komusmult), c(names(summe), round(benchmark[length(benchmark)])), cex=0.9, col=c(farbe, rgb(1,1,1)), lty=1);
+    legend(length(test)/4, length(test), c(names(summe), round(benchmark[length(benchmark)])), cex=0.9, col=c(farbe, rgb(1,1,1)), lty=1)
 #+END_SRC
 
 #+RESULTS: grafik
 [[file:/images/entropie2.png]]
-
