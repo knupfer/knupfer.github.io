@@ -24,7 +24,7 @@ So wäre eine Frage, die der Proband mit einer Chance von 50% lösen kann ideal 
 
 Entropie stellt nicht nur Chaos, sondern auch Informationsdichte nach Shannon dar (vgl. [[http://de.wikipedia.org/wiki/Entropie_%28Informationstheorie%29][Wikipedia]]).
 Die folgende Formel ergiebt die Entropie eines Ereignisses. Hierbei ist $n$ die Anzahl der Möglichkeiten und $p_i$ die jeweiligen Wahrscheinlichkeiten dieser (sich ausschließender) Möglichkeiten.
-    $$ H = - \sum_{i=1}^n p_i \cdot \log_2{p_i} $$
+$$ H = - \sum_{i=1}^n p_i \cdot \log_2{p_i} $$
 
 Betrachten wir ein binäres System, also nur Fragen die entweder vollständig falsch oder vollständig richtig beantwortet werden können, so haben wir $n = 2$ und $p_2 = 1 - p_1$.
 $$ H_2 = - p \cdot \log_2{p} - (1 - p) \cdot \log_2(1 - p) $$
@@ -102,7 +102,7 @@ Die Umsetzung wurde mit R bewerkstelligt. Hier traten auch schnell Probleme auf.
 So wurde die Rechenzeit bei etwas komplizierteren Modellen sehr lang, was natürlich auch an meinem Computer liegt.
 Nichts desto trotz ergaben sich Situationen, in denen der Computer 5 Tage lang rechnen hätte müssen.
 
-In anderen Situationen wurde das komplette Ram des Computers aufgezehrt usw.
+In anderen Situationen wurde das komplette RAM des Computers aufgezehrt usw.
 
 ** Programmierung
 
@@ -112,189 +112,219 @@ Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um gr
 Ferner werden, wo möglich, Berechnungen mit dieser Initialisierung parallelisiert.
 
 #+NAME: statistic
-#+BEGIN_SRC R :exports code :results none :noweb yes
+#+BEGIN_SRC R :session stat :exports code :results output :noweb yes
 require(MASS)
-library(multicore)
 library(foreach)
 library(doMC)
-registerDoMC(3)
+# number of cores to use
+registerDoMC(4)
 
-calculationtime <- proc.time()
+calculationtime = proc.time()
 komus = read.table("data/data_komus_bin2.dat",header=TRUE)
 test = data.frame(read.table("data/komus.csv",header=TRUE, sep=','))
 pcitems = array(which(sapply(test, max) > 1))
-pcitemsalt = pcitems
+pcitems.temp = pcitems
 test[pcitems] = lapply(test[pcitems],factor)
 
-FUN.infoMC = function(x) {return(rowSums(-x*log(x+0.00000001, 2)))}
-FUN.infoMC.IND = function(x) {return(sum(-x*log(x+0.00000001, 2)))}
-FUN.info = function(x) {return(-x*log(x+0.000001, 2)-(1-x)*log(1-x+0.00001, 2))}
-FUN.Odds = function(x) {
-    if (length(pcitems) > 0) {
-        x[-pcitems] = lapply(x[-pcitems], predict, type="response")
-        x[pcitems] = lapply(x[pcitems], predict, type="probs")
-    } else {
+# functions
+FUN.infoMC = function(x)
+{
+    return(rowSums(-x*log(x+0.0000000001, 2)))
+}
+
+FUN.infoMC.IND = function(x)
+{
+    return(sum(-x*log(x+0.0000000001, 2)))
+}
+
+FUN.info = function(x)
+{
+    return(-x*log(x+0.0000000001, 2)-(1-x)*log(1-x+0.0000000001, 2))
+}
+
+FUN.Odds = function(x)
+{
+    if (length(pcitems.temp) > 0)
+    {
+        x[-pcitems.temp] = lapply(x[-pcitems.temp], predict, type="response")
+        x[pcitems.temp] = lapply(x[pcitems.temp], predict, type="probs")
+    } else
+    {
         x = lapply(x, predict, type="response")
     }
     return(x)
 }
-FUN.Odds.IND = function(x,y) {
-    x[-pcitems] = lapply(x[-pcitems], predict, data = test[y,], type="response")
-    x[pcitems] = lapply(x[pcitems], predict, data = test[y,], type="probs")
-    return(x)
-}
-FUN.infotemp = function(x) {
-    if (length(pcitems) > 0) {
-        x[pcitems] = lapply(x[pcitems], FUN.infoMC)
-        x[-pcitems] =lapply(x[-pcitems], FUN.info)
-    } else {
-        x =lapply(x, FUN.info)
-    }
-    x = simplify2array(x)
-    return(x)
-}
-FUN.infotemp.IND = function(x) {
-    if (length(pcitems) > 0) {
-        x[pcitems] = lapply(x[pcitems], FUN.infoMC.IND)
-        x[-pcitems] =lapply(x[-pcitems], FUN.info)
-    } else {
-        x =lapply(x, FUN.info)
-    }
-    x = simplify2array(x)
-    return(x)
-}
-FUN.EntroMC = function(funpcitems, fundata, funmod) {
 
-    if (length(funpcitems) == 1) {
+FUN.Odds.IND = function(x,y)
+{
+    x[-pcitems.temp] = lapply(x[-pcitems.temp], predict, data = test[y,], type="response")
+    x[pcitems.temp] = lapply(x[pcitems.temp], predict, data = test[y,], type="probs")
+    return(x)
+}
+
+FUN.info.temp = function(x)
+{
+    if (length(pcitems.temp) > 0)
+    {
+        x[pcitems.temp] = lapply(x[pcitems.temp], FUN.infoMC)
+        x[-pcitems.temp] =lapply(x[-pcitems.temp], FUN.info)
+    } else   
+    {
+        x =lapply(x, FUN.info)
+    }
+    x = simplify2array(x)
+    return(x)
+}
+
+FUN.info.temp.IND = function(x)
+{
+    if (length(pcitems.temp) > 0)
+    {
+        x[pcitems.temp] = lapply(x[pcitems.temp], FUN.infoMC.IND)
+        x[-pcitems.temp] =lapply(x[-pcitems.temp], FUN.info)
+    } else
+    {
+        x =lapply(x, FUN.info)
+    }
+    x = simplify2array(x)
+    return(x)
+}
+
+FUN.EntroMC = function(funpcitems.temp, fundata, funmod)
+{
+    if (length(funpcitems.temp) == 1)
+    {
         odds = lapply(funmod, predict, fundata, type="response")
-        infotemp = odds
-        infotemp = lapply(odds, FUN.info)
-        infotemp = simplify2array(infotemp)
-    } else {
-        funpcitems = funpcitems[2:length(funpcitems)]
+        info.temp = odds
+        info.temp = lapply(odds, FUN.info)
+        info.temp = simplify2array(info.temp)
+    } else
+    {
+        funpcitems.temp = funpcitems.temp[2:length(funpcitems.temp)]
         odds = funmod
-        odds[-funpcitems] = lapply(funmod[-funpcitems], predict, fundata, type="response")
-        odds[funpcitems] = lapply(funmod[funpcitems], predict, fundata, type="probs")
-        infotemp = odds
-
-        infotemp[funpcitems] = lapply(odds[funpcitems], FUN.infoMC.IND)
-        infotemp[-funpcitems] = lapply(odds[-funpcitems], FUN.info)
-        infotemp = simplify2array(infotemp)
+        odds[-funpcitems.temp] = lapply(funmod[-funpcitems.temp], predict, fundata, type="response")
+        odds[funpcitems.temp] = lapply(funmod[funpcitems.temp], predict, fundata, type="probs")
+        info.temp = odds
+        info.temp[funpcitems.temp] = lapply(odds[funpcitems.temp], FUN.infoMC.IND)
+        info.temp[-funpcitems.temp] = lapply(odds[-funpcitems.temp], FUN.info)
+        info.temp = simplify2array(info.temp)
     }
-    return(infotemp)
+    return(info.temp)
 }
 
-
-
-
-
-
-info = NULL
 odds = NULL
 fit = NULL
 modell = NULL
 summe = data.frame()
-############
-items = length(test)
-#persons = length(test[,1])
-#items = 50
-persons = 3
-############
 
-EEE = data.frame(matrix(ncol = 1, nrow = items+1))
-SumSD = data.frame(matrix(ncol = 1, nrow = items+1))
-Restinfo = data.frame(matrix(ncol = 1, nrow = items+1))
-RestinfoSD = data.frame(matrix(ncol = 1, nrow = items+1))
-names(EEE) = 'kill'
-names(SumSD) = 'kill'
-names(Restinfo) = 'kill'
-names(RestinfoSD) = 'kill'
+# number of items and persons to consider in this calculation
+items = length(test)
+persons = length(test[,1])
+
+info = NULL
+info.rest = data.frame(matrix(ncol = 1, nrow = items+1))
+info.rest.SD = data.frame(matrix(ncol = 1, nrow = items+1))
+names(info.rest) = 'kill'
+names(info.rest.SD) = 'kill'
+
+entropie = data.frame(matrix(ncol = 1, nrow = items+1))
+entropie.SD = data.frame(matrix(ncol = 1, nrow = items+1))
+names(entropie) = 'kill'
+names(entropie.SD) = 'kill'
 #+END_SRC
+
+#+RESULTS: statistic
 
 *** Nichtadaptiv
 **** Unbedingte und bedingte info in normaler Reihenfolge
 Dieser verhältnismäßig simple Code berechnet die info über die klassische Itemschwierigkeit und die info über die durch binär-logistische Regressionen vorhergesagte Itemschwierigkeit in der ursprünglichen Reihenfolge.
-Zudem wird bei zweiter Berechnung noch angegeben, wie viel Restentropie nach jeder Antwort noch zu erwarten ist.
+Zudem wird bei zweiter Berechnung noch angegeben, wie viel entropie.rest nach jeder Antwort noch zu erwarten ist.
 #+NAME: statistic1
 #+BEGIN_SRC R :exports code :results output :noweb yes
 modell = NULL
+pcitems.temp = pcitems.temp[pcitems.temp <= items]
 
-pcitems = pcitems[pcitems <= items]
-if (1 %in% pcitems) {
+if (1 %in% pcitems.temp)
+{
     modell[[1]] = polr(reformulate('1', names(test[1])), data = test)
-} else {
+} else
+{
     modell[[1]] = glm(reformulate('1', names(test[1])), data = test, family = "binomial"(link=logit))
 }
 
-for (i in 2:items) {
-    if (i %in% pcitems) {
+for (i in 2:items)
+{
+    if (i %in% pcitems.temp)
+    {
         modell[[i]] = polr(reformulate(names(test[1:i-1]), names(test[i])), data = test)
-    } else {
+    } else
+    {
         modell[[i]] = glm(reformulate(names(test[1:i-1]), names(test[i])), data = test, family = "binomial"(link=logit))
     }
 }
 
 fit = modell
 <<fit>>
-    odds = FUN.Odds(fit)
-
-infotemp = FUN.infotemp(odds)
+odds = FUN.Odds(fit)
+info.temp = FUN.info.temp(odds)
 
 ### Without relations ###
 fit = lapply(fit, update, ~ 1)
 odds2 = FUN.Odds(fit)
-
-infotemp2 = FUN.infotemp(odds2)
-
-pcitems = pcitemsalt
-
+info.temp2 = FUN.info.temp(odds2)
+pcitems.temp = pcitems
 query = NULL
-resttemp = NULL
-for (i in 1:items) {
-    infotemp3 = NULL
-    fit3 = NULL
-    if (i == length(test)) {
-        resttemp[[i]] = resttemp[[1]]*0
-    } else {
-        query = 1:i
-        pcitems = which(names(test[-query]) %in% names(test[pcitemsalt]))
+rest.temp = NULL
 
-        for (j in 1:length(test[-query])) {
-            if (j %in% pcitems) {
+for (i in 1:items)
+{
+    info.temp3 = NULL
+    fit3 = NULL
+    
+    if (i == length(test))
+    {
+        rest.temp[[i]] = rest.temp[[1]]*0
+    } else
+    {
+        query = 1:i
+        pcitems.temp = which(names(test[-query]) %in% names(test[pcitems]))
+        
+        for (j in 1:length(test[-query]))
+        {
+            if (j %in% pcitems.temp)
+            {
                 fit3[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
-            } else {
+            } else
+            {
                 fit3[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
             }
         }
+        
         <<fit>>
-            odds3 = FUN.Odds(fit3)
-
-        infotemp3 = FUN.infotemp(odds3)
-        resttemp[[i]] = rowSums(infotemp3)
+        odds3 = FUN.Odds(fit3)
+        info.temp3 = FUN.info.temp(odds3)
+        rest.temp[[i]] = rowSums(info.temp3)
     }
 }
 
-resttemp = simplify2array(resttemp)
+rest.temp = simplify2array(rest.temp)
+info.rest$bedunsort = c(0,colMeans(rest.temp))
+info.rest.SD$bedunsort = c(0,apply(rest.temp, 2, sd))
+entropie.SD.temp = sd(info.temp[,1])
 
-Restinfo$bedunsort = c(0,colMeans(resttemp))
-RestinfoSD$bedunsort = c(0,apply(resttemp, 2, sd))
-
-
-
-SumSDtemp = sd(infotemp[,1])
-for (i in 2:length(infotemp[1,])) {
-    SumSDtemp[i] = sd(rowSums(infotemp[,1:i]))
+for (i in 2:length(info.temp[1,]))
+{
+    entropie.SD.temp[i] = sd(rowSums(info.temp[,1:i]))
 }
 
-SumSD$bedunsort = c(0,SumSDtemp)
-
-EEE$bedunsort = c(0,colMeans(infotemp))
-EEE$unbedunsort = c(0,colMeans(infotemp2))
-EEE$unbedsort = c(0,sort(colMeans(infotemp2), decreasing =TRUE))
-infotemp2 = data.frame(infotemp2)
-names(infotemp2) = names(test[1:length(infotemp2)])
-EEE
-Restinfo
+entropie.SD$bedunsort = c(0,entropie.SD.temp)
+entropie$bedunsort = c(0,colMeans(info.temp))
+entropie$unbedunsort = c(0,colMeans(info.temp2))
+entropie$unbedsort = c(0,sort(colMeans(info.temp2), decreasing =TRUE))
+info.temp2 = data.frame(info.temp2)
+names(info.temp2) = names(test[1:length(info.temp2)])
+entropie
+info.rest
 #+END_SRC
 
 **** Bedingte, sortierte info
@@ -307,37 +337,44 @@ odds = NULL
 fit = NULL
 
 ############## sortierte Reihenfolge
-for (i in 1:items) {
-    if (i %in% pcitems) {
+for (i in 1:items)
+{
+    if (i %in% pcitems.temp)
+    {
         modell[[i]] = polr(reformulate('1', names(test[i])), data = test)
-    } else {
+    } else
+    {
         modell[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
     }
 }
 
 odds = FUN.Odds(modell)
-infotemp = FUN.infotemp(odds)
-infotemp = data.frame(infotemp)
-names(infotemp) = names(test[1:length(infotemp)])
-komus2 = test[c(names(sort(colMeans(infotemp), decreasing=TRUE)))]
+info.temp = FUN.info.temp(odds)
+info.temp = data.frame(info.temp)
+names(info.temp) = names(test[1:length(info.temp)])
+komus2 = test[c(names(sort(colMeans(info.temp), decreasing=TRUE)))]
 #########
 
-names(sort(colMeans(infotemp), decreasing=TRUE))
-pcitems.alt = pcitems
-pcitems.alt
-pcitems = which(names(komus2) %in% names(test[pcitems.alt]))
+names(sort(colMeans(info.temp), decreasing=TRUE))
+pcitems.temp.alt = pcitems.temp
+pcitems.temp.alt
+pcitems.temp = which(names(komus2) %in% names(test[pcitems.temp.alt]))
 modell = NULL
 fit = NULL
 odds = NULL
 
-if (1 %in% pcitems) {
+if (1 %in% pcitems.temp)
+{
     modell[[1]] = polr(reformulate('1', names(komus2[1])), data = komus2)
-} else {
+} else
+{
     modell[[1]] = glm(reformulate('1', names(komus2[1])), data = komus2, family = "binomial"(link=logit))
 }
 
-for (i in 2:items) {
-    if (i %in% pcitems) {
+for (i in 2:items)
+{
+    if (i %in% pcitems.temp)
+    {
         modell[[i]] = polr(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2)
     } else {
         modell[[i]] = glm(reformulate(names(komus2[1:i-1]), names(komus2[i])), data = komus2, family = "binomial"(link=logit))
@@ -347,25 +384,25 @@ for (i in 2:items) {
 fit = modell
 <<fit>>
 odds = FUN.Odds(fit)
-#odds[-pcitems] = mclapply(fit[-pcitems], predict, type="response")
-#odds[pcitems] = mclapply(fit[pcitems], predict, type="probs")
+#odds[-pcitems.temp] = lapply(fit[-pcitems.temp], predict, type="response")
+#odds[pcitems.temp] = lapply(fit[pcitems.temp], predict, type="probs")
 
-#infotemp = fit
-infotemp = FUN.infotemp(odds)
-#infotemp[pcitems] = lapply(odds[pcitems], FUN.infoMC)
-#infotemp[-pcitems] =lapply(odds[-pcitems], FUN.info)
-#infotemp = simplify2array(infotemp)
+#info.temp = fit
+info.temp = FUN.info.temp(odds)
+#info.temp[pcitems.temp] = lapply(odds[pcitems.temp], FUN.infoMC)
+#info.temp[-pcitems.temp] =lapply(odds[-pcitems.temp], FUN.info)
+#info.temp = simplify2array(info.temp)
 
-SumSDtemp = sd(infotemp[,1])
-for (i in 2:length(infotemp[1,])) {
-    SumSDtemp[i] = sd(rowSums(infotemp[,1:i]))
+entropie.SD.temp = sd(info.temp[,1])
+
+for (i in 2:length(info.temp[1,]))
+{
+    entropie.SD.temp[i] = sd(rowSums(info.temp[,1:i]))
 }
 
-SumSD$sortbed = c(0,SumSDtemp)
-
-EEE$sortbed = c(0,colMeans(infotemp))
-
-pcitems = pcitems.alt
+entropie.SD$sortbed = c(0,entropie.SD.temp)
+entropie$sortbed = c(0,colMeans(info.temp))
+pcitems.temp = pcitems.temp.alt
 #+END_SRC
 
 **** Durchschnittlich bedingtsortierte info
@@ -376,84 +413,87 @@ Insgesamt ist dies aber noch nicht individualisiert und dementsprechen nicht ada
 #+BEGIN_SRC R :exports code :results output :noweb yes
 query = NULL
 modell = NULL
-resttemp = NULL
-pcitemsalt = pcitems
+rest.temp = NULL
+pcitems = pcitems.temp
 ############## sortierte Reihenfolge
-for (i in 1:length(test)) {
-    if (i %in% pcitems) {
+for (i in 1:length(test))
+{
+    if (i %in% pcitems.temp)
+    {
         fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
-    } else {
+    } else
+    {
         fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
     }
 }
-#modell
 odds = FUN.Odds(fit)
-
-infotemp = FUN.infotemp(odds)
-
-query = which(names(test[which(colMeans(infotemp) == max(colMeans(infotemp)))[1]]) == names(test))[1]
+info.temp = FUN.info.temp(odds)
+query = which(names(test[which(colMeans(info.temp) == max(colMeans(info.temp)))[1]]) == names(test))[1]
 query
-#########
 modell[[1]] = fit[[query]]
 
 for (i in 2:items) {
-    infotemp = NULL
+    info.temp = NULL
     fit = NULL
-
-    pcitems = which(names(test[-query]) %in% names(test[pcitemsalt]))
-
-    for (j in 1:length(test[-query])) {
-        if (j %in% pcitems) {
+    pcitems.temp = which(names(test[-query]) %in% names(test[pcitems]))
+    
+    for (j in 1:length(test[-query]))
+    {
+        if (j %in% pcitems.temp)
+        {
             fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
-        } else {
+        } else
+        {
             fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
         }
     }
     <<fit>>
     odds = FUN.Odds(fit)
-
-    infotemp = FUN.infotemp(odds)
-    resttemp[[i-1]] = rowSums(infotemp)
-
-    query = c(query, which(names(test[-query][which(colMeans(infotemp) == max(colMeans(infotemp)))[1]]) == names(test))[1])
-    modell[[i]] = fit[[which(colMeans(infotemp) == max(colMeans(infotemp)))[1]]]
+    info.temp = FUN.info.temp(odds)
+    rest.temp[[i-1]] = rowSums(info.temp)
+    query = c(query, which(names(test[-query][which(colMeans(info.temp) == max(colMeans(info.temp)))[1]]) == names(test))[1])
+    modell[[i]] = fit[[which(colMeans(info.temp) == max(colMeans(info.temp)))[1]]]
 }
 
-if (length(test) == items) {
-    resttemp[[items]] = resttemp[[1]]*0
-} else {
+if (length(test) == items)
+{
+    rest.temp[[items]] = rest.temp[[1]]*0
+} else
+{
     fit = NULL
-
-    pcitems = which(names(test[-query]) %in% names(test[pcitemsalt]))
-
-    for (j in 1:length(test[-query])) {
-        if (j %in% pcitems) {
+    pcitems.temp = which(names(test[-query]) %in% names(test[pcitems]))
+    
+    for (j in 1:length(test[-query]))
+    {
+        if (j %in% pcitems.temp)
+        {
             fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
-        } else {
+        } else
+        {
             fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
         }
     }
     <<fit>>
     odds = FUN.Odds(fit)
-    infotemp = FUN.infotemp(odds)
-    resttemp[[items]] = rowSums(infotemp)
+    info.temp = FUN.info.temp(odds)
+    rest.temp[[items]] = rowSums(info.temp)
 }
-pcitems = which(query %in% pcitemsalt)
 
-resttemp = simplify2array(resttemp)
-
+pcitems.temp = which(query %in% pcitems)
+rest.temp = simplify2array(rest.temp)
 odds = FUN.Odds(modell)
-infotemp = FUN.infotemp(odds)
+info.temp = FUN.info.temp(odds)
+entropie.SD.temp = sd(info.temp[,1])
 
-SumSDtemp = sd(infotemp[,1])
-for (i in 2:length(infotemp[1,])) {
-SumSDtemp[i] = sd(rowSums(infotemp[,1:i]))
+for (i in 2:length(info.temp[1,]))
+{
+    entropie.SD.temp[i] = sd(rowSums(info.temp[,1:i]))
 }
 
-SumSD$durchschbedsort = c(0,SumSDtemp)
-EEE$durchschbedsort = c(0,colMeans(infotemp))
-Restinfo$durchschbedsort = c(0,colMeans(resttemp))
-RestinfoSD$durchschbedsort = c(0,apply(resttemp, 2, sd))
+entropie.SD$durchschbedsort = c(0,entropie.SD.temp)
+entropie$durchschbedsort = c(0,colMeans(info.temp))
+info.rest$durchschbedsort = c(0,colMeans(rest.temp))
+info.rest.SD$durchschbedsort = c(0,apply(rest.temp, 2, sd))
 #+END_SRC
 
 *** Adaptiv
@@ -469,100 +509,111 @@ Ideal wäre ein Itempool, der nicht komplett erschöpft wird in einer Testung. S
 ## initializing
 infoall = NULL
 odds = NULL
-resttemp = NULL
+rest.temp = NULL
 query = NULL
 modell = NULL
-resttemp = NULL
-pcitems = pcitemsalt
+rest.temp = NULL
+pcitems.temp = pcitems
 fit = NULL
 
 ## first item
-for (i in 1:length(test)) {
-    if (i %in% pcitems) {
+for (i in 1:length(test))
+{
+    if (i %in% pcitems.temp)
+    {
         fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
-    } else {
+    } else
+    {
         fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
     }
 }
 
 odds = fit
-odds[-pcitems] = lapply(fit[-pcitems], predict, test[1,], type="response")
-odds[pcitems] = lapply(fit[pcitems], predict, test[1,], type="probs")
-infotemp = FUN.infotemp.IND(odds)
-query = which(names(test[which(infotemp == max(infotemp))[1]]) == names(test))[1]
-
+odds[-pcitems.temp] = lapply(fit[-pcitems.temp], predict, test[1,], type="response")
+odds[pcitems.temp] = lapply(fit[pcitems.temp], predict, test[1,], type="probs")
+info.temp = FUN.info.temp.IND(odds)
+query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))[1]
 modell[[1]] = fit[[query]]
 queryinit = query
 fit = NULL
 
 ## multicorecalculation for every person
-infoall = simplify2array(foreach(k=1:persons) %dopar% {
+infoall = simplify2array(foreach(k=1:persons) %dopar%
+{
     query = queryinit
-    Restentropie = NULL
-    for (i in 2:items) {
+    entropie.rest = NULL
+    
+    for (i in 2:items)
+    {
         odds = NULL
-        infotemp = NULL
+        info.temp = NULL
         fit = NULL
-        pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
-        for (j in 1:length(test[-query])) {
-            if (j %in% pcitems) {
+        pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
+        
+        for (j in 1:length(test[-query]))
+        {
+            if (j %in% pcitems.temp)
+            {
                 fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
-            } else {
+            } else
+            {
                 fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
             }
         }
-
+        
         <<fit>>
-            odds = fit
-
-        infotemp = FUN.EntroMC(pcitems,test[k,], fit)
-
-        resttemp[i-1] = sum(infotemp) #rest of entropie before this item
-        query = c(query, which(names(test[-query][which(infotemp == max(infotemp))[1]]) == names(test))[1])
-        modell[[i]] = fit[[which(infotemp == max(infotemp))[1]]]
+        odds = fit
+        info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+        rest.temp[i-1] = sum(info.temp) #rest of entropie before this item
+        query = c(query, which(names(test[-query][which(info.temp == max(info.temp))[1]]) == names(test))[1])
+        modell[[i]] = fit[[which(info.temp == max(info.temp))[1]]]
     }
-
+    
     ## calculation of last rest entropie
-    if (length(test) == items) {
-        resttemp[items] = 0
-    } else {
+    if (length(test) == items)
+    {
+        rest.temp[items] = 0
+    } else
+    {
         fit = NULL
-        pcitems = 0
-        pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
-        for (j in 1:length(test[-query])) {
-            if (j %in% pcitems) {
+        pcitems.temp = 0
+        pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
+        
+        for (j in 1:length(test[-query]))
+        {
+            if (j %in% pcitems.temp)
+            {
                 fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
-            } else {
+            } else
+            {
                 fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
             }
         }
         <<fit>>
-
-            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
-        resttemp[items] = sum(infotemp)
+        info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+        rest.temp[items] = sum(info.temp)
     }
-
+    
     ## calculation of the choosen modell
-    pcitems = c(0,which(query %in% pcitemsalt))
-
-    infotemp = FUN.EntroMC(pcitems,test[k,], modell)
-    return(c(infotemp, resttemp))
+    pcitems.temp = c(0,which(query %in% pcitems))
+    info.temp = FUN.EntroMC(pcitems.temp,test[k,], modell)
+    return(c(info.temp, rest.temp))
 })
 
-resttemp = (infoall[(items+1):(items*2),])
+rest.temp = (infoall[(items+1):(items*2),])
 infoall = infoall[1:items,]
+entropie.SD.temp = sd(infoall[1,])
 
-SumSDtemp = sd(infoall[1,])
-for (i in 2:length(infoall[,1])) {
-    SumSDtemp[i] = sd(colSums(infoall[1:i,]))
+for (i in 2:length(infoall[,1]))
+{
+    entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
 }
 
-SumSD$indivbedsort = c(0,SumSDtemp)
-EEE$indivbedsort = c(0,rowMeans(infoall))
-Restinfo$indivbedsort = c(0,rowMeans(resttemp))
-RestinfoSD$indivbedsort = c(0,apply(resttemp, 1, sd))
-
-pcitems = pcitemsalt
+entropie.SD$indivbedsort = c(0,entropie.SD.temp)
+entropie$indivbedsort = c(0,rowMeans(infoall))
+info.rest$indivbedsort = c(0,rowMeans(rest.temp))
+info.rest.SD$indivbedsort = c(0,apply(rest.temp, 1, sd))
+pcitems.temp = pcitems
 #+END_SRC
 
 **** Individuellbedingtsortierte info mit Trennschärfe
@@ -574,87 +625,95 @@ Dementsprechend kann man das bisherige Verfahren sicher nicht als robust bezeich
 infoall = NULL
 odds = NULL
 beta = NULL
-resttemp = NULL
-infotemp = NULL
+rest.temp = NULL
+info.temp = NULL
 fit = NULL
 
-if (!exists("information")) {
-    information = simplify2array(foreach(m=1:length(komus)) %dopar% {
-        for (n in 1:(length(komus)-1)) {
+if (!exists("information"))
+{
+    information = simplify2array(foreach(m=1:length(komus)) %dopar%
+    {
+        for (n in 1:(length(komus)-1))
+        {
             beta[[n]] = glm(reformulate(names(komus[m]), names(komus[-m][n])), data = komus, family = "binomial"(link=logit))
         }
         odds = simplify2array(lapply(beta, predict, type="response"))
         chancetemp = unlist(lapply(komus[m],mean))
-        infotemp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2))
-        information = sum(colMeans(infotemp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
+        info.temp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2))
+        information = sum(colMeans(info.temp)) + (-chancetemp*log(chancetemp,2)-(1-chancetemp)*log(1-chancetemp,2))
         return(information)
     })
     information = -(information - sum(-colMeans(komus)*log(colMeans(komus),2)-(1-colMeans(komus))*log(1-colMeans(komus),2)))
 }
 
-
-
-
-
-for (j in 1:length(komus)) {
+for (j in 1:length(komus))
+{
     fit[[j]] = glm(reformulate('1', names(komus[j])), data = komus, family = "binomial"(link=logit))
 }
+
 <<fit>>
 odds = simplify2array(lapply(fit, predict, komus[1,], type="response"))
-infotemp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2)) + (information)
-queryinit = which(names(komus[which((infotemp) == max((infotemp)))[1]]) == names(komus))[1]
+info.temp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2)) + (information)
+queryinit = which(names(komus[which((info.temp) == max((info.temp)))[1]]) == names(komus))[1]
+modell[[1]] = fit[[which((info.temp) == max((info.temp)))[1]]]
 
-
-
-modell[[1]] = fit[[which((infotemp) == max((infotemp)))[1]]]
-
-infoall = simplify2array(foreach(k=1:persons) %dopar% {
+infoall = simplify2array(foreach(k=1:persons) %dopar%
+{
     query = queryinit
-    for (i in 2:items) {
-        infotemp = NULL
+    
+    for (i in 2:items)
+    {
+        info.temp = NULL
         fit = NULL
-        for (j in 1:length(komus[-query])) {
+        
+        for (j in 1:length(komus[-query]))
+        {
             fit[[j]] = glm(reformulate(names(komus[query]), names(komus[-query][j])), data = komus, family = "binomial"(link=logit))
         }
-
+        
         <<fit>>
         ## TODO stimmt das so?
         odds = simplify2array(lapply(fit, predict, komus[k,], type="response"))
-        resttemp[i-1] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2)) 
-        infotemp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2)) + (information[-query]*(1 - (length(query)+1)/items))
-        query = c(query, which(names(komus[-query][which((infotemp) == max((infotemp)))[1]]) == names(komus))[1])
-        modell[[i]] = fit[[which((infotemp) == max((infotemp)))[1]]]
+        rest.temp[i-1] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2)) 
+        info.temp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2)) + (information[-query]*(1 - (length(query)+1)/items))
+        query = c(query, which(names(komus[-query][which((info.temp) == max((info.temp)))[1]]) == names(komus))[1])
+        modell[[i]] = fit[[which((info.temp) == max((info.temp)))[1]]]
     }
-
-    if (length(komus) == items) {
-        resttemp[items] = 0
-    } else {
+    
+    if (length(komus) == items)
+    {
+        rest.temp[items] = 0
+    } else
+    {
         fit = NULL
-        for (j in 1:length(komus[-query])) {
+        
+        for (j in 1:length(komus[-query]))
+        {
             fit[[j]] = glm(reformulate(names(komus[query]), names(komus[-query][j])), data = komus, family = "binomial"(link=logit))
         }
         <<fit>>
         odds = simplify2array(lapply(fit, predict, komus[k,], type="response"))
-        resttemp[length(query)] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2))
+        rest.temp[length(query)] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2))
     }
-
+    
     odds = simplify2array(lapply(modell, predict, komus[k,], type="response"))
-    infotemp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2))
-
-    return(c(infotemp, resttemp))
+    info.temp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2))
+    return(c(info.temp, rest.temp))
 })
 
-resttemp = (infoall[(items+1):(items*2),])
+rest.temp = (infoall[(items+1):(items*2),])
 infoall = infoall[1:items,]
-SumSDtemp = sd(infoall[1,])
-for (i in 2:length(infoall[,1])) {
-SumSDtemp[i] = sd(colSums(infoall[1:i,]))
+entropie.SD.temp = sd(infoall[1,])
+
+for (i in 2:length(infoall[,1]))
+{
+    entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
 }
 
-SumSD$indivbedsorttrenn = c(0,SumSDtemp )
-EEE$indivbedsorttrenn = c(0,rowMeans(infoall))
-Restinfo$indivbedsorttrenn = c(0,rowMeans(resttemp))
-RestinfoSD$indivbedsorttrenn = c(0,apply(resttemp,1 ,sd))
+entropie.SD$indivbedsorttrenn = c(0,entropie.SD.temp )
+entropie$indivbedsorttrenn = c(0,rowMeans(infoall))
+info.rest$indivbedsorttrenn = c(0,rowMeans(rest.temp))
+info.rest.SD$indivbedsorttrenn = c(0,apply(rest.temp,1 ,sd))
 #+END_SRC
 
 **** Individuellbedingtsortierte info mit Prädiktion
@@ -662,7 +721,7 @@ Hier wird nun die info rekursiv berechnet.
 Es wird nicht nur geschaut, welches Item die meiste info besitzt, sondern es werden für jedes Item alle Antwortmöglichkeiten simuliert und mit dieser Simulation die verbleibende info im gesamten Test errechnet, diese mit der Chance der simulierten Antwort gewichtet und aufaddiert mit den gewichteten anderen Antwortmöglichkeiten.
 
 Dieses Modell umgeht also das Problem der vorherigen beiden.
-Es ist sehr robust, weil immer auch berechnet wird, wie sehr sich das auserwählte Item mit all seinen Antwortmöglichkeiten auf die gesamte Restentropie auswirkt.
+Es ist sehr robust, weil immer auch berechnet wird, wie sehr sich das auserwählte Item mit all seinen Antwortmöglichkeiten auf die gesamte entropie.rest auswirkt.
 Dies ist eine mächtigere Form der Trennschärfe, weil sie nicht starr, sondern antwortmusterspezifisch ist.
 
 Dieses Modell bringt die rechnerischen Anforderungen auf ein neues Niveau, sie werden nochmals ungefähr 30 mal höher.
@@ -678,15 +737,15 @@ Im Moment fangen beispielsweise alle Schüler mit dem gleichen, maximal informat
 fit = NULL
 infoall = NULL
 odds = NULL
-resttemp = NULL
+rest.temp = NULL
 query = NULL
 modell = NULL
-resttemp = NULL
-pcitems = pcitemsalt
+rest.temp = NULL
+pcitems.temp = pcitems
 
 ## first item
 for (i in 1:length(test)) {
-    if (i %in% pcitems) {
+    if (i %in% pcitems.temp) {
         fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
     } else {
         fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
@@ -694,36 +753,36 @@ for (i in 1:length(test)) {
 }
 
 odds = fit
-odds[-pcitems] = lapply(fit[-pcitems], predict, test[1,], type="response")
-odds[pcitems] = lapply(fit[pcitems], predict, test[1,], type="probs")
-infotemp = FUN.infotemp.IND(odds)
-query = which(names(test[which(infotemp == max(infotemp))[1]]) == names(test))[1]
+odds[-pcitems.temp] = lapply(fit[-pcitems.temp], predict, test[1,], type="response")
+odds[pcitems.temp] = lapply(fit[pcitems.temp], predict, test[1,], type="probs")
+info.temp = FUN.info.temp.IND(odds)
+query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))[1]
 
 modell[[1]] = fit[[query]]
 queryinit = query
 fit = NULL
-Restentropie2 = NULL
+entropie.rest2 = NULL
 
 ## multicore calculation
 infoall = simplify2array(foreach(k=1:persons) %dopar% {
     query = queryinit
-    Restentropie = NULL
-    resttemp2 = NULL
-    resttemp = NULL
+    entropie.rest = NULL
+    rest.temp2 = NULL
+    rest.temp = NULL
     for (i in 2:items) {
         odds = NULL
-        infotemp = NULL
+        info.temp = NULL
         fit = NULL
         fit2 = NULL
         fitplus = NULL
         fitminus = NULL
-        infotemp2 = NULL
-        pcitems = 0
-        pcitems = c(pcitems,which(names(test[-query]) %in% names(test[pcitemsalt])))
+        info.temp2 = NULL
+        pcitems.temp = 0
+        pcitems.temp = c(pcitems.temp,which(names(test[-query]) %in% names(test[pcitems])))
 
         ## prediction for all not-answerd questions
         for (j in 1:length(test[-query])) {
-            if (j %in% pcitems) {
+            if (j %in% pcitems.temp) {
                 fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
             } else {
                 fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
@@ -731,9 +790,9 @@ infoall = simplify2array(foreach(k=1:persons) %dopar% {
 
             ## prediction for all not-answered questions after prediction
             if (length(test[-query]) > 1) {
-                pcitems2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitemsalt])))
+                pcitems.temp2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitems])))
                 for (n in 1:length(test[-query][-j])) {
-                    if (n %in% pcitems2) {
+                    if (n %in% pcitems.temp2) {
                         fit2[[n]] = polr(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test)
                     } else {
                         fit2[[n]] = glm(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test, family = "binomial"(link=logit))
@@ -745,26 +804,26 @@ infoall = simplify2array(foreach(k=1:persons) %dopar% {
                 ##tempdata[-query][j] = 0 #dies muss noch bearbeitet werden (chancen...)
                 <<fit>>
                     #                        odds = fit2
-                    #                    if (length(pcitems2) == 1) {
+                    #                    if (length(pcitems.temp2) == 1) {
                     #                        odds = lapply(fit2, predict, tempdata, type="response")
-                    #                        infotemp = odds
-                    #                        infotemp = lapply(odds, FUN.info)
-                    #                        infotemp = simplify2array(infotemp)
+                    #                        info.temp = odds
+                    #                        info.temp = lapply(odds, FUN.info)
+                    #                        info.temp = simplify2array(info.temp)
                     #                    } else {
-                    #                        pcitems2 = pcitems2[2:length(pcitems2)]
-                    #                        odds[-pcitems2] = lapply(fit2[-pcitems2], predict, tempdata, type="response")
-                    #                        odds[pcitems2] = lapply(fit2[pcitems2], predict, tempdata, type="probs")
-                    #                        infotemp = odds
+                    #                        pcitems.temp2 = pcitems.temp2[2:length(pcitems.temp2)]
+                    #                        odds[-pcitems.temp2] = lapply(fit2[-pcitems.temp2], predict, tempdata, type="response")
+                    #                        odds[pcitems.temp2] = lapply(fit2[pcitems.temp2], predict, tempdata, type="probs")
+                    #                        info.temp = odds
 
-                    #                        ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems zugreift
-                    #                        infotemp[pcitems2] = lapply(odds[pcitems2], FUN.infoMC.IND)
-                    #                        infotemp[-pcitems2] = lapply(odds[-pcitems2], FUN.info)
-                    #                        infotemp = simplify2array(infotemp)
+                    #                        ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems.temp zugreift
+                    #                        info.temp[pcitems.temp2] = lapply(odds[pcitems.temp2], FUN.infoMC.IND)
+                    #                        info.temp[-pcitems.temp2] = lapply(odds[-pcitems.temp2], FUN.info)
+                    #                        info.temp = simplify2array(info.temp)
                     #                    }
-                    infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)
-                resttemp2[j] = sum(infotemp)
+                    info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)
+                rest.temp2[j] = sum(info.temp)
             } else {
-                resttemp2[j] = 0 
+                rest.temp2[j] = 0 
             }
         }
 
@@ -772,39 +831,39 @@ infoall = simplify2array(foreach(k=1:persons) %dopar% {
             odds = fit
 
         #            ## calculation of current rest entropie
-        #            if (length(pcitems) == 1) {
+        #            if (length(pcitems.temp) == 1) {
         #                odds = lapply(fit, predict, test[k,], type="response")
-        #                infotemp = odds
-        #                infotemp = lapply(odds, FUN.info)
-        #                infotemp = simplify2array(infotemp)
+        #                info.temp = odds
+        #                info.temp = lapply(odds, FUN.info)
+        #                info.temp = simplify2array(info.temp)
         #            } else {
-        #                pcitems = pcitems[2:length(pcitems)]
-        #                odds[-pcitems] = lapply(fit[-pcitems], predict, test[k,], type="response")
-        #                odds[pcitems] = lapply(fit[pcitems], predict, test[k,], type="probs")
-        #                infotemp = odds
+        #                pcitems.temp = pcitems.temp[2:length(pcitems.temp)]
+        #                odds[-pcitems.temp] = lapply(fit[-pcitems.temp], predict, test[k,], type="response")
+        #                odds[pcitems.temp] = lapply(fit[pcitems.temp], predict, test[k,], type="probs")
+        #                info.temp = odds
 
-        #                ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems zugreift
-        #                infotemp[pcitems] = lapply(odds[pcitems], FUN.infoMC.IND)
-        #                infotemp[-pcitems] = lapply(odds[-pcitems], FUN.info)
-        #                infotemp = simplify2array(infotemp)
+        #                ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems.temp zugreift
+        #                info.temp[pcitems.temp] = lapply(odds[pcitems.temp], FUN.infoMC.IND)
+        #                info.temp[-pcitems.temp] = lapply(odds[-pcitems.temp], FUN.info)
+        #                info.temp = simplify2array(info.temp)
         #            }
-        infotemp = FUN.EntroMC(pcitems,test[k,], fit)
-        resttemp[i-1] = sum(infotemp)
-        query = c(query, which(names(test[-query][which(resttemp2 == min(resttemp2))[1]]) == names(test))[1])
-        ## stimmt das? sollte das nicht mit resttemp2 arbeiten?
-        ##        modell[[i]] = fit[[which(infotemp == max(infotemp))]]
-        modell[[i]] = fit[[which(resttemp2 == min(resttemp2))[1]]]
+        info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+        rest.temp[i-1] = sum(info.temp)
+        query = c(query, which(names(test[-query][which(rest.temp2 == min(rest.temp2))[1]]) == names(test))[1])
+        ## stimmt das? sollte das nicht mit rest.temp2 arbeiten?
+        ##        modell[[i]] = fit[[which(info.temp == max(info.temp))]]
+        modell[[i]] = fit[[which(rest.temp2 == min(rest.temp2))[1]]]
     }
 
     ## calculation of last rest entropie
     if (length(test) == items) {
-        resttemp[items] = 0
+        rest.temp[items] = 0
     } else {
         fit = NULL
-        pcitems = 0
-        pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
+        pcitems.temp = 0
+        pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
         for (j in 1:length(test[-query])) {
-            if (j %in% pcitems) {
+            if (j %in% pcitems.temp) {
                 fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
             } else {
                 fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
@@ -812,69 +871,69 @@ infoall = simplify2array(foreach(k=1:persons) %dopar% {
         }
 
         <<fit>>
-            #                if (length(pcitems) == 1) {
+            #                if (length(pcitems.temp) == 1) {
             #                    odds = lapply(fit, predict, test[k,], type="response")
-            #                    infotemp = odds
-            #                    infotemp = lapply(odds, FUN.info)
-            #                    infotemp = simplify2array(infotemp) 
+            #                    info.temp = odds
+            #                    info.temp = lapply(odds, FUN.info)
+            #                    info.temp = simplify2array(info.temp) 
             #                } else {
-            #                    pcitems = pcitems[2:length(pcitems)]
-            #                    odds[-pcitems] = lapply(fit[-pcitems], predict, test[k,], type="response")
-            #                    odds[pcitems] = lapply(fit[pcitems], predict, test[k,], type="probs")
-            #                    infotemp = odds
+            #                    pcitems.temp = pcitems.temp[2:length(pcitems.temp)]
+            #                    odds[-pcitems.temp] = lapply(fit[-pcitems.temp], predict, test[k,], type="response")
+            #                    odds[pcitems.temp] = lapply(fit[pcitems.temp], predict, test[k,], type="probs")
+            #                    info.temp = odds
 
-            #                    ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems zugreift
-            #                    infotemp[pcitems] = lapply(odds[pcitems], FUN.infoMC.IND)
-            #                    infotemp[-pcitems] = lapply(odds[-pcitems], FUN.info)
-            #                    infotemp = simplify2array(infotemp)
+            #                    ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems.temp zugreift
+            #                    info.temp[pcitems.temp] = lapply(odds[pcitems.temp], FUN.infoMC.IND)
+            #                    info.temp[-pcitems.temp] = lapply(odds[-pcitems.temp], FUN.info)
+            #                    info.temp = simplify2array(info.temp)
             #                }
-            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
-        resttemp[items] = sum(infotemp)
+            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+        rest.temp[items] = sum(info.temp)
     }
 
     ## calculation of choosen modell
-    pcitems = 0
-    pcitems = c(pcitems,which(query %in% pcitemsalt))
-    #        if (length(pcitems) == 1) {
+    pcitems.temp = 0
+    pcitems.temp = c(pcitems.temp,which(query %in% pcitems))
+    #        if (length(pcitems.temp) == 1) {
     #            odds = modell
     #            odds = lapply(modell, predict, test[k,], type="response")
-    #            infotemp = odds
-    #            infotemp = lapply(odds, FUN.info)
-    #            infotemp = simplify2array(infotemp)
+    #            info.temp = odds
+    #            info.temp = lapply(odds, FUN.info)
+    #            info.temp = simplify2array(info.temp)
     #        } else {
-    #            pcitems = pcitems[2:length(pcitems)]
+    #            pcitems.temp = pcitems.temp[2:length(pcitems.temp)]
     #            odds = modell
-    #            odds[-pcitems] = lapply(modell[-pcitems], predict, test[k,], type="response")
-    #            odds[pcitems] = lapply(modell[pcitems], predict, test[k,], type="probs")
-    #            infotemp = odds
+    #            odds[-pcitems.temp] = lapply(modell[-pcitems.temp], predict, test[k,], type="response")
+    #            odds[pcitems.temp] = lapply(modell[pcitems.temp], predict, test[k,], type="probs")
+    #            info.temp = odds
 
-    #            ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems zugreift
-    #            infotemp[pcitems] = lapply(odds[pcitems], FUN.infoMC.IND)
-    #            infotemp[-pcitems] = lapply(odds[-pcitems], FUN.info)
-    #            infotemp = simplify2array(infotemp)
+    #            ## Funktion kann nicht benutzt werden, da sie auf nicht manipulierte pcitems.temp zugreift
+    #            info.temp[pcitems.temp] = lapply(odds[pcitems.temp], FUN.infoMC.IND)
+    #            info.temp[-pcitems.temp] = lapply(odds[-pcitems.temp], FUN.info)
+    #            info.temp = simplify2array(info.temp)
     #        }
-    infotemp = FUN.EntroMC(pcitems,test[k,], modell)
-    return(c(infotemp, resttemp))
+    info.temp = FUN.EntroMC(pcitems.temp,test[k,], modell)
+    return(c(info.temp, rest.temp))
 })
 
-resttemp = (infoall[(items+1):(items*2),])
+rest.temp = (infoall[(items+1):(items*2),])
 infoall = infoall[1:items,]
 
-SumSDtemp = sd(infoall[1,])
+entropie.SD.temp = sd(infoall[1,])
 for (i in 2:length(infoall[,1])) {
-    SumSDtemp[i] = sd(colSums(infoall[1:i,]))
+    entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
 }
 
-SumSD$indivbedsortpred = c(0,SumSDtemp)
-EEE$indivbedsortpred = c(0,rowMeans(infoall))
-Restinfo$indivbedsortpred = c(0,rowMeans(resttemp))
-RestinfoSD$indivbedsortpred = c(0,apply(resttemp, 1, sd))
+entropie.SD$indivbedsortpred = c(0,entropie.SD.temp)
+entropie$indivbedsortpred = c(0,rowMeans(infoall))
+info.rest$indivbedsortpred = c(0,rowMeans(rest.temp))
+info.rest.SD$indivbedsortpred = c(0,apply(rest.temp, 1, sd))
 
-pcitems = pcitemsalt
-EEE
-SumSD
-Restinfo
-RestinfoSD
+pcitems.temp = pcitems
+entropie
+entropie.SD
+info.rest
+info.rest.SD
 #+END_SRC
 
 *** Experimenteller Code
@@ -885,15 +944,15 @@ calculationtime <- proc.time()
 fit = NULL
 infoall = NULL
 odds = NULL
-resttemp = NULL
+rest.temp = NULL
 query = NULL
 modell = NULL
-resttemp = NULL
-pcitems = pcitemsalt
+rest.temp = NULL
+pcitems.temp = pcitems
 
 ## first item
 for (i in 1:length(test)) {
-    if (i %in% pcitems) {
+    if (i %in% pcitems.temp) {
         fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
     } else {
         fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
@@ -901,53 +960,53 @@ for (i in 1:length(test)) {
 }
 
 odds = fit
-odds[-pcitems] = lapply(fit[-pcitems], predict, test[1,], type="response")
-odds[pcitems] = lapply(fit[pcitems], predict, test[1,], type="probs")
-infotemp = FUN.infotemp.IND(odds)
-query = which(names(test[which(infotemp == max(infotemp))[1]]) == names(test))[1]
+odds[-pcitems.temp] = lapply(fit[-pcitems.temp], predict, test[1,], type="response")
+odds[pcitems.temp] = lapply(fit[pcitems.temp], predict, test[1,], type="probs")
+info.temp = FUN.info.temp.IND(odds)
+query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))[1]
 
 modell[[1]] = fit[[query]]
 queryinit = query
 fit = NULL
-Restentropie2 = NULL
+entropie.rest2 = NULL
 infoall = matrix(nrow=persons,ncol=items)
 ## multicore calculation
 #    infoall = simplify2array(foreach(k=1:persons) %dopar% {
 for (k in 1:persons) {
     query = queryinit
-    Restentropie = NULL
-    resttemp2 = NULL
-    resttemp = NULL
+    entropie.rest = NULL
+    rest.temp2 = NULL
+    rest.temp = NULL
     calcu = 0
     calcutime = proc.time()
-    antwortmuster = vector(length=(length(test)+2))
+    answers = vector(length=(length(test)+2))
     if (file.exists('database.dat')) {
         database = read.table('database.dat')
     }
-    antwortmuster[1] = query[1] + as.numeric(as.character(test[k,query[1]]))/100
-    #                antwortmuster[2] = test[k,query[1]]
+    answers[1] = query[1] + as.numeric(as.character(test[k,query[1]]))/100
+    #                answers[2] = test[k,query[1]]
     for (i in 2:items) {
         odds = NULL
-        infotemp = NULL
+        info.temp = NULL
         fit = NULL
         fit2 = NULL
         fitplus = NULL
         fitminus = NULL
-        infotemp2 = NULL
+        info.temp2 = NULL
         found = 0
-        pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
+        pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
         Liste = NULL
         foundit = 0
         ## prediction for all not-answerd questions
         if (exists("database")) {
             for (m in 1:length(database[,1])) {
                 for (u in 1:length(query)) {
-                    if (sort(antwortmuster[1:length(query)])[u] != database[m,u]) {
+                    if (sort(answers[1:length(query)])[u] != database[m,u]) {
                         break
                     }
                     if (database[m,(length(query)+3)] == 0 && u == length(query)) {
                         found = database[m,(length(query)+2)]
-                        resttemp[i-1] = database[m,(length(query)+1)]
+                        rest.temp[i-1] = database[m,(length(query)+1)]
                         query = c(query, found)
                     }
                 }
@@ -960,17 +1019,17 @@ for (k in 1:persons) {
             calcu = calcu+1
             isgood = NULL
             for (q in 1:length(test[-query])) {
-                if (q %in% pcitems) {
+                if (q %in% pcitems.temp) {
                     fit[[q]] = polr(reformulate(names(test[query]), names(test[-query][q])), data = test)
                 } else {
                     fit[[q]] = glm(reformulate(names(test[query]), names(test[-query][q])), data = test, family = "binomial"(link=logit))
                 }
             }
-            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
-            isgood = infotemp == max(infotemp)[1]
+            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+            isgood = info.temp >= (max(info.temp)[1] * 0.8)
             Liste =foreach(j=1:length(test[-query])) %dopar% {
                 chance = NULL
-                if (j %in% pcitems) {
+                if (j %in% pcitems.temp) {
                     #    fit = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
                     chance = predict(fit[[j]], test[k,], type="probs")
                 } else {
@@ -978,32 +1037,32 @@ for (k in 1:persons) {
                     chance = predict(fit[[j]], test[k,], type="response")
                     chance[2] = 1-chance[1]
                 }
-                #                                             infotemp = FUN.EntroMC(pcitems,test[k,], fit)
+                #                                             info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
                 #      tempdata = test[k,]
-                #          if (j %in% pcitems) {
+                #          if (j %in% pcitems.temp) {
                 #              for (s in 1:length(chance)) {
                 #                  tempdata[-query][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
-                #                  infotemp = FUN.EntroMC(pcitems,tempdata, fit)*chance[s]
-                #                  resttemp2[s] = sum(infotemp)
+                #                  info.temp = FUN.EntroMC(pcitems.temp,tempdata, fit)*chance[s]
+                #                  rest.temp2[s] = sum(info.temp)
                 #              }
-                #              resttemp2 = sum(resttemp2)
+                #              rest.temp2 = sum(rest.temp2)
                 #          } else {
                 #              tempdata[-query][j] = 1
-                #              infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[1]
-                #              resttemp2 = sum(infotemp)
+                #              info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[1]
+                #              rest.temp2 = sum(info.temp)
                 #              tempdata[-query][j] = 0
-                #              infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[2]
-                #              resttemp2[2] = sum(infotemp)
-                #              resttemp2 = sum(resttemp2)
+                #              info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[2]
+                #              rest.temp2[2] = sum(info.temp)
+                #              rest.temp2 = sum(rest.temp2)
                 #          }
                 #          fit2=NULL
 
-                resttemp2 = NULL
+                rest.temp2 = NULL
                 ## prediction for all not-answered questions after prediction
                 if (length(test[-query]) > 1 && isgood[j]) {
-                    pcitems2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitemsalt])))
+                    pcitems.temp2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitems])))
                     for (n in 1:length(test[-query][-j])) {
-                        if (n %in% pcitems2) {
+                        if (n %in% pcitems.temp2) {
                             fit2[[n]] = polr(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test)
                         } else {
                             fit2[[n]] = glm(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test, family = "binomial"(link=logit))
@@ -1012,69 +1071,69 @@ for (k in 1:persons) {
 
                     ## calculation of rest entropie for each possibility
                     tempdata = test[k,]
-                    if (j %in% pcitems) {
-                        #            for (s in 1:length(chance)) {
-                        #                tempdata[-query][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
-                        #                infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[s]
-                        #                resttemp2[s] = sum(infotemp)
-                        #                                                            }
-                        #            resttemp2 = sum(resttemp2)
-                        infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)
-                        resttemp2 = sum(infotemp)
+                    if (j %in% pcitems.temp) {
+                                    for (s in 1:length(chance)) {
+                                        tempdata[-query][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
+                                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[s]
+                                        rest.temp2[s] = sum(info.temp)
+                                                                                    }
+                                    rest.temp2 = sum(rest.temp2)
+                        #info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)
+                        #rest.temp2 = sum(info.temp)
 
                     } else {
                         tempdata[-query][j] = 1
-                        infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[1]
-                        resttemp2 = sum(infotemp)
+                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[1]
+                        rest.temp2 = sum(info.temp)
                         tempdata[-query][j] = 0
-                        infotemp = FUN.EntroMC(pcitems2,tempdata, fit2)*chance[2]
-                        resttemp2[2] = sum(infotemp)
-                        resttemp2 = sum(resttemp2)
+                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[2]
+                        rest.temp2[2] = sum(info.temp)
+                        rest.temp2 = sum(rest.temp2)
                     }
                     fit2=NULL
                 } else {
                     if (isgood[j]) {
-                        resttemp2 = 0
+                        rest.temp2 = 0
                     } else {
-                        resttemp2 = 55555555
+                        rest.temp2 = 55555555
                     }
                 }
-                return(resttemp2)
+                return(rest.temp2)
             }
             #                                             Liste = unlist(Liste, recursive = FALSE)
 
-            #                                             resttemp2 = unlist(Liste[(1:(length(Liste)/2))*2])
+            #                                             rest.temp2 = unlist(Liste[(1:(length(Liste)/2))*2])
             #                                             fit = Liste[(1:(length(Liste)/2))*2-1]
-            resttemp2 = simplify2array(Liste)
-            query = c(query, which(names(test[-query][which(resttemp2 == min(resttemp2))[1]]) == names(test))[1])
-            modell[[i]] = fit[[which(resttemp2 == min(resttemp2))[1]]]
+            rest.temp2 = simplify2array(Liste)
+            query = c(query, which(names(test[-query][which(rest.temp2 == min(rest.temp2))[1]]) == names(test))[1])
+            modell[[i]] = fit[[which(rest.temp2 == min(rest.temp2))[1]]]
             <<fit>>
                 odds = fit
 
-            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
-            resttemp[i-1] = sum(infotemp)
+            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+            rest.temp[i-1] = sum(info.temp)
 
         }
-        antwortmuster[i] = query[i] + as.numeric(as.character(test[k,query[i]]))/100
+        answers[i] = query[i] + as.numeric(as.character(test[k,query[i]]))/100
 
         if (found == 0) {
-            temp = antwortmuster
-            temp[1:(i-1)] = sort(antwortmuster[1:(i-1)])
-            temp[i] = resttemp[i-1]
+            temp = answers
+            temp[1:(i-1)] = sort(answers[1:(i-1)])
+            temp[i] = rest.temp[i-1]
             temp[i+1] = query[i]
-            write(temp, file='database.dat', append=TRUE, ncolumns=length(antwortmuster))
+            write(temp, file='database.dat', append=TRUE, ncolumns=length(answers))
         }
-        plot(resttemp, type='l', col=rgb(0,0.7,0.7))
+        plot(rest.temp, type='l', col=rgb(0,0.7,0.7))
     }
     ## calculation of last rest entropie
     if (length(test) == items) {
-        resttemp[items] = 0
+        rest.temp[items] = 0
     } else {
         fit = NULL
-        pcitems = 0
-        pcitems = c(0,which(names(test[-query]) %in% names(test[pcitemsalt])))
+        pcitems.temp = 0
+        pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
         for (j in 1:length(test[-query])) {
-            if (j %in% pcitems) {
+            if (j %in% pcitems.temp) {
                 fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
             } else {
                 fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
@@ -1083,205 +1142,602 @@ for (k in 1:persons) {
 
         <<fit>>
 
-            infotemp = FUN.EntroMC(pcitems,test[k,], fit)
-        resttemp[items] = sum(infotemp)
+            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+        rest.temp[items] = sum(info.temp)
     }
 
     ## calculation of choosen modell
-    pcitems = 0
-    pcitems = c(pcitems,which(query %in% pcitemsalt))
+    pcitems.temp = 0
+    pcitems.temp = c(pcitems.temp,which(query %in% pcitems))
     if (calcu != 0) {
         temp = vector(length=(length(test)+2))
         temp[2] = k
         temp[3] = (proc.time() - calcutime)[3]
         temp[4] = calcu
-        write(temp, file='database.dat', append=TRUE, ncolumns=length(antwortmuster))
+        write(temp, file='database.dat', append=TRUE, ncolumns=length(answers))
     }
-    #infotemp = FUN.EntroMC(pcitems,test[k,], modell)
-    #    return(c(infotemp, resttemp))
-    infoall[k,] = resttemp
+    #info.temp = FUN.EntroMC(pcitems.temp,test[k,], modell)
+    #    return(c(info.temp, rest.temp))
+    infoall[k,] = rest.temp
 }#})
 
 #restt = (infoall[(items+1):(items*2),])
 #infoall = infoall[1:items,]
 
-#    SumSDtemp = sd(infoall[1,])
+#    entropie.SD.temp = sd(infoall[1,])
 #   for (i in 2:length(infoall[,1])) {
-#      SumSDtemp[i] = sd(colSums(infoall[1:i,]))
+#      entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
 # }
 
-#SumSD$indivbedsortpred = c(0,SumSDtemp)
-#EEE$indivbedsortpred = c(0,rowMeans(infoall))
-Restinfo$indivbedsortpred = c(0,colMeans(infoall))
-RestinfoSD$indivbedsortpred = c(0,apply(infoall, 2, sd))
+#entropie.SD$indivbedsortpred = c(0,entropie.SD.temp)
+#entropie$indivbedsortpred = c(0,rowMeans(infoall))
+info.rest$indivbedsortpred = c(0,colMeans(infoall))
+info.rest.SD$indivbedsortpred = c(0,apply(infoall, 2, sd))
 
-pcitems = pcitemsalt
-#EEE
-#SumSD
-Restinfo
-RestinfoSD
+pcitems.temp = pcitems
+#entropie
+#entropie.SD
+info.rest
+info.rest.SD
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
-   indivbedsortpred  indivbedsort
-1        0.00000000  5.512415e+01
-2       51.35907667  5.135908e+01
-3       48.81582000  4.881582e+01
-4       46.75794333  4.562663e+01
-5       45.51642000  4.325132e+01
-6       43.51850333  4.112426e+01
-7       42.37757333  4.042258e+01
-8       40.79356000  3.854947e+01
-9       39.57111000  3.716378e+01
-10      38.85900000  3.618153e+01
-11      38.49110333  3.519636e+01
-12      37.39650667  3.388109e+01
-13      36.53168000  3.279737e+01
-14      35.12376000  3.180080e+01
-15      34.01320667  3.026254e+01
-16      33.22901667  2.864349e+01
-17      32.61010000  2.724371e+01
-18      31.95430667  2.623535e+01
-19      31.09503667  2.508785e+01
-20      29.53204333  2.405066e+01
-21      28.77588667  2.277454e+01
-22      27.71298667  2.177713e+01
-23      26.92562000  2.034057e+01
-24      26.31079000  1.946257e+01
-25      25.54026333  1.803385e+01
-26      24.33001333  1.721388e+01
-27      22.75637333  1.597181e+01
-28      21.28342667  1.498193e+01
-29      20.29931333  1.396405e+01
-30      19.24166667  1.307385e+01
-31      18.20082333  1.191703e+01
-32      17.75165667  1.097635e+01
-33      16.88355000  1.016586e+01
-34      15.95108333  9.202684e+00
-35      15.69948333  7.899795e+00
-36      14.97986333  7.097354e+00
-37      14.29918667  6.081928e+00
-38      13.74156000  5.460851e+00
-39      12.78344000  4.772650e+00
-40      11.90049333  4.067948e+00
-41      11.14289667  3.413253e+00
-42      10.60420000  2.846556e+00
-43       9.76043400  2.350530e+00
-44       8.00142567  1.769718e+00
-45       7.27654133  1.480445e+00
-46       7.18327067  1.097974e+00
-47       6.65206400  7.927647e-01
-48       5.28410967  5.259278e-01
-49       4.85331833  3.187139e-01
-50       3.26410533  1.914815e-01
-51       2.61981200  6.822902e-02
-52       1.88945100  1.518414e-02
-53       0.63633380  3.023751e-03
-54       0.01750709 -5.770756e-06
-55       0.00000000  0.000000e+00
-   indivbedsortpred indivbedsort
-1        0.00000000 0.000000e+00
-2        0.73626593 7.362653e-01
-3        0.31769969 3.176987e-01
-4        0.58883257 4.793886e-01
-5        0.47281875 5.785675e-01
-6        1.03360931 6.393388e-01
-7        1.35424266 9.577214e-01
-8        1.21930633 1.274269e+00
-9        1.32488984 2.027016e+00
-10       1.30099273 1.909940e+00
-11       0.80615468 1.643141e+00
-12       0.95669944 1.960404e+00
-13       0.90708640 1.964451e+00
-14       0.62132121 1.529076e+00
-15       1.18971368 1.878734e+00
-16       0.44513378 2.053826e+00
-17       0.45204319 2.220281e+00
-18       0.36223211 2.052133e+00
-19       0.33878530 1.876594e+00
-20       0.32835853 2.009701e+00
-21       0.56435673 1.974349e+00
-22       0.83285755 1.933595e+00
-23       0.34692387 2.002850e+00
-24       0.35767683 1.692322e+00
-25       0.50423868 1.799258e+00
-26       0.54804700 1.725785e+00
-27       0.45201665 1.812078e+00
-28       1.05109429 1.929145e+00
-29       0.96785497 1.743920e+00
-30       1.13072874 1.755639e+00
-31       1.21593032 1.502964e+00
-32       1.81961329 1.570259e+00
-33       1.79432292 1.452640e+00
-34       1.49351920 1.378060e+00
-35       1.41433285 1.133211e+00
-36       0.79995535 1.130159e+00
-37       0.52543705 9.339317e-01
-38       0.14859745 7.751506e-01
-39       0.11536975 9.749697e-01
-40       0.28325276 8.970542e-01
-41       0.40936682 8.093955e-01
-42       0.34851890 6.485482e-01
-43       0.19618676 6.307331e-01
-44       0.44100079 5.379630e-01
-45       0.10431056 6.920624e-01
-46       0.36854398 5.264797e-01
-47       0.37862328 3.919423e-01
-48       0.46464706 2.473037e-01
-49       0.68695282 2.055540e-01
-50       0.50191052 1.517166e-01
-51       0.61925114 3.453077e-02
-52       0.88309830 7.483717e-03
-53       0.32651072 4.935855e-03
-54       0.01060055 7.496422e-06
-55       0.00000000 0.000000e+00
+ Es gab 50 oder mehr Warnungen (Anzeige der ersten 50 mit warnings())
+   kill indivbedsortpred
+1    NA     0.000000e+00
+2    NA     5.178416e+01
+3    NA     4.916337e+01
+4    NA     4.566564e+01
+5    NA     4.359631e+01
+6    NA     4.159470e+01
+7    NA     4.082654e+01
+8    NA     3.915497e+01
+9    NA     3.749386e+01
+10   NA     3.678568e+01
+11   NA     3.532201e+01
+12   NA     3.478900e+01
+13   NA     3.362443e+01
+14   NA     3.214838e+01
+15   NA     3.145607e+01
+16   NA     2.949048e+01
+17   NA     2.840046e+01
+18   NA     2.704249e+01
+19   NA     2.522070e+01
+20   NA     2.390117e+01
+21   NA     2.285837e+01
+22   NA     2.138640e+01
+23   NA     2.018033e+01
+24   NA     1.893426e+01
+25   NA     1.852548e+01
+26   NA     1.715495e+01
+27   NA     1.590440e+01
+28   NA     1.499250e+01
+29   NA     1.377086e+01
+30   NA     1.276547e+01
+31   NA     1.162250e+01
+32   NA     1.030836e+01
+33   NA     9.559273e+00
+34   NA     8.476659e+00
+35   NA     8.269190e+00
+36   NA     7.469053e+00
+37   NA     6.842426e+00
+38   NA     6.075166e+00
+39   NA     5.484574e+00
+40   NA     4.795565e+00
+41   NA     4.022908e+00
+42   NA     3.420260e+00
+43   NA     2.941864e+00
+44   NA     2.320071e+00
+45   NA     2.010199e+00
+46   NA     1.455297e+00
+47   NA     1.005096e+00
+48   NA     7.026305e-01
+49   NA     4.921134e-01
+50   NA     2.107218e-01
+51   NA     1.053573e-01
+52   NA     2.072936e-02
+53   NA     8.718869e-03
+54   NA    -1.442694e-06
+55   NA     0.000000e+00
+   kill indivbedsortpred
+1    NA                0
+2    NA               NA
+3    NA               NA
+4    NA               NA
+5    NA               NA
+6    NA               NA
+7    NA               NA
+8    NA               NA
+9    NA               NA
+10   NA               NA
+11   NA               NA
+12   NA               NA
+13   NA               NA
+14   NA               NA
+15   NA               NA
+16   NA               NA
+17   NA               NA
+18   NA               NA
+19   NA               NA
+20   NA               NA
+21   NA               NA
+22   NA               NA
+23   NA               NA
+24   NA               NA
+25   NA               NA
+26   NA               NA
+27   NA               NA
+28   NA               NA
+29   NA               NA
+30   NA               NA
+31   NA               NA
+32   NA               NA
+33   NA               NA
+34   NA               NA
+35   NA               NA
+36   NA               NA
+37   NA               NA
+38   NA               NA
+39   NA               NA
+40   NA               NA
+41   NA               NA
+42   NA               NA
+43   NA               NA
+44   NA               NA
+45   NA               NA
+46   NA               NA
+47   NA               NA
+48   NA               NA
+49   NA               NA
+50   NA               NA
+51   NA               NA
+52   NA               NA
+53   NA               NA
+54   NA               NA
+55   NA               NA
 #+end_example
 
-*** Schlussberechnungen
-Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um diese dann gut zeichnen zu können.
-#+NAME: statisticend
-#+BEGIN_SRC R :exports code :results output :noweb yes
-if (names(EEE[1]) == 'kill') {
-    EEE = EEE[-1]
-}
+*** Exp2, ersetzt präd.
+#+BEGIN_SRC R :session stat :exports code :results output :noweb yes
+## initializing
 
-if (names(SumSD[1]) == 'kill') {
-    SumSD = SumSD[-1]
-}
+infoall = NULL
+rest.temp = NULL
 
-if (names(Restinfo[1]) == 'kill') {
-    Restinfo = Restinfo[-1]
-    RestinfoSD = RestinfoSD[-1]
-}
+pcitems.temp = pcitems
 
-for (i in 1:length(EEE[1,])) {
-    for (j in 1:length(EEE[,1])) {
-        summe[j,i] = sum(EEE[1:j,i])
-    }
-}
-
+## first item
 fit = NULL
-pcitems = pcitemsalt
-for (i in 1:length(test)) {
-    if (i %in% pcitems) {
+for (i in 1:length(test)) 
+{
+    if (i %in% pcitems)
+    {
         fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
-    } else {
+    } else
+    {
         fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
     }
 }
 
 odds = fit
-odds[-pcitems] = lapply(fit[-pcitems], predict, test[1,], type="response")
-odds[pcitems] = lapply(fit[pcitems], predict, test[1,], type="probs")
-infotemp = FUN.infotemp.IND(odds)
-Restinfo[1,] = sum(infotemp)
+odds[-pcitems.temp] = lapply(fit[-pcitems], predict, test[1,], type="response")
+odds[pcitems.temp] = lapply(fit[pcitems], predict, test[1,], type="probs")
+info.temp = FUN.info.temp.IND(odds)
+query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))[1]
+modell = NULL
+modell[[1]] = fit[[query]]
+queryinit = query
+fit = NULL
+entropie.rest2 = NULL
+infoall = matrix(nrow=persons,ncol=items)
 
-names(summe) = names(EEE)
+for (k in 1:persons)
+{
+    query = queryinit
+    entropie.rest = NULL
+    rest.temp2 = NULL
+    rest.temp = NULL
+    calcu = 0
+    calcutime = proc.time()
+    answers = vector(length = (length(test)+2))
+    
+    if (file.exists('database.dat'))
+    {
+        database = read.table('database.dat')
+    }
+    
+    answers[1] = query[1] + as.numeric(as.character(test[k,query[1]]))/100
+    
+    for (i in 2:items)
+    {
+        odds = NULL
+        info.temp = NULL
+        fit = NULL
+        fit2 = NULL
+        info.temp2 = NULL
+        found = 0
+        pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
+        foundit = 0
+        
+        # prediction for all not-answerd questions
+        if (exists("database"))
+        {
+            for (m in 1:length(database[,1]))
+            {
+                for (u in 1:length(query))
+                {
+                    if (sort(answers[1:length(query)])[u] != database[m,u])
+                    {
+                        break
+                    }
+                    
+                    if (database[m,(length(query)+3)] == 0 && u == length(query))
+                    {
+                        found = database[m,(length(query)+2)]
+                        rest.temp[i-1] = database[m,(length(query)+1)]
+                        query = c(query, found)
+                    }
+                }
+                
+                if (found != 0)
+                {                   
+                    break
+                }
+            }
+        }
+        
+        if (found == 0)
+        {
+            calcu = calcu+1
+            isgood = NULL
+            
+            for (q in 1:length(test[-query]))
+            {
+                if (q %in% pcitems.temp)
+                {
+                    fit[[q]] = polr(reformulate(names(test[query]), names(test[-query][q])), data = test)
+                } else
+                {
+                    fit[[q]] = glm(reformulate(names(test[query]), names(test[-query][q])), data = test, family = "binomial"(link=logit))   
+                }
+            }
+            
+            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+            isgood = info.temp >= (max(info.temp)[1] * 0.8)
+            
+            Liste = foreach(j=1:length(test[-query])) %dopar%
+            {
+                chance = NULL
+                
+                if (j %in% pcitems.temp)
+                {
+                    chance = predict(fit[[j]], test[k,], type="probs")
+                } else
+                {
+                    chance = predict(fit[[j]], test[k,], type="response")
+                    chance[2] = 1-chance[1]
+                }
+                
+                rest.temp2 = NULL
+                
+                ## prediction for all not-answered questions after prediction
+                if (length(test[-query]) > 1 && isgood[j])
+                {
+                    pcitems.temp2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitems])))
+                    
+                    for (n in 1:length(test[-query][-j]))
+                    {
+                        if (n %in% pcitems.temp2)
+                        {
+                            fit2[[n]] = polr(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test)
+                        } else
+                        { 
+                            fit2[[n]] = glm(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test, family = "binomial"(link=logit))
+                        }
+                    }
+                    
+                    ## calculation of rest entropie for each possibility
+                    tempdata = test[k,]
+                    
+                    if (j %in% pcitems.temp)
+                    {
+                        for (s in 1:length(chance))
+                        {
+                            tempdata[-query][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
+                            info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[s]
+                            rest.temp2[s] = sum(info.temp)
+                        }
+                        
+                        rest.temp2 = sum(rest.temp2)
+                    } else
+                    {
+                        tempdata[-query][j] = 1
+                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[1]
+                        rest.temp2 = sum(info.temp)
+                        tempdata[-query][j] = 0
+                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[2]
+                        rest.temp2[2] = sum(info.temp)
+                        rest.temp2 = sum(rest.temp2)
+                    }
+                    
+                    fit2=NULL
+                } else
+                {
+                    if (isgood[j])
+                    {
+                        rest.temp2 = 0
+                        
+                    } else {
+                        
+                        rest.temp2 = 55555555
+                    }
+                }
+                
+                return(rest.temp2)
+            }
+            
+            rest.temp2 = simplify2array(Liste)
+            query = c(query, which(names(test[-query][which(rest.temp2 == min(rest.temp2))[1]]) == names(test))[1])
+            modell[[i]] = fit[[which(rest.temp2 == min(rest.temp2))[1]]]
+            <<fit>>
+            odds = fit
+            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+            rest.temp[i-1] = sum(info.temp)
+        }
+        
+        answers[i] = query[i] + as.numeric(as.character(test[k,query[i]]))/100
+        
+        if (found == 0) 
+        {
+            temp = answers
+            temp[1:(i-1)] = sort(answers[1:(i-1)])
+            temp[i] = rest.temp[i-1]
+            temp[i+1] = query[i]
+            write(temp, file='database.dat', append=TRUE, ncolumns=length(answers))
+        }
+        
+        plot(rest.temp, type='l', col=rgb(0,0.7,0.7))
+    }
+    
+    ## calculation of last rest entropie
+    if (length(test) == items)
+    {
+        rest.temp[items] = 0
+    } else
+    {
+        fit = NULL
+        pcitems.temp = 0
+        pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
+        
+        for (j in 1:length(test[-query]))
+        {
+            if (j %in% pcitems.temp)
+            {
+                fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
+            } else
+            {
+                fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
+            }
+        }
+        
+        <<fit>>
+        info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+        rest.temp[items] = sum(info.temp)
+    }
+    
+    ## calculation of choosen modell
+    pcitems.temp = 0
+    pcitems.temp = c(pcitems.temp,which(query %in% pcitems))
+    
+    if (calcu != 0)
+    {
+        temp = vector(length=(length(test)+2))
+        temp[2] = k
+        temp[3] = (proc.time() - calcutime)[3]
+        temp[4] = calcu
+        write(temp, file='database.dat', append=TRUE, ncolumns=length(answers))
+    }
+    
+    infoall[k,] = rest.temp
+}
 
-if (exists("benchmark")) {
+#restt = (infoall[(items+1):(items*2),])
+#infoall = infoall[1:items,]
+
+#    entropie.SD.temp = sd(infoall[1,])
+#   for (i in 2:length(infoall[,1])) {
+#      entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
+# }
+
+#entropie.SD$indivbedsortpred = c(0,entropie.SD.temp)
+#entropie$indivbedsortpred = c(0,rowMeans(infoall))
+info.rest$indivbedsortpred = c(0,colMeans(infoall))
+info.rest.SD$indivbedsortpred = c(0,apply(infoall, 2, sd))
+
+pcitems.temp = pcitems
+#entropie
+#entropie.SD
+info.rest
+info.rest.SD
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+   kill indivbedsortpred
+1    NA     0.000000e+00
+2    NA     5.088224e+01
+3    NA     4.708860e+01
+4    NA     4.364700e+01
+5    NA     4.082633e+01
+6    NA     3.884856e+01
+7    NA     3.692731e+01
+8    NA     3.550697e+01
+9    NA     3.406869e+01
+10   NA     3.265390e+01
+11   NA     3.130491e+01
+12   NA     3.014410e+01
+13   NA     2.892794e+01
+14   NA     2.761485e+01
+15   NA     2.653562e+01
+16   NA     2.535908e+01
+17   NA     2.425488e+01
+18   NA     2.311946e+01
+19   NA     2.194481e+01
+20   NA     2.076681e+01
+21   NA     1.962725e+01
+22   NA     1.856671e+01
+23   NA     1.746298e+01
+24   NA     1.651694e+01
+25   NA     1.547850e+01
+26   NA     1.442117e+01
+27   NA     1.342482e+01
+28   NA     1.246893e+01
+29   NA     1.153402e+01
+30   NA     1.058600e+01
+31   NA     9.666018e+00
+32   NA     8.826963e+00
+33   NA     8.031532e+00
+34   NA     7.211193e+00
+35   NA     6.388973e+00
+36   NA     5.720829e+00
+37   NA     4.990771e+00
+38   NA     4.336273e+00
+39   NA     3.786006e+00
+40   NA     3.208691e+00
+41   NA     2.694796e+00
+42   NA     2.173516e+00
+43   NA     1.774256e+00
+44   NA     1.385644e+00
+45   NA     1.113493e+00
+46   NA     8.169955e-01
+47   NA     5.803046e-01
+48   NA     3.958115e-01
+49   NA     2.514898e-01
+50   NA     1.358215e-01
+51   NA     6.645557e-02
+52   NA     1.793999e-02
+53   NA     3.745726e-03
+54   NA     1.944789e-06
+55   NA     0.000000e+00
+   kill indivbedsortpred
+1    NA     0.0000000000
+2    NA     0.9910198509
+3    NA     2.5194564287
+4    NA     3.2932574743
+5    NA     3.0636426153
+6    NA     3.1604779488
+7    NA     3.2235898557
+8    NA     3.2192837452
+9    NA     3.3200072546
+10   NA     3.3635327317
+11   NA     3.3954967580
+12   NA     3.3238365051
+13   NA     3.2783102744
+14   NA     3.1741922193
+15   NA     3.1087892582
+16   NA     3.0315390593
+17   NA     3.0631320192
+18   NA     3.1182361606
+19   NA     3.0264015036
+20   NA     3.1013493268
+21   NA     3.0988411295
+22   NA     3.0826331024
+23   NA     2.9955631262
+24   NA     2.9977971750
+25   NA     2.9199160967
+26   NA     2.9223287506
+27   NA     2.9397578763
+28   NA     2.8174495814
+29   NA     2.7462677386
+30   NA     2.6383491120
+31   NA     2.5592422603
+32   NA     2.4876267555
+33   NA     2.3641125633
+34   NA     2.2521104186
+35   NA     2.1160820232
+36   NA     1.9835384881
+37   NA     1.8440810131
+38   NA     1.7448851263
+39   NA     1.6493209820
+40   NA     1.5139577018
+41   NA     1.3953294615
+42   NA     1.1797181994
+43   NA     1.0800215650
+44   NA     0.9263059132
+45   NA     0.8236899814
+46   NA     0.6325828796
+47   NA     0.4789183568
+48   NA     0.3615579244
+49   NA     0.2586800710
+50   NA     0.1632051989
+51   NA     0.0936261164
+52   NA     0.0448180381
+53   NA     0.0183911168
+54   NA     0.0000137512
+55   NA     0.0000000000
+#+end_example
+
+
+
+
+
+
+*** Schlussberechnungen
+Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um diese dann gut zeichnen zu können.
+#+NAME: statisticend
+#+BEGIN_SRC R :exports code :results output :noweb yes
+if (names(entropie[1]) == 'kill')
+{
+    entropie = entropie[-1]
+}
+
+if (names(entropie.SD[1]) == 'kill')
+{
+    entropie.SD = entropie.SD[-1]
+}
+
+if (names(info.rest[1]) == 'kill')
+{
+    info.rest = info.rest[-1]
+    info.rest.SD = info.rest.SD[-1]
+}
+
+for (i in 1:length(entropie[1,]))
+{
+    for (j in 1:length(entropie[,1]))
+    {
+        summe[j,i] = sum(entropie[1:j,i])
+    }
+}
+
+fit = NULL
+pcitems.temp = pcitems
+
+for (i in 1:length(test))
+{
+    if (i %in% pcitems.temp)
+    {
+        fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
+    } else
+    {
+        fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
+    }
+}
+
+odds = fit
+odds[-pcitems.temp] = lapply(fit[-pcitems.temp], predict, test[1,], type="response")
+odds[pcitems.temp] = lapply(fit[pcitems.temp], predict, test[1,], type="probs")
+info.temp = FUN.info.temp.IND(odds)
+info.rest[1,] = sum(info.temp)
+
+names(summe) = names(entropie)
+
+if (exists("benchmark"))
+{
     benchmark = array(c(benchmark,(proc.time() - calculationtime)[3]))
-} else {
+} else
+{
     benchmark = (proc.time() - calculationtime)[3]
 }
 #+END_SRC
@@ -1295,8 +1751,8 @@ Was hier aber dagegen spricht, ist die dadurch resultierende Berechnungsdauer.
 So sind selbst die einfacheren obigen Modell auch nach Stunden nicht fertig.
 #+NAME: fit
 #+BEGIN_SRC R :exports code
-#fit = mclapply(fit, step, trace = 0)
-#fit = mclapply(fit, step, ~.^2, trace = 0)
+#fit = lapply(fit, step, trace = 0)
+#fit = lapply(fit, step, ~.^2, trace = 0)
 #+END_SRC
 
 *** Benchmark
@@ -1316,7 +1772,8 @@ Zudem werden eine Legende generiert und die Berechnungsdauer angegeben.
 #+BEGIN_SRC R :noweb yes :results output graphics :file /images/entropie2.png :exports code
 farbe = NULL
 farbeSD = NULL
-for (j in 1:(length(summe[1,]))) {
+for (j in 1:(length(summe[1,])))
+{
     r = runif(1,0.1,0.9)
     g = runif(1,0.1,0.9)
     b = runif(1,0.1,0.9)
@@ -1325,16 +1782,22 @@ for (j in 1:(length(summe[1,]))) {
 }
 
 plot(0:(length(test)), type="l", col=rgb(0,0,0), ann=F)
-for (i in 1:(length(summe[1,]))) {
+
+for (i in 1:(length(summe[1,])))
+{
     lines(summe[,i], col=farbe[i])
-    if (dim(SumSD[names(SumSD) == names(summe[i])])[2] != 0) {
-        lines(summe[,i]+SumSD[names(summe[i])],lty = 4, col=farbeSD[i])
-        lines(summe[,i]-SumSD[names(summe[i])],lty = 4, col=farbeSD[i])
+    
+    if (dim(entropie.SD[names(entropie.SD) == names(summe[i])])[2] != 0)
+    {
+        lines(summe[,i]+entropie.SD[names(summe[i])],lty = 4, col=farbeSD[i])
+        lines(summe[,i]-entropie.SD[names(summe[i])],lty = 4, col=farbeSD[i])
     }
-    if (dim(Restinfo[names(Restinfo) == names(summe[i])])[2] != 0) {
-        lines(Restinfo[names(summe[i])], col=farbe[i])
-        lines(Restinfo[names(summe[i])]+RestinfoSD[names(summe[i])],lty = 4, col=farbeSD[i])
-        lines(Restinfo[names(summe[i])]-RestinfoSD[names(summe[i])],lty = 4, col=farbeSD[i])
+    
+    if (dim(info.rest[names(info.rest) == names(summe[i])])[2] != 0)
+    {
+        lines(info.rest[names(summe[i])], col=farbe[i])
+        lines(info.rest[names(summe[i])]+info.rest.SD[names(summe[i])],lty = 4, col=farbeSD[i])
+        lines(info.rest[names(summe[i])]-info.rest.SD[names(summe[i])],lty = 4, col=farbeSD[i])
     }
 }
 
