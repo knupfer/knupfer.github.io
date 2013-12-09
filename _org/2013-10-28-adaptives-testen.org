@@ -112,7 +112,7 @@ Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um gr
 Ferner werden, wo möglich, Berechnungen mit dieser Initialisierung parallelisiert.
 
 #+NAME: statistic
-#+BEGIN_SRC R :exports code :results output :noweb yes
+#+BEGIN_SRC R :session muu :exports code :results output :noweb yes
 require(MASS)
 library(foreach)
 library(doMC)
@@ -234,6 +234,12 @@ names(entropie.SD) = 'kill'
 #+END_SRC
 
 #+RESULTS: statistic
+: Lade nötiges Paket: MASS
+: foreach: simple, scalable parallel programming from Revolution Analytics
+: Use Revolution R for scalability, fault tolerance and more.
+: http://www.revolutionanalytics.com
+: Lade nötiges Paket: iterators
+: Lade nötiges Paket: parallel
 
 *** Nichtadaptiv
 **** Unbedingte und bedingte info in normaler Reihenfolge
@@ -1680,7 +1686,437 @@ info.rest.SD
 
 
 
+*** exp3 binsearch
+#+BEGIN_SRC R :session muu :exports code :results output :noweb yes
+## initializing
 
+infoall = NULL
+rest.temp = NULL
+
+pcitems.temp = pcitems
+
+## first item
+fit = NULL
+for (i in 1:length(test)) 
+{
+    if (i %in% pcitems)
+    {
+        fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
+    } else
+    {
+        fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
+    }
+}
+
+odds = fit
+odds[-pcitems.temp] = lapply(fit[-pcitems], predict, test[1,], type="response")
+odds[pcitems.temp] = lapply(fit[pcitems], predict, test[1,], type="probs")
+info.temp = FUN.info.temp.IND(odds)
+query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))[1]
+modell = NULL
+modell[[1]] = fit[[query]]
+queryinit = query
+fit = NULL
+entropie.rest2 = NULL
+infoall = matrix(nrow=persons,ncol=items)
+
+for (k in 1:persons)
+{
+    query = queryinit
+    entropie.rest = NULL
+    rest.temp2 = NULL
+    rest.temp = NULL
+    calcu = 0
+    calcutime = proc.time()
+    answers = vector(length = (length(test)+2))
+    
+    if (file.exists('binsearch.dat'))
+    {
+        database = read.table('binsearch.dat')
+    }
+    
+    answers[1] = query[1] + as.numeric(as.character(test[k,query[1]]))/100
+    
+    for (i in 2:items)
+    {
+        odds = NULL
+        info.temp = NULL
+        fit = NULL
+        fit2 = NULL
+        info.temp2 = NULL
+        found = 0
+        pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
+        foundit = 0
+        
+        # prediction for all not-answerd questions
+        if (exists("database"))
+        #{
+        #    for (m in 1:length(database[,1]))
+        #    {
+        #        for (u in 1:length(query))
+        #        {
+        #            if (sort(answers[1:length(query)])[u] != database[m,u])
+        #            {
+        #                break
+        #            }
+        #            
+        #            if (database[m,(length(query)+3)] == 0 && u == length(query))
+        #            {
+        #                found = database[m,(length(query)+2)]
+        #                rest.temp[i-1] = database[m,(length(query)+1)]
+        #                query = c(query, found)
+        #            }
+        #        }
+        #        
+        #        if (found != 0)
+        #        {                   
+        #            break
+        #        }
+        #    }
+        #}
+        {
+            currentold = 1
+            lower = 1
+            upper = length(database[,1])
+current = upper
+            for (m in 1:length(database[,1]))
+            {
+                currentold = current
+                current = round((lower+upper) / 2)
+
+                if (upper < lower)
+                {
+                    break
+                }
+                
+                for (u in 1:length(query))
+                {
+                    if (sort(answers[1:length(query)])[u] > database[current,u])
+                    {
+                        lower = current + 1
+                        break
+                    }
+                    
+                    if (sort(answers[1:length(query)])[u] < database[current,u])
+                    {
+                        upper = current - 1
+                        break
+                    }
+                    
+                    if (u == length(query))
+                    {
+                        if (database[current,(u+1)] == 0)
+                        {
+                            found = database[current,(u+3)]
+                            rest.temp[i-1] = database[current,(u+2)]
+                            query = c(query, found)
+                            break
+                        } else
+                        {
+                            upper = current - 1
+                            break
+                        }
+                    }
+                }
+                
+                if (found != 0)
+                {
+                    break
+                }
+            }
+        }
+        
+        if (found == 0)
+        {
+            calcu = calcu+1
+            isgood = NULL
+            
+            for (q in 1:length(test[-query]))
+            {
+                if (q %in% pcitems.temp)
+                {
+                    fit[[q]] = polr(reformulate(names(test[query]), names(test[-query][q])), data = test)
+                } else
+                {
+                    fit[[q]] = glm(reformulate(names(test[query]), names(test[-query][q])), data = test, family = "binomial"(link=logit))   
+                }
+            }
+            
+            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+            isgood = info.temp >= (max(info.temp)[1] * 0.8)
+            
+            Liste = foreach(j=1:length(test[-query])) %dopar%
+            {
+                chance = NULL
+                
+                if (j %in% pcitems.temp)
+                {
+                    chance = predict(fit[[j]], test[k,], type="probs")
+                } else
+                {
+                    chance = predict(fit[[j]], test[k,], type="response")
+                    chance[2] = 1-chance[1]
+                }
+                
+                rest.temp2 = NULL
+                
+                ## prediction for all not-answered questions after prediction
+                if (length(test[-query]) > 1 && isgood[j])
+                {
+                    pcitems.temp2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitems])))
+                    
+                    for (n in 1:length(test[-query][-j]))
+                    {
+                        if (n %in% pcitems.temp2)
+                        {
+                            fit2[[n]] = polr(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test)
+                        } else
+                        { 
+                            fit2[[n]] = glm(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test, family = "binomial"(link=logit))
+                        }
+                    }
+                    
+                    ## calculation of rest entropie for each possibility
+                    tempdata = test[k,]
+                    
+                    if (j %in% pcitems.temp)
+                    {
+                        for (s in 1:length(chance))
+                        {
+                            tempdata[-query][j] = factor(s-1) #dies muss noch bearbeitet werden (chancen...)
+                            info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[s]
+                            rest.temp2[s] = sum(info.temp)
+                        }
+                        
+                        rest.temp2 = sum(rest.temp2)
+                    } else
+                    {
+                        tempdata[-query][j] = 1
+                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[1]
+                        rest.temp2 = sum(info.temp)
+                        tempdata[-query][j] = 0
+                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[2]
+                        rest.temp2[2] = sum(info.temp)
+                        rest.temp2 = sum(rest.temp2)
+                    }
+                    
+                    fit2=NULL
+                } else
+                {
+                    if (isgood[j])
+                    {
+                        rest.temp2 = 0
+                        
+                    } else {
+                        
+                        rest.temp2 = 55555555
+                    }
+                }
+                
+                return(rest.temp2)
+            }
+            
+            rest.temp2 = simplify2array(Liste)
+            query = c(query, which(names(test[-query][which(rest.temp2 == min(rest.temp2))[1]]) == names(test))[1])
+            modell[[i]] = fit[[which(rest.temp2 == min(rest.temp2))[1]]]
+            <<fit>>
+            odds = fit
+            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+            rest.temp[i-1] = sum(info.temp)
+        }
+        
+        answers[i] = query[i] + as.numeric(as.character(test[k,query[i]]))/100
+        
+    #    if (found == 0) 
+    #    {
+    #        temp = answers
+    #        temp[1:(i-1)] = sort(answers[1:(i-1)])
+    #        temp[i] = rest.temp[i-1]
+    #        temp[i+1] = query[i]
+    #        write(temp, file='database.dat', append=TRUE, ncolumns=length(answers))
+    #    }
+        
+        plot(rest.temp, type='l', col=rgb(0,0.7,0.7))
+    }
+    
+    ## calculation of last rest entropie
+    if (length(test) == items)
+    {
+        rest.temp[items] = 0
+    } else
+    {
+        fit = NULL
+        pcitems.temp = 0
+        pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
+        
+        for (j in 1:length(test[-query]))
+        {
+            if (j %in% pcitems.temp)
+            {
+                fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
+            } else
+            {
+                fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
+            }
+        }
+        
+        <<fit>>
+        info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+        rest.temp[items] = sum(info.temp)
+    }
+    
+    ## calculation of choosen modell
+    pcitems.temp = 0
+    pcitems.temp = c(pcitems.temp,which(query %in% pcitems))
+    
+#    if (calcu != 0)
+#    {
+#        temp = vector(length=(length(test)+2))
+#        temp[2] = k
+#        temp[3] = (proc.time() - calcutime)[3]
+#        temp[4] = calcu
+#        write(temp, file='database.dat', append=TRUE, ncolumns=length(answers))
+#    }
+    
+    infoall[k,] = rest.temp
+}
+
+#restt = (infoall[(items+1):(items*2),])
+#infoall = infoall[1:items,]
+
+#    entropie.SD.temp = sd(infoall[1,])
+#   for (i in 2:length(infoall[,1])) {
+#      entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
+# }
+
+#entropie.SD$indivbedsortpred = c(0,entropie.SD.temp)
+#entropie$indivbedsortpred = c(0,rowMeans(infoall))
+info.rest$indivbedsortpred = c(0,colMeans(infoall))
+info.rest.SD$indivbedsortpred = c(0,apply(infoall, 2, sd))
+
+pcitems.temp = pcitems
+#entropie
+#entropie.SD
+info.rest
+info.rest.SD
+
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+   kill indivbedsortpred
+1    NA     0.000000e+00
+2    NA     5.082217e+01
+3    NA     4.695088e+01
+4    NA     4.384639e+01
+5    NA     4.105024e+01
+6    NA     3.879538e+01
+7    NA     3.686947e+01
+8    NA     3.523404e+01
+9    NA     3.373877e+01
+10   NA     3.232012e+01
+11   NA     3.094476e+01
+12   NA     2.971151e+01
+13   NA     2.849716e+01
+14   NA     2.723191e+01
+15   NA     2.607972e+01
+16   NA     2.488432e+01
+17   NA     2.377207e+01
+18   NA     2.262792e+01
+19   NA     2.152213e+01
+20   NA     2.042998e+01
+21   NA     1.934875e+01
+22   NA     1.829717e+01
+23   NA     1.724955e+01
+24   NA     1.624447e+01
+25   NA     1.522439e+01
+26   NA     1.424490e+01
+27   NA     1.327722e+01
+28   NA     1.233397e+01
+29   NA     1.142872e+01
+30   NA     1.052840e+01
+31   NA     9.642002e+00
+32   NA     8.771659e+00
+33   NA     7.954316e+00
+34   NA     7.192489e+00
+35   NA     6.415413e+00
+36   NA     5.701401e+00
+37   NA     5.002546e+00
+38   NA     4.351939e+00
+39   NA     3.755783e+00
+40   NA     3.204925e+00
+41   NA     2.695089e+00
+42   NA     2.219276e+00
+43   NA     1.797131e+00
+44   NA     1.409575e+00
+45   NA     1.090268e+00
+46   NA     8.124601e-01
+47   NA     5.752688e-01
+48   NA     3.824999e-01
+49   NA     2.354267e-01
+50   NA     1.249635e-01
+51   NA     5.558062e-02
+52   NA     1.716667e-02
+53   NA     3.042076e-03
+54   NA     5.169629e-05
+55   NA     0.000000e+00
+   kill indivbedsortpred
+1    NA     0.0000000000
+2    NA     2.0994343328
+3    NA     2.8730697713
+4    NA     3.1936597433
+5    NA     3.1447947370
+6    NA     3.1734686757
+7    NA     3.2242821333
+8    NA     3.2756973110
+9    NA     3.3545717101
+10   NA     3.3805050750
+11   NA     3.4281752920
+12   NA     3.4558477208
+13   NA     3.4236473919
+14   NA     3.4203042683
+15   NA     3.4416223451
+16   NA     3.4252262560
+17   NA     3.3668930591
+18   NA     3.3353574576
+19   NA     3.2868599132
+20   NA     3.2840222014
+21   NA     3.2641694406
+22   NA     3.2350563702
+23   NA     3.1775787385
+24   NA     3.1466061440
+25   NA     3.0763035965
+26   NA     3.0075896302
+27   NA     2.9510421881
+28   NA     2.8855743120
+29   NA     2.7909275405
+30   NA     2.6972236558
+31   NA     2.5951995350
+32   NA     2.4956550743
+33   NA     2.3928959586
+34   NA     2.2943692759
+35   NA     2.1626049894
+36   NA     2.0269526218
+37   NA     1.9032980538
+38   NA     1.7492354270
+39   NA     1.5936359446
+40   NA     1.4470935771
+41   NA     1.3089467045
+42   NA     1.1391690211
+43   NA     0.9868549455
+44   NA     0.8236529830
+45   NA     0.6907447010
+46   NA     0.5469390118
+47   NA     0.4177658400
+48   NA     0.3046073428
+49   NA     0.2073388365
+50   NA     0.1304897732
+51   NA     0.0739558652
+52   NA     0.0355630250
+53   NA     0.0119947830
+54   NA     0.0007272126
+55   NA     0.0000000000
+#+end_example
 
 
 *** Schlussberechnungen

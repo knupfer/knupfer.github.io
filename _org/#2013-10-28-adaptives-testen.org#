@@ -1305,7 +1305,7 @@ info.rest.SD
 #+end_example
 
 *** Exp2, ersetzt präd.
-#+BEGIN_SRC R :session stat :exports code :results output :noweb yes
+#+BEGIN_SRC R :session stat  :exports code :results output :noweb yes
 ## initializing
 
 infoall = NULL
@@ -1338,7 +1338,7 @@ fit = NULL
 entropie.rest2 = NULL
 infoall = matrix(nrow=persons,ncol=items)
 
-for (k in 285:persons)
+for (k in 1:persons)
 {
     query = queryinit
     entropie.rest = NULL
@@ -1569,121 +1569,6 @@ info.rest.SD
 #+END_SRC
 
 #+RESULTS:
-#+begin_example
- Es gab 50 oder mehr Warnungen (Anzeige der ersten 50 mit warnings())
-   kill indivbedsortpred
-1    NA                0
-2    NA               NA
-3    NA               NA
-4    NA               NA
-5    NA               NA
-6    NA               NA
-7    NA               NA
-8    NA               NA
-9    NA               NA
-10   NA               NA
-11   NA               NA
-12   NA               NA
-13   NA               NA
-14   NA               NA
-15   NA               NA
-16   NA               NA
-17   NA               NA
-18   NA               NA
-19   NA               NA
-20   NA               NA
-21   NA               NA
-22   NA               NA
-23   NA               NA
-24   NA               NA
-25   NA               NA
-26   NA               NA
-27   NA               NA
-28   NA               NA
-29   NA               NA
-30   NA               NA
-31   NA               NA
-32   NA               NA
-33   NA               NA
-34   NA               NA
-35   NA               NA
-36   NA               NA
-37   NA               NA
-38   NA               NA
-39   NA               NA
-40   NA               NA
-41   NA               NA
-42   NA               NA
-43   NA               NA
-44   NA               NA
-45   NA               NA
-46   NA               NA
-47   NA               NA
-48   NA               NA
-49   NA               NA
-50   NA               NA
-51   NA               NA
-52   NA               NA
-53   NA               NA
-54   NA               NA
-55   NA               NA
-   kill indivbedsortpred
-1    NA                0
-2    NA               NA
-3    NA               NA
-4    NA               NA
-5    NA               NA
-6    NA               NA
-7    NA               NA
-8    NA               NA
-9    NA               NA
-10   NA               NA
-11   NA               NA
-12   NA               NA
-13   NA               NA
-14   NA               NA
-15   NA               NA
-16   NA               NA
-17   NA               NA
-18   NA               NA
-19   NA               NA
-20   NA               NA
-21   NA               NA
-22   NA               NA
-23   NA               NA
-24   NA               NA
-25   NA               NA
-26   NA               NA
-27   NA               NA
-28   NA               NA
-29   NA               NA
-30   NA               NA
-31   NA               NA
-32   NA               NA
-33   NA               NA
-34   NA               NA
-35   NA               NA
-36   NA               NA
-37   NA               NA
-38   NA               NA
-39   NA               NA
-40   NA               NA
-41   NA               NA
-42   NA               NA
-43   NA               NA
-44   NA               NA
-45   NA               NA
-46   NA               NA
-47   NA               NA
-48   NA               NA
-49   NA               NA
-50   NA               NA
-51   NA               NA
-52   NA               NA
-53   NA               NA
-54   NA               NA
-55   NA               NA
-#+end_example
 
 
 
