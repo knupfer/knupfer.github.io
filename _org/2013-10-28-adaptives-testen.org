@@ -112,7 +112,7 @@ Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um gr
 Ferner werden, wo möglich, Berechnungen mit dieser Initialisierung parallelisiert.
 
 #+NAME: statistic
-#+BEGIN_SRC R :session muu :exports code :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
 require(MASS)
 library(foreach)
 library(doMC)
@@ -1001,7 +1001,7 @@ info.rest.SD
 #+END_SRC
 
 *** exp3 binsearch
-#+BEGIN_SRC R :session muu :exports code :results output :noweb yes
+#+BEGIN_SRC R :exports code :results output :noweb yes
 ## initializing
 infoall = NULL
 rest.temp = NULL

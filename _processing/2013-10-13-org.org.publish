@@ -12,8 +12,8 @@ father: Linux
 <ul>
 <li>
 <ul>
-<li><a href="#sec-2-0-1">2.0.1. offener Punkt</a></li>
-<li><a href="#sec-2-0-2">2.0.2. abgeschlossener Punkt.</a></li>
+<li><a href="#sec-2-0-1">2.0.1. <span class="todo TODO">TODO</span> offener Punkt</a></li>
+<li><a href="#sec-2-0-2">2.0.2. <span class="done DONE">DONE</span> abgeschlossener Punkt.</a></li>
 </ul>
 </li>
 <li><a href="#sec-2-1">2.1. Agendas</a></li>
@@ -56,7 +56,7 @@ Org-Mode bietet sehr elaborierte Outlinefähigkeiten. Hierarchien werden mit ein
 
 <div class="org-src-container">
 
-<pre class="src src-org"><span style="color: #87ceff;">* Erste &#220;berschrift</span>
+<pre class="src src-org"><span style="color: #87ceff; font-weight: bold;">* Erste &#220;berschrift</span>
 Text
 
 <span style="color: #98f5ff;">** Unter&#252;berschrift</span>
@@ -65,7 +65,7 @@ Text
 <span style="color: #cae1ff;">*** Unterunter&#252;berschrift</span>
 Text
 
-<span style="color: #87ceff;">* Zweite &#220;berschrift</span>
+<span style="color: #87ceff; font-weight: bold;">* Zweite &#220;berschrift</span>
 </pre>
 </div><p></p>
 
@@ -79,8 +79,8 @@ Um sich einen Überblick zu verschaffen und in seinem Dokument effizient zu navi
 
 <div class="org-src-container">
 
-<pre class="src src-org"><span style="color: #87ceff;">* Erste &#220;berschrift...</span>
-<span style="color: #87ceff;">* Zweite &#220;berschrift</span>
+<pre class="src src-org"><span style="color: #87ceff; font-weight: bold;">* Erste &#220;berschrift...</span>
+<span style="color: #87ceff; font-weight: bold;">* Zweite &#220;berschrift</span>
 </pre>
 </div><p></p>
 
@@ -198,7 +198,7 @@ Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden, sondern auch na
 <div class="org-src-container">
 
 <pre class="src src-org"><span style="color: #7f7f7f;">#+BEGIN_SRC org</span>
-<span style="color: #87ceff;">* Test&#252;berschrift</span>
+<span style="color: #87ceff; font-weight: bold;">* Test&#252;berschrift</span>
 <span style="color: #7f7f7f;">#+END_SRC</span>
 </pre>
 </div><p></p>
@@ -216,14 +216,14 @@ Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt 
 
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #7f7f7f;"># Fibonacci-Reihe</span>
+<pre class="src src-python"><span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Fibonacci-Reihe</span>
 <span style="color: #4eee94;">x</span> = 5
 <span style="color: #4eee94;">y</span> = 5
 <span style="color: #4eee94;">fib</span> = [[0] * x <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(y)]
 fib[0][0] = 1
 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(x * y):
-<span style="background-color: #252530;"> </span>   <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span> (1, 3):
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
+    <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span> (1, 3):
+        fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
 <span style="color: #00bfff;">return</span> fib
 </pre>
 </div><p></p>
@@ -299,26 +299,26 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
 <div class="outline-text-5" id="text-3-2-1-2">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #7f7f7f;"># Zahlensystemkonverter</span>
+<pre class="src src-python"><span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Zahlensystemkonverter</span>
 <span style="color: #4eee94;">Konvertierungszahl</span> = 1000
 <span style="color: #4eee94;">Zahlenraum</span> = 20
 <span style="color: #4eee94;">Zahlensystem</span> = [[0] <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(Zahlenraum - 1)]
 <span style="color: #4eee94;">Resultat</span> = [[<span style="color: #deb887;">''</span>] * 2 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(Zahlenraum - 1)]
 
 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(2, Zahlenraum + 1):
-<span style="background-color: #252530;"> </span>   Stelle = 0
-<span style="background-color: #252530;"> </span>   Zahlensystem[i-2][0] = Konvertierungszahl
-<span style="background-color: #252530;"> </span>   <span style="color: #00bfff;">while</span> Zahlensystem[i-2][0] &gt; 0:
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>     Stelle += 1
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>     Zahlensystem[i-2].insert(1,<span style="color: #f08080;">chr</span>(<span style="color: #f08080;">ord</span>(<span style="color: #deb887;">'0'</span>)
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>     + (Zahlensystem[i - 2][0] % i)))
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>     Zahlensystem[i-2][0] //= i
-<span style="background-color: #252530;"> </span>   Zahlensystem[i - 2][0] = i<span style="background-color: #252530;"> </span>   
+    <span style="color: #4eee94;">Stelle</span> = 0
+    Zahlensystem[i-2][0] = Konvertierungszahl
+    <span style="color: #00bfff;">while</span> Zahlensystem[i-2][0] &gt; 0:
+          <span style="color: #4eee94;">Stelle</span> += 1
+          Zahlensystem[i-2].insert(1,<span style="color: #f08080;">chr</span>(<span style="color: #f08080;">ord</span>(<span style="color: #deb887;">'0'</span>)
+                  + (Zahlensystem[i - 2][0] % i)))
+          Zahlensystem[i-2][0] //= i
+    Zahlensystem[i - 2][0] = i    
 
 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(Zahlenraum - 1):
-<span style="background-color: #252530;"> </span>   Resultat[i][0] = Zahlensystem[i][0]
-<span style="background-color: #252530;"> </span>   <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(1, <span style="color: #f08080;">len</span>(Zahlensystem[i])):
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   Resultat[i][1] += <span style="color: #f08080;">str</span>(Zahlensystem[i][j])
+    Resultat[i][0] = Zahlensystem[i][0]
+    <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(1, <span style="color: #f08080;">len</span>(Zahlensystem[i])):
+        Resultat[i][1] += <span style="color: #f08080;">str</span>(Zahlensystem[i][j])
 
 <span style="color: #00bfff;">return</span> Resultat
 </pre>

@@ -99,8 +99,8 @@
 <ul>
 <li>
 <ul>
-<li><a href="/2013/10/13/org.html#sec-2-0-1">2.0.1. offener Punkt</a></li>
-<li><a href="/2013/10/13/org.html#sec-2-0-2">2.0.2. abgeschlossener Punkt.</a></li>
+<li><a href="/2013/10/13/org.html#sec-2-0-1">2.0.1. <span class="todo TODO">TODO</span> offener Punkt</a></li>
+<li><a href="/2013/10/13/org.html#sec-2-0-2">2.0.2. <span class="done DONE">DONE</span> abgeschlossener Punkt.</a></li>
 </ul>
 </li>
 <li><a href="/2013/10/13/org.html#sec-2-1">2.1. Agendas</a></li>
