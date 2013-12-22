@@ -105,7 +105,7 @@ Nichts desto trotz ergaben sich Situationen, in denen der Computer 5 Tage lang r
 In anderen Situationen wurde das komplette RAM des Computers aufgezehrt usw.
 
 ** Programmierung
-
+   
 *** Initialisierung
 
 Für alle nachfolgenden Berechnungen habe ich immer dieses Skript benutzt, um grundlegende Dinge, wie Funktionen, die an vielen Stellen benötigt werden, die Daten usw. bereitgestellt werden.
@@ -234,12 +234,10 @@ names(entropie.SD) = 'kill'
 #+END_SRC
 
 #+RESULTS: statistic
-: Lade nötiges Paket: MASS
-: foreach: simple, scalable parallel programming from Revolution Analytics
-: Use Revolution R for scalability, fault tolerance and more.
-: http://www.revolutionanalytics.com
-: Lade nötiges Paket: iterators
-: Lade nötiges Paket: parallel
+: Loading required package: MASS
+: Error in library(foreach) : there is no package called 'foreach'
+: Error in library(doMC) : there is no package called 'doMC'
+: Error: could not find function "registerDoMC"
 
 *** Nichtadaptiv
 **** Unbedingte und bedingte info in normaler Reihenfolge
@@ -1005,10 +1003,8 @@ info.rest.SD
 *** exp3 binsearch
 #+BEGIN_SRC R :session muu :exports code :results output :noweb yes
 ## initializing
-
 infoall = NULL
 rest.temp = NULL
-
 pcitems.temp = pcitems
 
 ## first item
@@ -1049,6 +1045,11 @@ for (k in 1:persons)
     if (file.exists('binsearch.dat'))
     {
         database = read.table('binsearch.dat')
+    }
+    
+    if (file.exists('newdata.dat'))
+    {
+        newdata = read.table('newdata.dat')
     }
     
     answers[1] = query[1] + as.numeric(as.character(test[k,query[1]]))/100
@@ -1112,6 +1113,35 @@ for (k in 1:persons)
                 
                 if (found != 0)
                 {
+                    break
+                }
+            }
+        }
+        
+        if (found == 0 && exists("newdata"))
+        {
+            # prediction for all not-answerd questions
+            
+            
+            for (m in 1:length(newdata[,1]))
+            {
+                for (u in 1:length(query))
+                {
+                    if (sort(answers[1:length(query)])[u] != newdata[m,u])
+                    {
+                        break
+                    }
+                    
+                    if (newdata[m,(length(query)+3)] == 0 && u == length(query))
+                    {
+                        found = newdata[m,(length(query)+2)]
+                        rest.temp[i-1] = newdata[m,(length(query)+1)]
+                        query = c(query, found)
+                    }
+                }
+                
+                if (found != 0)
+                {                   
                     break
                 }
             }
@@ -1274,10 +1304,10 @@ for (k in 1:persons)
 #restt = (infoall[(items+1):(items*2),])
 #infoall = infoall[1:items,]
 
-#    entropie.SD.temp = sd(infoall[1,])
-#   for (i in 2:length(infoall[,1])) {
-#      entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
-# }
+#entropie.SD.temp = sd(infoall[1,])
+#for (i in 2:length(infoall[,1])) {
+#    entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
+#}
 
 #entropie.SD$indivbedsortpred = c(0,entropie.SD.temp)
 #entropie$indivbedsortpred = c(0,rowMeans(infoall))
