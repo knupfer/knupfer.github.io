@@ -1064,32 +1064,28 @@ for (k in 1:persons)
         found = 0
         pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
         foundit = 0
+        answers.sorted = sort(answers[1:length(query)])
         
-        # prediction for all not-answerd questions
+        ## binary search in sorted database
         if (exists("database"))
         {
-            currentold = 1
             lower = 1
             upper = length(database[,1])
             current = upper
-            for (m in 1:length(database[,1]))
+            
+            while (upper >= lower)
             {
-                currentold = current
                 current = round((lower+upper) / 2)
-                if (upper < lower)
-                {
-                    break
-                }
                 
                 for (u in 1:length(query))
                 {
-                    if (sort(answers[1:length(query)])[u] > database[current,u])
+                    if (answers.sorted[u] > database[current,u])
                     {
                         lower = current + 1
                         break
                     }
                     
-                    if (sort(answers[1:length(query)])[u] < database[current,u])
+                    if (answers.sorted[u] < database[current,u])
                     {
                         upper = current - 1
                         break
@@ -1118,16 +1114,14 @@ for (k in 1:persons)
             }
         }
         
+        ## search in new data if binary search is'nt succesfull
         if (found == 0 && exists("newdata"))
         {
-            # prediction for all not-answerd questions
-            
-            
             for (m in 1:length(newdata[,1]))
             {
                 for (u in 1:length(query))
                 {
-                    if (sort(answers[1:length(query)])[u] != newdata[m,u])
+                    if (answers.sorted[u] != newdata[m,u])
                     {
                         break
                     }
@@ -1154,12 +1148,13 @@ for (k in 1:persons)
             
             for (q in 1:length(test[-query]))
             {
+                fit.formula = reformulate(names(test[query]), names(test[-query][q]))
                 if (q %in% pcitems.temp)
                 {
-                    fit[[q]] = polr(reformulate(names(test[query]), names(test[-query][q])), data = test)
+                    fit[[q]] = polr(fit.formula, data = test)
                 } else
                 {
-                    fit[[q]] = glm(reformulate(names(test[query]), names(test[-query][q])), data = test, family = "binomial"(link=logit))   
+                    fit[[q]] = glm(fit.formula, data = test, family = "binomial"(link=logit))   
                 }
             }
             
@@ -1188,12 +1183,13 @@ for (k in 1:persons)
                     
                     for (n in 1:length(test[-query][-j]))
                     {
+                        fit2.formula = reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n]))
                         if (n %in% pcitems.temp2)
                         {
-                            fit2[[n]] = polr(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test)
+                            fit2[[n]] = polr(fit2.formula, data = test)
                         } else
                         { 
-                            fit2[[n]] = glm(reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n])), data = test, family = "binomial"(link=logit))
+                            fit2[[n]] = glm(fit2.formula, data = test, family = "binomial"(link=logit))
                         }
                     }
                     
@@ -1253,7 +1249,7 @@ for (k in 1:persons)
             temp[1:(i-1)] = sort(answers[1:(i-1)])
             temp[i] = rest.temp[i-1]
             temp[i+1] = query[i]
-            write(temp, file='database.dat', append=TRUE, ncolumns=length(answers))
+            write(temp, file='newdata.dat', append=TRUE, ncolumns=length(answers))
         }
         
         plot(rest.temp, type='l', col=rgb(0,0.7,0.7))
@@ -1271,12 +1267,13 @@ for (k in 1:persons)
         
         for (j in 1:length(test[-query]))
         {
+            fit.formula = reformulate(names(test[query]), names(test[-query][j]))
             if (j %in% pcitems.temp)
             {
-                fit[[j]] = polr(reformulate(names(test[query]), names(test[-query][j])), data = test)
+                fit[[j]] = polr(fit.formula, data = test)
             } else
             {
-                fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
+                fit[[j]] = glm(fit.formula, data = test, family = "binomial"(link=logit))
             }
         }
         
@@ -1295,7 +1292,7 @@ for (k in 1:persons)
         temp[2] = k
         temp[3] = (proc.time() - calcutime)[3]
         temp[4] = calcu
-        write(temp, file='database.dat', append=TRUE, ncolumns=length(answers))
+        write(temp, file='newdata.dat', append=TRUE, ncolumns=length(answers))
     }
     
     infoall[k,] = rest.temp
