@@ -7,8 +7,8 @@
 <ul>
 <li>
 <ul>
-<li><a href="#sec-2-0-1">2.0.1. offener Punkt</a></li>
-<li><a href="#sec-2-0-2">2.0.2. abgeschlossener Punkt.</a></li>
+<li><a href="#sec-2-0-1">2.0.1. <span class="todo TODO">TODO</span> offener Punkt</a></li>
+<li><a href="#sec-2-0-2">2.0.2. <span class="done DONE">DONE</span> abgeschlossener Punkt.</a></li>
 </ul>
 </li>
 <li><a href="#sec-2-1">2.1. Agendas</a></li>
@@ -51,7 +51,7 @@ Org-Mode bietet sehr elaborierte Outlinefähigkeiten. Hierarchien werden mit ein
 
 <div class="org-src-container">
 
-<pre class="src src-org"><span style="color: #87ceff;">* Erste &#220;berschrift</span>
+<pre class="src src-org"><span style="color: #87ceff; font-weight: bold;">* Erste &#220;berschrift</span>
 Text
 
 <span style="color: #98f5ff;">** Unter&#252;berschrift</span>
@@ -60,7 +60,7 @@ Text
 <span style="color: #cae1ff;">*** Unterunter&#252;berschrift</span>
 Text
 
-<span style="color: #87ceff;">* Zweite &#220;berschrift</span>
+<span style="color: #87ceff; font-weight: bold;">* Zweite &#220;berschrift</span>
 </pre>
 </div>
 
@@ -74,8 +74,8 @@ Um sich einen Überblick zu verschaffen und in seinem Dokument effizient zu navi
 
 <div class="org-src-container">
 
-<pre class="src src-org"><span style="color: #87ceff;">* Erste &#220;berschrift...</span>
-<span style="color: #87ceff;">* Zweite &#220;berschrift</span>
+<pre class="src src-org"><span style="color: #87ceff; font-weight: bold;">* Erste &#220;berschrift...</span>
+<span style="color: #87ceff; font-weight: bold;">* Zweite &#220;berschrift</span>
 </pre>
 </div>
 
@@ -193,7 +193,7 @@ Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden, sondern auch na
 <div class="org-src-container">
 
 <pre class="src src-org"><span style="color: #7f7f7f;">#+BEGIN_SRC org</span>
-<span style="color: #87ceff;">* Test&#252;berschrift</span>
+<span style="color: #87ceff; font-weight: bold;">* Test&#252;berschrift</span>
 <span style="color: #7f7f7f;">#+END_SRC</span>
 </pre>
 </div>
@@ -211,74 +211,17 @@ Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt 
 
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #7f7f7f;"># Fibonacci-Reihe</span>
+<pre class="src src-python"><span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Fibonacci-Reihe</span>
 <span style="color: #4eee94;">x</span> = 5
 <span style="color: #4eee94;">y</span> = 5
 <span style="color: #4eee94;">fib</span> = [[0] * x <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(y)]
 fib[0][0] = 1
 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(x * y):
-<span style="background-color: #252530;"> </span>   <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span> (1, 3):
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
+    <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span> (1, 3):
+        fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
 <span style="color: #00bfff;">return</span> fib
 </pre>
 </div>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="right" />
-
-<col  class="right" />
-
-<col  class="right" />
-
-<col  class="right" />
-
-<col  class="right" />
-</colgroup>
-<tbody>
-<tr>
-<td class="right">1</td>
-<td class="right">8</td>
-<td class="right">89</td>
-<td class="right">987</td>
-<td class="right">10946</td>
-</tr>
-
-<tr>
-<td class="right">1</td>
-<td class="right">13</td>
-<td class="right">144</td>
-<td class="right">1597</td>
-<td class="right">17711</td>
-</tr>
-
-<tr>
-<td class="right">2</td>
-<td class="right">21</td>
-<td class="right">233</td>
-<td class="right">2584</td>
-<td class="right">28657</td>
-</tr>
-
-<tr>
-<td class="right">3</td>
-<td class="right">34</td>
-<td class="right">377</td>
-<td class="right">4181</td>
-<td class="right">46368</td>
-</tr>
-
-<tr>
-<td class="right">5</td>
-<td class="right">55</td>
-<td class="right">610</td>
-<td class="right">6765</td>
-<td class="right">75025</td>
-</tr>
-</tbody>
-</table>
 
 <p>
 Ferner ist es möglich, die Ergebnisse eines Sourceblocks für den Input eines anderen Sourceblocks zu verwenden. Dementsprechend können, ähnlich zu Shellscripten, Pipes zwischen verschiedenen Programmiersprachen gebaut werden. Das Ergebnis kann an jeder beliebigen Stelle im Dokument durch einen Platzhalter eingefügt werden, wodurch es möglich ist, Tabellen und Grafiken automatisch immer auf den aktuellen Datenstand darzustellen.
@@ -294,136 +237,30 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
 <div class="outline-text-5" id="text-3-2-1-2">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #7f7f7f;"># Zahlensystemkonverter</span>
+<pre class="src src-python"><span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Zahlensystemkonverter</span>
 <span style="color: #4eee94;">Konvertierungszahl</span> = 1000
 <span style="color: #4eee94;">Zahlenraum</span> = 20
 <span style="color: #4eee94;">Zahlensystem</span> = [[0] <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(Zahlenraum - 1)]
 <span style="color: #4eee94;">Resultat</span> = [[<span style="color: #deb887;">''</span>] * 2 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(Zahlenraum - 1)]
 
 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(2, Zahlenraum + 1):
-<span style="background-color: #252530;"> </span>   Stelle = 0
-<span style="background-color: #252530;"> </span>   Zahlensystem[i-2][0] = Konvertierungszahl
-<span style="background-color: #252530;"> </span>   <span style="color: #00bfff;">while</span> Zahlensystem[i-2][0] &gt; 0:
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>     Stelle += 1
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>     Zahlensystem[i-2].insert(1,<span style="color: #f08080;">chr</span>(<span style="color: #f08080;">ord</span>(<span style="color: #deb887;">'0'</span>)
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>     + (Zahlensystem[i - 2][0] % i)))
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>     Zahlensystem[i-2][0] //= i
-<span style="background-color: #252530;"> </span>   Zahlensystem[i - 2][0] = i<span style="background-color: #252530;"> </span>   
+    <span style="color: #4eee94;">Stelle</span> = 0
+    Zahlensystem[i-2][0] = Konvertierungszahl
+    <span style="color: #00bfff;">while</span> Zahlensystem[i-2][0] &gt; 0:
+          <span style="color: #4eee94;">Stelle</span> += 1
+          Zahlensystem[i-2].insert(1,<span style="color: #f08080;">chr</span>(<span style="color: #f08080;">ord</span>(<span style="color: #deb887;">'0'</span>)
+                  + (Zahlensystem[i - 2][0] % i)))
+          Zahlensystem[i-2][0] //= i
+    Zahlensystem[i - 2][0] = i    
 
 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(Zahlenraum - 1):
-<span style="background-color: #252530;"> </span>   Resultat[i][0] = Zahlensystem[i][0]
-<span style="background-color: #252530;"> </span>   <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(1, <span style="color: #f08080;">len</span>(Zahlensystem[i])):
-<span style="background-color: #252530;"> </span>   <span style="background-color: #252530;"> </span>   Resultat[i][1] += <span style="color: #f08080;">str</span>(Zahlensystem[i][j])
+    Resultat[i][0] = Zahlensystem[i][0]
+    <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(1, <span style="color: #f08080;">len</span>(Zahlensystem[i])):
+        Resultat[i][1] += <span style="color: #f08080;">str</span>(Zahlensystem[i][j])
 
 <span style="color: #00bfff;">return</span> Resultat
 </pre>
 </div>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="right" />
-
-<col  class="right" />
-</colgroup>
-<tbody>
-<tr>
-<td class="right">2</td>
-<td class="right">1111101000</td>
-</tr>
-
-<tr>
-<td class="right">3</td>
-<td class="right">1101001</td>
-</tr>
-
-<tr>
-<td class="right">4</td>
-<td class="right">33220</td>
-</tr>
-
-<tr>
-<td class="right">5</td>
-<td class="right">13000</td>
-</tr>
-
-<tr>
-<td class="right">6</td>
-<td class="right">4344</td>
-</tr>
-
-<tr>
-<td class="right">7</td>
-<td class="right">2626</td>
-</tr>
-
-<tr>
-<td class="right">8</td>
-<td class="right">1750</td>
-</tr>
-
-<tr>
-<td class="right">9</td>
-<td class="right">1331</td>
-</tr>
-
-<tr>
-<td class="right">10</td>
-<td class="right">1000</td>
-</tr>
-
-<tr>
-<td class="right">11</td>
-<td class="right">82:</td>
-</tr>
-
-<tr>
-<td class="right">12</td>
-<td class="right">6;4</td>
-</tr>
-
-<tr>
-<td class="right">13</td>
-<td class="right">5;&lt;</td>
-</tr>
-
-<tr>
-<td class="right">14</td>
-<td class="right">516</td>
-</tr>
-
-<tr>
-<td class="right">15</td>
-<td class="right">46:</td>
-</tr>
-
-<tr>
-<td class="right">16</td>
-<td class="right">3&gt;8</td>
-</tr>
-
-<tr>
-<td class="right">17</td>
-<td class="right">37&gt;</td>
-</tr>
-
-<tr>
-<td class="right">18</td>
-<td class="right">31:</td>
-</tr>
-
-<tr>
-<td class="right">19</td>
-<td class="right">2&gt;&lt;</td>
-</tr>
-
-<tr>
-<td class="right">20</td>
-<td class="right">2:0</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>
