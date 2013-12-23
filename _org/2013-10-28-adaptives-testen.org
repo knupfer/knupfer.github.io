@@ -1011,17 +1011,24 @@ fit = NULL
 modell = NULL
 infoall = matrix(nrow=persons, ncol=items)
 
+FUN.modelliteration = function(fun.fit.formula, fun.pcitems, fun.iterator, fun.data)
+{
+    fun.tempfit = NULL
+    if (fun.iterator %in% fun.pcitems)
+    {
+        fun.tempfit[[fun.iterator]] = polr(fun.fit.formula, data = fun.data)
+    } else
+    {
+        fun.tempfit[[fun.iterator]] = glm(fun.fit.formula, data = fun.data, family = "binomial")
+    }
+    return(fun.tempfit)
+}
+
 ## first item 
 for (i in 1:length(test)) 
 {
     fit.formula = reformulate('1', names(test[i]))
-    if (i %in% pcitems)
-    {
-        fit[[i]] = polr(fit.formula, data = test)
-    } else
-    {
-        fit[[i]] = glm(fit.formula, data = test, family = "binomial"(link=logit))
-    }
+    fit = FUN.modelliteration(fit.formula, pcitems, i, test)
 }
 
 odds = fit
@@ -1031,7 +1038,6 @@ info.temp = FUN.info.temp.IND(odds)
 query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))[1]
 modell[[1]] = fit[[query]]
 queryinit = query
-
 
 for (k in 1:persons)
 {
@@ -1148,22 +1154,14 @@ for (k in 1:persons)
             for (q in 1:length(test[-query]))
             {
                 fit.formula = reformulate(names(test[query]), names(test[-query][q]))
-                if (q %in% pcitems.temp)
-                {
-                    fit[[q]] = polr(fit.formula, data = test)
-                } else
-                {
-                    fit[[q]] = glm(fit.formula, data = test, family = "binomial"(link=logit))   
-                }
+                fit = FUN.modelliteration(fit.formula, pcitems.temp, q, test)
             }
             
-            info.temp = FUN.EntroMC(pcitems.temp, test[k,], fit)
+            info.temp = FUN.EntroMC(pcitems.temp, test[k, ], fit)
             isgood = info.temp >= (max(info.temp)[1] * 0.8)
             
             Liste = foreach(j=1:length(test[-query])) %dopar%
             {
-                chance = NULL
-                
                 if (j %in% pcitems.temp)
                 {
                     chance = predict(fit[[j]], test[k,], type="probs")
@@ -1183,17 +1181,11 @@ for (k in 1:persons)
                     for (n in 1:length(test[-query][-j]))
                     {
                         fit2.formula = reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n]))
-                        if (n %in% pcitems.temp2)
-                        {
-                            fit2[[n]] = polr(fit2.formula, data = test)
-                        } else
-                        { 
-                            fit2[[n]] = glm(fit2.formula, data = test, family = "binomial"(link=logit))
-                        }
+                        fit2 = FUN.modelliteration(fit2.formula, pcitems.temp2, n, test)
                     }
                     
                     ## calculation of rest entropie for each possibility
-                    tempdata = test[k,]
+                    tempdata = test[k, ]
                     
                     if (j %in% pcitems.temp)
                     {
@@ -1261,29 +1253,21 @@ for (k in 1:persons)
     } else
     {
         fit = NULL
-        pcitems.temp = 0
         pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
         
         for (j in 1:length(test[-query]))
         {
             fit.formula = reformulate(names(test[query]), names(test[-query][j]))
-            if (j %in% pcitems.temp)
-            {
-                fit[[j]] = polr(fit.formula, data = test)
-            } else
-            {
-                fit[[j]] = glm(fit.formula, data = test, family = "binomial"(link=logit))
-            }
+            fit = FUN.modelliteration(fit.formula, pcitems.temp, j, test)
         }
         
         <<fit>>
-        info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+        info.temp = FUN.EntroMC(pcitems.temp, test[k, ], fit)
         rest.temp[items] = sum(info.temp)
     }
     
     ## calculation of choosen modell
-    pcitems.temp = 0
-    pcitems.temp = c(pcitems.temp, which(query %in% pcitems))
+    pcitems.temp = c(0, which(query %in% pcitems))
     
     if (calcu)
     {
@@ -1299,12 +1283,12 @@ for (k in 1:persons)
 
 #restt = (infoall[(items+1):(items*2)ü,])
 #infoall = infoall[1:items,]
-
+#
 #entropie.SD.temp = sd(infoall[1,])
 #for (i in 2:length(infoall[,1])) {
 #    entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
 #}
-
+#
 #entropie.SD$indivbedsortpred = c(0, entropie.SD.temp)
 #entropie$indivbedsortpred = c(0, rowMeans(infoall))
 info.rest$indivbedsortpred = c(0, colMeans(infoall))
@@ -1315,7 +1299,6 @@ pcitems.temp = pcitems
 #entropie.SD
 info.rest
 info.rest.SD
-
 #+END_SRC
 
 *** Schlussberechnungen
