@@ -1009,7 +1009,7 @@ info.rest.SD
 pcitems.temp = pcitems
 fit = NULL
 modell = NULL
-
+infoall = matrix(nrow=persons, ncol=items)
 
 ## first item 
 for (i in 1:length(test)) 
@@ -1031,7 +1031,7 @@ info.temp = FUN.info.temp.IND(odds)
 query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))[1]
 modell[[1]] = fit[[query]]
 queryinit = query
-infoall = matrix(nrow=persons, ncol=items)
+
 
 for (k in 1:persons)
 {
@@ -1054,7 +1054,7 @@ for (k in 1:persons)
         newdata = read.table('newdata.dat')
     }
     
-    answers[1] = query[1] + as.numeric(as.character(test[k,query[1]]))/100
+    answers[1] = query[1] + as.numeric(as.character(test[k, query[1]]))/100
     
     for (i in 2:items)
     {
@@ -1073,7 +1073,7 @@ for (k in 1:persons)
         if (exists("database"))
         {
             lower = 1
-            upper = length(database[,1])
+            upper = length(database[, 1])
             current = upper
             
             while (upper >= lower)
@@ -1082,20 +1082,20 @@ for (k in 1:persons)
                 
                 for (u in 1:length(query))
                 {
-                    if (answers.sorted[u] > database[current,u])
+                    if (answers.sorted[u] > database[current, u])
                     {
                         lower = current + 1
                         break
-                    } else if (answers.sorted[u] < database[current,u])
+                    } else if (answers.sorted[u] < database[current, u])
                     {
                         upper = current - 1
                         break
                     } else if (u == length(query))
                     {
-                        if (!database[current,(u+1)])
+                        if (!database[current, (u+1)])
                         {
-                            found = database[current,(u+3)]
-                            rest.temp[i-1] = database[current,(u+2)]
+                            found = database[current, (u+3)]
+                            rest.temp[i-1] = database[current, (u+2)]
                             query = c(query, found)
                             break
                         } else
@@ -1116,19 +1116,19 @@ for (k in 1:persons)
         ## search in new data if binary search is'nt succesfull
         if (!found && exists("newdata"))
         {
-            for (m in 1:length(newdata[,1]))
+            for (m in 1:length(newdata[, 1]))
             {
                 for (u in 1:length(query))
                 {
-                    if (answers.sorted[u] != newdata[m,u])
+                    if (answers.sorted[u] != newdata[m, u])
                     {
                         break
                     }
                     
                     if (!newdata[m,(length(query)+3)] && u == length(query))
                     {
-                        found = newdata[m,(length(query)+2)]
-                        rest.temp[i-1] = newdata[m,(length(query)+1)]
+                        found = newdata[m, (length(query)+2)]
+                        rest.temp[i-1] = newdata[m, (length(query)+1)]
                         query = c(query, found)
                     }
                 }
@@ -1157,7 +1157,7 @@ for (k in 1:persons)
                 }
             }
             
-            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+            info.temp = FUN.EntroMC(pcitems.temp, test[k,], fit)
             isgood = info.temp >= (max(info.temp)[1] * 0.8)
             
             Liste = foreach(j=1:length(test[-query])) %dopar%
@@ -1178,7 +1178,7 @@ for (k in 1:persons)
                 ## prediction for all not-answered questions after prediction
                 if (length(test[-query]) > 1 && isgood[j])
                 {
-                    pcitems.temp2 = c(0,which(names(test[-query][-j]) %in% names(test[pcitems])))
+                    pcitems.temp2 = c(0, which(names(test[-query][-j]) %in% names(test[pcitems])))
                     
                     for (n in 1:length(test[-query][-j]))
                     {
@@ -1200,17 +1200,17 @@ for (k in 1:persons)
                         for (s in 1:length(chance))
                         {
                             tempdata[-query][j] = factor(s-1)
-                            info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[s]
+                            info.temp = FUN.EntroMC(pcitems.temp2, tempdata, fit2)*chance[s]
                             rest.temp2[s] = sum(info.temp)
                         }
                         rest.temp2 = sum(rest.temp2)
                     } else
                     {
                         tempdata[-query][j] = 1
-                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[1]
+                        info.temp = FUN.EntroMC(pcitems.temp2, tempdata, fit2)*chance[1]
                         rest.temp2 = sum(info.temp)
                         tempdata[-query][j] = 0
-                        info.temp = FUN.EntroMC(pcitems.temp2,tempdata, fit2)*chance[2]
+                        info.temp = FUN.EntroMC(pcitems.temp2, tempdata, fit2)*chance[2]
                         rest.temp2[2] = sum(info.temp)
                         rest.temp2 = sum(rest.temp2)
                     }
@@ -1236,11 +1236,11 @@ for (k in 1:persons)
             modell[[i]] = fit[[which(rest.temp2 == min(rest.temp2))[1]]]
             <<fit>>
             odds = fit
-            info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
+            info.temp = FUN.EntroMC(pcitems.temp, test[k,], fit)
             rest.temp[i-1] = sum(info.temp)
         }
         
-        answers[i] = query[i] + as.numeric(as.character(test[k,query[i]]))/100
+        answers[i] = query[i] + as.numeric(as.character(test[k, query[i]]))/100
         
         if (!found) 
         {
@@ -1251,7 +1251,7 @@ for (k in 1:persons)
             write(temp, file='newdata.dat', append=TRUE, ncolumns=length(answers))
         }
         
-        plot(rest.temp, type='l', col=rgb(0,0.7,0.7))
+        plot(rest.temp, type='l', col=rgb(0, 0.7, 0.7))
     }
     
     ## calculation of last rest entropie
@@ -1262,7 +1262,7 @@ for (k in 1:persons)
     {
         fit = NULL
         pcitems.temp = 0
-        pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
+        pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
         
         for (j in 1:length(test[-query]))
         {
@@ -1283,7 +1283,7 @@ for (k in 1:persons)
     
     ## calculation of choosen modell
     pcitems.temp = 0
-    pcitems.temp = c(pcitems.temp,which(query %in% pcitems))
+    pcitems.temp = c(pcitems.temp, which(query %in% pcitems))
     
     if (calcu)
     {
@@ -1297,7 +1297,7 @@ for (k in 1:persons)
     infoall[k,] = rest.temp
 }
 
-#restt = (infoall[(items+1):(items*2),])
+#restt = (infoall[(items+1):(items*2)ü,])
 #infoall = infoall[1:items,]
 
 #entropie.SD.temp = sd(infoall[1,])
@@ -1305,10 +1305,10 @@ for (k in 1:persons)
 #    entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
 #}
 
-#entropie.SD$indivbedsortpred = c(0,entropie.SD.temp)
-#entropie$indivbedsortpred = c(0,rowMeans(infoall))
-info.rest$indivbedsortpred = c(0,colMeans(infoall))
-info.rest.SD$indivbedsortpred = c(0,apply(infoall, 2, sd))
+#entropie.SD$indivbedsortpred = c(0, entropie.SD.temp)
+#entropie$indivbedsortpred = c(0, rowMeans(infoall))
+info.rest$indivbedsortpred = c(0, colMeans(infoall))
+info.rest.SD$indivbedsortpred = c(0, apply(infoall, 2, sd))
 
 pcitems.temp = pcitems
 #entropie
@@ -1317,7 +1317,6 @@ info.rest
 info.rest.SD
 
 #+END_SRC
-
 
 *** Schlussberechnungen
 Hier werden lediglich ein paar Aufräumarbeiten in den Daten noch erledigt, um diese dann gut zeichnen zu können.
