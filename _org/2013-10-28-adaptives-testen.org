@@ -18,6 +18,9 @@ Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den
     +------------------------------+
 #+END_SRC
 
+#+RESULTS:
+[[file:/images/adaptiveditaa.png]]
+
 * Kriterien
 Wie genau die Frage ausgewählt wird hängt vornehmlich von den Zielen der Testung und den Nebenwirkungen, die man ggf. vermeiden möchte, ab.
 So wäre eine Frage, die der Proband mit einer Chance von 50% lösen kann ideal im Sinne eines Informationsgewinnes über den Probanden, da die Entropie maximal ist.
@@ -1003,20 +1006,21 @@ info.rest.SD
 *** exp3 binsearch
 #+BEGIN_SRC R :exports code :results output :noweb yes
 ## initializing
-infoall = NULL
-rest.temp = NULL
 pcitems.temp = pcitems
-
-## first item
 fit = NULL
+modell = NULL
+
+
+## first item 
 for (i in 1:length(test)) 
 {
+    fit.formula = reformulate('1', names(test[i]))
     if (i %in% pcitems)
     {
-        fit[[i]] = polr(reformulate('1', names(test[i])), data = test)
+        fit[[i]] = polr(fit.formula, data = test)
     } else
     {
-        fit[[i]] = glm(reformulate('1', names(test[i])), data = test, family = "binomial"(link=logit))
+        fit[[i]] = glm(fit.formula, data = test, family = "binomial"(link=logit))
     }
 }
 
@@ -1025,19 +1029,17 @@ odds[-pcitems.temp] = lapply(fit[-pcitems], predict, test[1,], type="response")
 odds[pcitems.temp] = lapply(fit[pcitems], predict, test[1,], type="probs")
 info.temp = FUN.info.temp.IND(odds)
 query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))[1]
-modell = NULL
 modell[[1]] = fit[[query]]
 queryinit = query
-fit = NULL
-entropie.rest2 = NULL
-infoall = matrix(nrow=persons,ncol=items)
+infoall = matrix(nrow=persons, ncol=items)
 
 for (k in 1:persons)
 {
     query = queryinit
     entropie.rest = NULL
-    rest.temp2 = NULL
     rest.temp = NULL
+    rest.temp2 = NULL
+    
     calcu = 0
     calcutime = proc.time()
     answers = vector(length = (length(test)+2))
@@ -1058,15 +1060,16 @@ for (k in 1:persons)
     {
         odds = NULL
         info.temp = NULL
+        info.temp2 = NULL
         fit = NULL
         fit2 = NULL
-        info.temp2 = NULL
         found = 0
         pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
-        foundit = 0
         answers.sorted = sort(answers[1:length(query)])
         
+        
         ## binary search in sorted database
+        
         if (exists("database"))
         {
             lower = 1
@@ -1083,17 +1086,13 @@ for (k in 1:persons)
                     {
                         lower = current + 1
                         break
-                    }
-                    
-                    if (answers.sorted[u] < database[current,u])
+                    } else if (answers.sorted[u] < database[current,u])
                     {
                         upper = current - 1
                         break
-                    }
-                    
-                    if (u == length(query))
+                    } else if (u == length(query))
                     {
-                        if (database[current,(u+1)] == 0)
+                        if (!database[current,(u+1)])
                         {
                             found = database[current,(u+3)]
                             rest.temp[i-1] = database[current,(u+2)]
@@ -1107,7 +1106,7 @@ for (k in 1:persons)
                     }
                 }
                 
-                if (found != 0)
+                if (found)
                 {
                     break
                 }
@@ -1115,7 +1114,7 @@ for (k in 1:persons)
         }
         
         ## search in new data if binary search is'nt succesfull
-        if (found == 0 && exists("newdata"))
+        if (!found && exists("newdata"))
         {
             for (m in 1:length(newdata[,1]))
             {
@@ -1126,7 +1125,7 @@ for (k in 1:persons)
                         break
                     }
                     
-                    if (newdata[m,(length(query)+3)] == 0 && u == length(query))
+                    if (!newdata[m,(length(query)+3)] && u == length(query))
                     {
                         found = newdata[m,(length(query)+2)]
                         rest.temp[i-1] = newdata[m,(length(query)+1)]
@@ -1134,14 +1133,14 @@ for (k in 1:persons)
                     }
                 }
                 
-                if (found != 0)
+                if (found)
                 {                   
                     break
                 }
             }
         }
         
-        if (found == 0)
+        if (!found)
         {
             calcu = calcu+1
             isgood = NULL
@@ -1243,7 +1242,7 @@ for (k in 1:persons)
         
         answers[i] = query[i] + as.numeric(as.character(test[k,query[i]]))/100
         
-        if (found == 0) 
+        if (!found) 
         {
             temp = answers
             temp[1:(i-1)] = sort(answers[1:(i-1)])
@@ -1286,7 +1285,7 @@ for (k in 1:persons)
     pcitems.temp = 0
     pcitems.temp = c(pcitems.temp,which(query %in% pcitems))
     
-    if (calcu != 0)
+    if (calcu)
     {
         temp = vector(length=(length(test)+2))
         temp[2] = k
