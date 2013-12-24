@@ -1011,24 +1011,90 @@ fit = NULL
 modell = NULL
 infoall = matrix(nrow=persons, ncol=items)
 
-FUN.modelliteration = function(fun.fit.formula, fun.pcitems, fun.iterator, fun.data)
+FUN.modelliteration = function(fun.fit.formula, fun.pcitems)
 {
-    fun.tempfit = NULL
     if (fun.iterator %in% fun.pcitems)
     {
-        fun.tempfit[[fun.iterator]] = polr(fun.fit.formula, data = fun.data)
+        fun.tempfit = polr(fun.fit.formula, data = test)
     } else
     {
-        fun.tempfit[[fun.iterator]] = glm(fun.fit.formula, data = fun.data, family = "binomial")
+        fun.tempfit = glm(fun.fit.formula, data = test, family = "binomial")
     }
     return(fun.tempfit)
+}
+
+FUN.binarysearch = function(query)
+{
+    ## binary search in sorted database for each answer
+    if (!exists("database"))
+    {
+        return(0)
+    }
+    
+    lower = 1
+    upper = length(database[, 1])
+    current = upper
+    
+    while (upper >= lower)
+    {
+        current = round((lower+upper) / 2)
+        
+        for (u in 1:length(query))
+        {
+            if (answers.sorted[u] > database[current, u])
+            {
+                lower = current + 1
+                break
+            } else if (answers.sorted[u] < database[current, u])
+            {
+                upper = current - 1
+                break
+            } else if (u == length(query))
+            {
+                if (!database[current, (u+1)])
+                {
+                    return(current)
+                } else
+                {
+                    upper = current - 1
+                    break
+                }
+            }
+        }
+    }
+    
+    return(0)
+}
+
+FUN.unsortedsearch = function(query)
+{
+    ## linear search in new data if binary search is'nt succesfull
+    if (exists("newdata"))
+    {
+        for (m in 1:length(newdata[, 1]))
+        {
+            for (u in 1:length(query))
+            {
+                if (answers.sorted[u] != newdata[m, u])
+                {
+                    break
+                }
+                
+                if (!newdata[m,(length(query)+3)] && u == length(query))
+                {
+                    return(m)
+                }
+            }
+        }
+    }
+    return(0)
 }
 
 ## first item 
 for (i in 1:length(test)) 
 {
     fit.formula = reformulate('1', names(test[i]))
-    fit = FUN.modelliteration(fit.formula, pcitems, i, test)
+    fit[[i]] = FUN.modelliteration(fit.formula, pcitems)
 }
 
 odds = fit
@@ -1069,80 +1135,25 @@ for (k in 1:persons)
         info.temp2 = NULL
         fit = NULL
         fit2 = NULL
-        found = 0
         pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
         answers.sorted = sort(answers[1:length(query)])
         
-        
-        ## binary search in sorted database
-        
-        if (exists("database"))
+        found = FUN.binarysearch(query)
+        if (found)
         {
-            lower = 1
-            upper = length(database[, 1])
-            current = upper
-            
-            while (upper >= lower)
-            {
-                current = round((lower+upper) / 2)
-                
-                for (u in 1:length(query))
-                {
-                    if (answers.sorted[u] > database[current, u])
-                    {
-                        lower = current + 1
-                        break
-                    } else if (answers.sorted[u] < database[current, u])
-                    {
-                        upper = current - 1
-                        break
-                    } else if (u == length(query))
-                    {
-                        if (!database[current, (u+1)])
-                        {
-                            found = database[current, (u+3)]
-                            rest.temp[i-1] = database[current, (u+2)]
-                            query = c(query, found)
-                            break
-                        } else
-                        {
-                            upper = current - 1
-                            break
-                        }
-                    }
-                }
-                
-                if (found)
-                {
-                    break
-                }
-            }
-        }
-        
-        ## search in new data if binary search is'nt succesfull
-        if (!found && exists("newdata"))
+            lq = length(query)
+            rest.temp[i-1] = database[found, (lq+2)]
+            found = database[found, (lq+3)]
+            query = c(query, found)
+        } else
         {
-            for (m in 1:length(newdata[, 1]))
+            found = FUN.unsortedsearch(query)
+            if (found)
             {
-                for (u in 1:length(query))
-                {
-                    if (answers.sorted[u] != newdata[m, u])
-                    {
-                        break
-                    }
-                    
-                    if (!newdata[m,(length(query)+3)] && u == length(query))
-                    {
-                        found = newdata[m, (length(query)+2)]
-                        rest.temp[i-1] = newdata[m, (length(query)+1)]
-                        query = c(query, found)
-                    }
-                }
-                
-                if (found)
-                {                   
-                    break
-                }
+                lq = length(query)
+                rest.temp[i-1] = newdata[found, (lq+1)]
+                found = newdata[found, (lq+2)]
+                query = c(query, found)
             }
         }
         
@@ -1154,7 +1165,7 @@ for (k in 1:persons)
             for (q in 1:length(test[-query]))
             {
                 fit.formula = reformulate(names(test[query]), names(test[-query][q]))
-                fit = FUN.modelliteration(fit.formula, pcitems.temp, q, test)
+                fit[[q]] = FUN.modelliteration(fit.formula, pcitems.temp)
             }
             
             info.temp = FUN.EntroMC(pcitems.temp, test[k, ], fit)
@@ -1181,7 +1192,7 @@ for (k in 1:persons)
                     for (n in 1:length(test[-query][-j]))
                     {
                         fit2.formula = reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n]))
-                        fit2 = FUN.modelliteration(fit2.formula, pcitems.temp2, n, test)
+                        fit2[[n]] = FUN.modelliteration(fit2.formula, pcitems.temp2)
                     }
                     
                     ## calculation of rest entropie for each possibility
@@ -1258,7 +1269,7 @@ for (k in 1:persons)
         for (j in 1:length(test[-query]))
         {
             fit.formula = reformulate(names(test[query]), names(test[-query][j]))
-            fit = FUN.modelliteration(fit.formula, pcitems.temp, j, test)
+            fit[[j]] = FUN.modelliteration(fit.formula, pcitems.temp)
         }
         
         <<fit>>
