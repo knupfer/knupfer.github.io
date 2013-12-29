@@ -1,4 +1,4 @@
-
+* Einleitung
 #+BEGIN_COMMENT
 ---
 layout: post
@@ -140,10 +140,10 @@ for i in range(2, Zahlenraum + 1):
     Stelle = 0
     Zahlensystem[i-2][0] = Konvertierungszahl
     while Zahlensystem[i-2][0] > 0:
-          Stelle += 1
-          Zahlensystem[i-2].insert(1,chr(ord('0')
-                  + (Zahlensystem[i - 2][0] % i)))
-          Zahlensystem[i-2][0] //= i
+        Stelle += 1
+        Zahlensystem[i-2].insert(1,chr(ord('0')
+                + (Zahlensystem[i - 2][0] % i)))
+        Zahlensystem[i-2][0] //= i
     Zahlensystem[i - 2][0] = i    
 
 for i in range(Zahlenraum - 1):
@@ -241,4 +241,3 @@ Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschied
 
 #+RESULTS:
 [[file:/images/lily-beispiel.png]]
-

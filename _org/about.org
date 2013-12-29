@@ -1,3 +1,4 @@
+* Einleitung
 #+BEGIN_COMMENT
 ---
 layout: default
@@ -23,15 +24,15 @@ title: Über mich
 *** Bass
 *** Altus
 * Curriculum Vitae
-** Ausbildung                                                                                                           
-|-----------+---------------------------------------------------------------------------------------------------------|
-|       <r> |                                                                                                         |
-| 1994–1998 | Grundschule Parkschule Essingen                                                                         |
+** Ausbildung
+|-----------+----------------------------------------------------------------------------------|
+|       <r> | <80>                                                                             |
+| 1994–1998 | Grundschule Parkschule Essingen                                                  |
 | 1998–2007 | Theodor-Heuss-Gymnasium Aalen, Preis der Schule und Preis der DPG (Deutsche Physikalische Gesellschaft) |
-| 2007–2008 | C-Kurs Rottenburg am Neckar                                                                             |
-| seit 2008 | Doppelstudium Schulmusik und Kirchenmusik an der Hochschule für Musik und Darstellende Kunst Stuttgart  |
-| seit 2010 | Physikstudium an der Universität Vaihingen                                                              |
-|-----------+---------------------------------------------------------------------------------------------------------|
+| 2007–2008 | C-Kurs Rottenburg am Neckar                                                      |
+| seit 2008 | Doppelstudium Schulmusik und Kirchenmusik an der Hochschule für Musik und Darstellende Kunst Stuttgart |
+| seit 2010 | Physikstudium an der Universität Vaihingen                                       |
+|-----------+----------------------------------------------------------------------------------|
 
 ** Sonstige Tätigkeiten
 |---------------+----------------------------------------------------------------------------------|
@@ -70,13 +71,3 @@ title: Über mich
 | SPSS             | Profunde Statistikkenntnis                         |
 | Lilypond         | Auszeichnungssprache für professionellen Notensatz |
 |------------------+----------------------------------------------------|
-
-
-
-
-
-
-
-
-
-

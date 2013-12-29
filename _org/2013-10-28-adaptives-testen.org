@@ -1006,12 +1006,21 @@ info.rest.SD
 
 *** exp3 binsearch
 #+BEGIN_SRC R :exports code :results output :noweb yes
-## initializing
+
+### Calculate the potential benefit of an adaptive test with non-adaptive data (data.dat).
+#
+# Return a database (database.dat) of proposed items for each individual.
+# Draw a curve of the effect.
+# Afterwards, search.sh should be run to update the database.
+#
+###
+
 pcitems.temp = pcitems
 fit = NULL
 modell = NULL
 infoall = matrix(nrow=persons, ncol=items)
 
+# Return a fitted modell, which considers polytomus and dichotomus items.
 FUN.modelliteration = function(fun.fit.formula, fun.pcitems)
 {
     if (fun.iterator %in% fun.pcitems)
@@ -1024,9 +1033,9 @@ FUN.modelliteration = function(fun.fit.formula, fun.pcitems)
     return(fun.tempfit)
 }
 
+# Binary search in database.dat for each column to match already calculated predictions.
 FUN.binarysearch = function(query)
 {
-    ## binary search in sorted database for each answer
     if (!exists("database"))
     {
         return(0)
@@ -1067,9 +1076,10 @@ FUN.binarysearch = function(query)
     return(0)
 }
 
+# Linear search in new data, if binary search fails.
+# This is a lot slower and should be only used, if unsorted database is small.
 FUN.unsortedsearch = function(query)
 {
-    ## linear search in new data if binary search is'nt succesfull
     if (exists("newdata"))
     {
         for (m in 1:length(newdata[, 1]))
@@ -1091,7 +1101,7 @@ FUN.unsortedsearch = function(query)
     return(0)
 }
 
-## first item 
+# Return the modell for the first item. (This should be a function.)
 for (i in 1:length(test)) 
 {
     fit.formula = reformulate('1', names(test[i]))
@@ -1106,6 +1116,7 @@ query = which(names(test[which(info.temp == max(info.temp))[1]]) == names(test))
 modell[[1]] = fit[[query]]
 queryinit = query
 
+# Calculate item predictions for each person for all remaining items.
 for (k in 1:persons)
 {
     query = queryinit
@@ -1116,7 +1127,9 @@ for (k in 1:persons)
     calcu = 0
     calcutime = proc.time()
     answers = vector(length = (length(test)+2))
+    answers[1] = query[1] + as.numeric(as.character(test[k, query[1]]))/100
     
+    # Check existing databases.
     if (file.exists('binsearch.dat'))
     {
         database = read.table('binsearch.dat')
@@ -1127,8 +1140,7 @@ for (k in 1:persons)
         newdata = read.table('newdata.dat')
     }
     
-    answers[1] = query[1] + as.numeric(as.character(test[k, query[1]]))/100
-    
+    # Calculate next item.
     for (i in 2:items)
     {
         odds = NULL
@@ -1139,7 +1151,9 @@ for (k in 1:persons)
         pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
         answers.sorted = sort(answers[1:length(query)])
         
+        # Search in database if pattern of answers already exists.
         found = FUN.binarysearch(query)
+        
         if (found)
         {
             lq = length(query)
@@ -1158,22 +1172,27 @@ for (k in 1:persons)
             }
         }
         
+        # If pattern isn't found, calculate the new one.
         if (!found)
         {
             calcu = calcu+1
             isgood = NULL
             
+            # Create a modell for each remaining item with all answers as predictors.
             for (q in 1:length(test[-query]))
             {
                 fit.formula = reformulate(names(test[query]), names(test[-query][q]))
                 fit[[q]] = FUN.modelliteration(fit.formula, pcitems.temp)
             }
             
+            # Calculate the entropie of these items and chose good ones.
             info.temp = FUN.EntroMC(pcitems.temp, test[k, ], fit)
             isgood = info.temp >= (max(info.temp)[1] * 0.8)
             
+            # Multicore calculation.
             Liste = foreach(j=1:length(test[-query])) %dopar%
             {
+                # Give the probability of each answer possibility.
                 if (j %in% pcitems.temp)
                 {
                     chance = predict(fit[[j]], test[k,], type="probs")
@@ -1185,18 +1204,19 @@ for (k in 1:persons)
                 
                 rest.temp2 = NULL
                 
-                ## prediction for all not-answered questions after prediction
+                # Predict the entropie with simulated answers of good items.
                 if (length(test[-query]) > 1 && isgood[j])
                 {
                     pcitems.temp2 = c(0, which(names(test[-query][-j]) %in% names(test[pcitems])))
                     
+                    # Calculate the fitted modell of each item.
                     for (n in 1:length(test[-query][-j]))
                     {
                         fit2.formula = reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n]))
                         fit2[[n]] = FUN.modelliteration(fit2.formula, pcitems.temp2)
                     }
                     
-                    ## calculation of rest entropie for each possibility
+                    # Calculate the reduction of entropie multiplied by the chance of these answers.
                     tempdata = test[k, ]
                     
                     if (j %in% pcitems.temp)
@@ -1222,6 +1242,8 @@ for (k in 1:persons)
                     fit2=NULL
                 } else
                 {
+                    # If the item is the last one, take it.
+                    # If the item isn't good, don't take it.
                     if (isgood[j])
                     {
                         rest.temp2 = 0
@@ -1235,6 +1257,7 @@ for (k in 1:persons)
                 return(rest.temp2)
             }
             
+            # Save the best modell, add the proposed item to the list of questions.
             rest.temp2 = simplify2array(Liste)
             query = c(query, which(names(test[-query][which(rest.temp2 == min(rest.temp2))[1]]) == names(test))[1])
             modell[[i]] = fit[[which(rest.temp2 == min(rest.temp2))[1]]]
@@ -1246,6 +1269,7 @@ for (k in 1:persons)
         
         answers[i] = query[i] + as.numeric(as.character(test[k, query[i]]))/100
         
+        # Save the new calculated pattern to the database.
         if (!found) 
         {
             temp = answers
@@ -1258,7 +1282,7 @@ for (k in 1:persons)
         plot(rest.temp, type='l', col=rgb(0, 0.7, 0.7))
     }
     
-    ## calculation of last rest entropie
+    # Calculate the last remaining entropie (which may be non-nil if not all items are answered).
     if (length(test) == items)
     {
         rest.temp[items] = 0
@@ -1278,7 +1302,7 @@ for (k in 1:persons)
         rest.temp[items] = sum(info.temp)
     }
     
-    ## calculation of choosen modell
+    # Save the number of new patterns and seconds for this person.
     pcitems.temp = c(0, which(query %in% pcitems))
     
     if (calcu)
@@ -1293,22 +1317,24 @@ for (k in 1:persons)
     infoall[k,] = rest.temp
 }
 
-#restt = (infoall[(items+1):(items*2)ü,])
-#infoall = infoall[1:items,]
-#
-#entropie.SD.temp = sd(infoall[1,])
-#for (i in 2:length(infoall[,1])) {
-#    entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
-#}
-#
-#entropie.SD$indivbedsortpred = c(0, entropie.SD.temp)
-#entropie$indivbedsortpred = c(0, rowMeans(infoall))
+# Clean-up.
+## restt = (infoall[(items+1):(items*2)ü,])
+## infoall = infoall[1:items,]
+## 
+## entropie.SD.temp = sd(infoall[1,])
+## for (i in 2:length(infoall[,1])) {
+##     entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
+## }
+## 
+## entropie.SD$indivbedsortpred = c(0, entropie.SD.temp)
+## entropie$indivbedsortpred = c(0, rowMeans(infoall))
 info.rest$indivbedsortpred = c(0, colMeans(infoall))
 info.rest.SD$indivbedsortpred = c(0, apply(infoall, 2, sd))
 
 pcitems.temp = pcitems
-#entropie
-#entropie.SD
+# Give some output for debugging.
+## entropie
+## entropie.SD
 info.rest
 info.rest.SD
 #+END_SRC

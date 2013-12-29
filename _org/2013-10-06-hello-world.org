@@ -1,4 +1,4 @@
-  
+* Einleitung
 #+BEGIN_COMMENT
 ---
 layout: post
@@ -6,7 +6,7 @@ title:  "Hello World!"
 father: Linux
 ---
 #+END_COMMENT
-* Begrüßung
+
 Hallo, dies ist mein erster Post hier. Ich bin gespannt, ob ich mich für das Bloggen begeistern kann. Gleichzeitig dient diese Homepage dazu, gemeinschaftlich über Probleme nachzudenken. Diese können aus ganz verschiedenen Bereichen kommen. Hier im Speziellen wird es sich um Themen der Musikpädagogik, der Empirie, des Computers und der Typography drehen.
 
 ** Zu meiner Person
@@ -15,7 +15,7 @@ Angefangen habe ich mit Python; als pädagogische Programmiersprache erschien mi
 
 Dann bin ich auf die Lernplattform [[http://www.edx.org][EdX]] gestoßen. Diese bietet kostenlose MOOCs an, also Vorlesungen (meist vom MIT oder Harvard), die den regulären Studenten auch angeboten werden. Dort bin ich nun in CS50 eingeschrieben und besuche regelmäßig Vorlesungen zum Programmieren und bearbeite auch die dortigen Aufgaben. So bin ich erst zu C und dann zu PHP gekommen.
 
-* Programmierung der Homepage 
+* Programmierung der Homepage
 Die Grundlagen dieser durch [[http://www.jekyllrb.com][Jekyll]] compilierten Homepage haben mich einige Tage gekostet, da ich noch kaum Erfahrung mit Markup-Sprachen hatte. Ferner wollte ich einige Prozesse automatisieren und verbessern, was mir manch einen Nerv geraubt hat.
 
 ** Jekyll

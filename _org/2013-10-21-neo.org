@@ -1,4 +1,4 @@
-
+* Einleitung
 #+BEGIN_COMMENT
 ---
 layout: post
@@ -57,6 +57,5 @@ Eine phantastische Besonderheit des Neolayouts, welche mich damals dazu bewog, e
 Dieses Layout steht für „Aus der Neo-Welt“ und sieht sich selbst als Nachfolger des Neo-Layoutes. Hier wurde das Layout noch weiter verfeinert und nicht nur an deutschen, sondern auch an englischen Texten ausgerichtet. Somit ist dieses Layout weit internationaler und trotzdem auch in der deutschen Sprache dem Neo-Layout deutlich überlegen.
 
 Meines Wissens nach ist dies derzeit das beste und vielseitigste Tastaturlayout. Es wurde von vielen auch schon unter dem Namen Neo3 vorgeschlagen, jedoch gibt es manch eine Unstimmigkeit zwischen den Projekten. Parallel dazu wird an einem anderen Neo3 gearbeitet, was sehr gut ist, da Neo bereits einen beachtlichen Bekanntheitsgrad erlangt hat, so ist das Neo-Layout in jeder Linuxdistro als Belegungsvariante des Deutschen auswählbar.
-
 
 

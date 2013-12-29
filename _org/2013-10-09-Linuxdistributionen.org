@@ -1,4 +1,4 @@
-
+* Einleitung
 #+BEGIN_COMMENT
 ---
 layout: post
@@ -6,7 +6,6 @@ title: Linuxdistributionen
 father: Linux
 ---
 #+END_COMMENT
-
 
 Als ich vor ungefähr 2 Jahren auf Linux umgestiegen bin, stellte ich mir die Frage welche Distribution ich nehmen sollte. Überwältigt von der Vielfalt und zunächst nicht im Stande Desktopumgebungen (Xcfe, Lxde, Gnome …) von Distributionen zu unterscheiden entschied ich mich für Ubuntu.
 
