@@ -1,3 +1,4 @@
+* Einleitung
 #+BEGIN_COMMENT
 ---
 layout: post
@@ -736,7 +737,7 @@ Als Konsequenz daraus habe ich hier eine Datenbank mit implementiert, die einers
 
 Zunächst könnte man denken, dass es bei rund 50 binären Items $2^{50}$ Möglichkeiten der Antwortmuster gibt, was die Datenbank als sinnlos erscheinen lässt.
 Jedoch muss bedacht werden, dass die Antwort Reihenfolge in der aktuellen Regression keine Rolle spielt. Beantwortet man Item a, b, und c richtig und bekommt daraufhin Item c, so würde man dies genauso bekommen, wenn man b, c und dann erst a richtig beantwortet, was die Sinnhaftigkeit der Datenbank deutlich steigert.
-Zudem werden manche Antwortmuster und manche Items gehäuft vorkommen, weil sie entweder besonders qualitativ, oder besonders »normal« sind.
+Zudem werden manche Antwortmuster und manche Items gehäuft vorkommen, weil sie entweder besonders qualitativ, oder besonders normal sind.
 Im Moment fangen beispielsweise alle Schüler mit dem gleichen, maximal informativen Item an, weil noch keine Vorinformation über die Schüler vorhanden ist.
 
 #+NAME: statistic6

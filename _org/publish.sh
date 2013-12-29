@@ -16,8 +16,8 @@ for FILE in *.org
 do
     DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
     URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
-    TITLE=$(sed -n '2,/---/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
-    FATHER=$(sed -n '2,/---/ s_father: *"*\([^"]*\)"*_\1_p' $DATEI.org);
+    TITLE=$(sed -n '3,/---/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
+    FATHER=$(sed -n '3,/---/ s_father: *"*\([^"]*\)"*_\1_p' $DATEI.org);
     
     test -e $TEMP/$DATEI.html &&
     echo '<li><a href="'$URL'">'$TITLE'</a>' >> categorie.$FATHER &&
