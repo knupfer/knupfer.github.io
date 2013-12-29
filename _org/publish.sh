@@ -25,7 +25,7 @@ do
         tail -n +2 | 
         head -n -1 | 
         sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
-    sed -n '2,/---/ p' $DATEI.org > $TEMP/$DATEI.org.publish &&
+    sed -n '3,/---/ p' $DATEI.org > $TEMP/$DATEI.org.publish &&
     sed 'N;
         s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
         P;
