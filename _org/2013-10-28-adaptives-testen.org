@@ -6,7 +6,7 @@ title: Adaptives Testen
 father: Wissenschaft
 ---
 #+END_COMMENT
-Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung in erweitertem Maße ausgenutzt.
+Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten Testung in erweitertem Maße ausgenutzt. 
 Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den Fähigkeitsgrad des Probanden geschätzt, um ihm als nächstes eine Frage zu geben, die diesen reflektiert.
 
 #+BEGIN_SRC ditaa :file /images/adaptiveditaa.png :exports results
