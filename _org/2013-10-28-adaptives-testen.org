@@ -1007,13 +1007,14 @@ info.rest.SD
 *** exp3 binsearch
 #+BEGIN_SRC R :exports code :results output :noweb yes
 
-### Calculate the potential benefit of an adaptive test with non-adaptive data (data.dat).
+##### Calculate the benefit of an adaptive test with non-adaptive data.
 #
+# Use data.dat to predict answers of items.
 # Return a database (database.dat) of proposed items for each individual.
-# Draw a curve of the effect.
+# Draw a curve of the linear and adaptive test.
 # Afterwards, search.sh should be run to update the database.
-#
-###
+# 
+#####
 
 pcitems.temp = pcitems
 fit = NULL
