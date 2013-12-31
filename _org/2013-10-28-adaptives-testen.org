@@ -1022,7 +1022,7 @@ modell = NULL
 infoall = matrix(nrow=persons, ncol=items)
 
 # Return a fitted modell, which considers polytomus and dichotomus items.
-FUN.modelliteration = function(fun.fit.formula, fun.pcitems)
+FUN.modelliteration = function(fun.fit.formula, fun.pcitems, fun.iterator)
 {
     if (fun.iterator %in% fun.pcitems)
     {
@@ -1106,7 +1106,7 @@ FUN.unsortedsearch = function(query)
 for (i in 1:length(test)) 
 {
     fit.formula = reformulate('1', names(test[i]))
-    fit[[i]] = FUN.modelliteration(fit.formula, pcitems)
+    fit[[i]] = FUN.modelliteration(fit.formula, pcitems, i)
 }
 
 odds = fit
@@ -1183,7 +1183,7 @@ for (k in 1:persons)
             for (q in 1:length(test[-query]))
             {
                 fit.formula = reformulate(names(test[query]), names(test[-query][q]))
-                fit[[q]] = FUN.modelliteration(fit.formula, pcitems.temp)
+                fit[[q]] = FUN.modelliteration(fit.formula, pcitems.temp, q)
             }
             
             # Calculate the entropie of these items and choose good ones.
@@ -1214,7 +1214,7 @@ for (k in 1:persons)
                     for (n in 1:length(test[-query][-j]))
                     {
                         fit2.formula = reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n]))
-                        fit2[[n]] = FUN.modelliteration(fit2.formula, pcitems.temp2)
+                        fit2[[n]] = FUN.modelliteration(fit2.formula, pcitems.temp2, n)
                     }
                     
                     # Calculate the reduction of entropie multiplied by the chance of these answers.
@@ -1295,7 +1295,7 @@ for (k in 1:persons)
         for (j in 1:length(test[-query]))
         {
             fit.formula = reformulate(names(test[query]), names(test[-query][j]))
-            fit[[j]] = FUN.modelliteration(fit.formula, pcitems.temp)
+            fit[[j]] = FUN.modelliteration(fit.formula, pcitems.temp, j)
         }
         
         <<fit>>

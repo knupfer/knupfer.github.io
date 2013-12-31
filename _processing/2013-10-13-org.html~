@@ -283,24 +283,25 @@ Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschied
 
 <pre class="src src-lilypond"><span style="color: #00bfff;">\version</span> <span style="color: #deb887;">"2.16.0"</span>
 <span style="color: #deb887;">#(ly:set-option 'resolution 140)</span>
+
 <span style="color: #00bfff;">\paper</span><span style="color: #a2cd5a;">{</span>
-<span style="color: #4eee94;">indent</span>=<span style="color: #4eee94;">0</span><span style="color: #00bfff;">\mm</span>
-<span style="color: #4eee94;">line-width</span>=<span style="color: #4eee94;">90</span><span style="color: #00bfff;">\mm</span>
-<span style="color: #4eee94;">oddFooterMarkup</span>=<span style="color: #deb887;">##f</span>
-<span style="color: #4eee94;">oddHeaderMarkup</span>=<span style="color: #deb887;">##f</span>
-<span style="color: #4eee94;">bookTitleMarkup</span>=<span style="color: #deb887;">##f</span>
-<span style="color: #4eee94;">scoreTitleMarkup</span>=<span style="color: #deb887;">##f</span>
+    <span style="color: #4eee94;">indent</span>=<span style="color: #4eee94;">0</span><span style="color: #00bfff;">\mm</span>
+    <span style="color: #4eee94;">line-width</span>=<span style="color: #4eee94;">90</span><span style="color: #00bfff;">\mm</span>
+    <span style="color: #4eee94;">oddFooterMarkup</span>=<span style="color: #deb887;">##f</span>
+    <span style="color: #4eee94;">oddHeaderMarkup</span>=<span style="color: #deb887;">##f</span>
+    <span style="color: #4eee94;">bookTitleMarkup</span>=<span style="color: #deb887;">##f</span>
+    <span style="color: #4eee94;">scoreTitleMarkup</span>=<span style="color: #deb887;">##f</span>
 <span style="color: #a2cd5a;">}</span>
 
 <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span>
-  <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
-  <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
-  <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
-  <span style="color: #98f5ff;">d2</span> 
+    <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
+    <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
+    <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
+    <span style="color: #98f5ff;">d2</span> 
 <span style="color: #a2cd5a;">}</span>
 
 <span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span>
-  Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
+    Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
 <span style="color: #a2cd5a;">}</span>
 </pre>
 </div>
@@ -317,47 +318,49 @@ Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschied
 <div class="outline-text-5" id="text-3-2-2-2">
 <div class="org-src-container">
 
-<pre class="src src-lilypond"> <span style="color: #00bfff;">\version</span> <span style="color: #deb887;">"2.16.0"</span>
- <span style="color: #deb887;">#(ly:set-option 'resolution 140)</span>
- <span style="color: #00bfff;">\paper</span><span style="color: #a2cd5a;">{</span>
- <span style="color: #4eee94;">indent</span>=<span style="color: #4eee94;">0</span><span style="color: #00bfff;">\mm</span>
- <span style="color: #4eee94;">line-width</span>=<span style="color: #4eee94;">90</span><span style="color: #00bfff;">\mm</span>
- <span style="color: #4eee94;">oddFooterMarkup</span>=<span style="color: #deb887;">##f</span>
- <span style="color: #4eee94;">oddHeaderMarkup</span>=<span style="color: #deb887;">##f</span>
- <span style="color: #4eee94;">bookTitleMarkup</span>=<span style="color: #deb887;">##f</span>
- <span style="color: #4eee94;">scoreTitleMarkup</span>=<span style="color: #deb887;">##f</span>
- <span style="color: #a2cd5a;">}</span>
+<pre class="src src-lilypond"><span style="color: #00bfff;">\version</span> <span style="color: #deb887;">"2.16.0"</span>
+<span style="color: #deb887;">#(ly:set-option 'resolution 140)</span>
+
+<span style="color: #00bfff;">\paper</span><span style="color: #a2cd5a;">{</span>
+    <span style="color: #4eee94;">indent</span>=<span style="color: #4eee94;">0</span><span style="color: #00bfff;">\mm</span>
+    <span style="color: #4eee94;">line-width</span>=<span style="color: #4eee94;">90</span><span style="color: #00bfff;">\mm</span>
+    <span style="color: #4eee94;">oddFooterMarkup</span>=<span style="color: #deb887;">##f</span>
+    <span style="color: #4eee94;">oddHeaderMarkup</span>=<span style="color: #deb887;">##f</span>
+    <span style="color: #4eee94;">bookTitleMarkup</span>=<span style="color: #deb887;">##f</span>
+    <span style="color: #4eee94;">scoreTitleMarkup</span>=<span style="color: #deb887;">##f</span>
+<span style="color: #a2cd5a;">}</span>
 
 <span style="color: #00bfff;">\language</span> <span style="color: #deb887;">"deutsch"</span>
 
 <span style="color: #00bfff;">\score</span> <span style="color: #a2cd5a;">{</span>
-  <span style="color: #daa520;">&lt;&lt;</span>
-  <span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Voice</span> = <span style="color: #4eee94;">mel</span> <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span> 
-    <span style="color: #00bfff;">\set</span> <span style="color: #4eee94;">Score.defaultBarType</span> = <span style="color: #deb887;">"-"</span>
-    <span style="color: #00bfff;">\clef</span> <span style="color: #deb887;">"petrucci-c3"</span>
-    <span style="color: #daa520;">\autoBeamOff</span>
-    <span style="color: #00bfff;">\override</span> NoteHead <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'petrucci</span>
-    <span style="color: #00bfff;">\override</span> <span style="color: #4eee94;">Staff</span>.TimeSignature <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'neomensural</span>
+    <span style="color: #daa520;">&lt;&lt;</span>
+        <span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Voice</span> = <span style="color: #4eee94;">mel</span> <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span> 
+            <span style="color: #00bfff;">\set</span> <span style="color: #4eee94;">Score.defaultBarType</span> = <span style="color: #deb887;">"-"</span>
+            <span style="color: #00bfff;">\clef</span> <span style="color: #deb887;">"petrucci-c3"</span>
+            <span style="color: #daa520;">\autoBeamOff</span>
+            <span style="color: #00bfff;">\override</span> NoteHead <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'petrucci</span>
+            <span style="color: #00bfff;">\override</span> <span style="color: #4eee94;">Staff</span>.TimeSignature <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'neomensural</span>
 
-    <span style="color: #00bfff;">\time</span> 2/2
+            <span style="color: #00bfff;">\time</span> 2/2
 
-    <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
-    <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
-    <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
-    <span style="color: #98f5ff;">d2</span> 
-  <span style="color: #a2cd5a;">}</span>
-  <span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span> 
-    Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
-  <span style="color: #a2cd5a;">}</span>
-  <span style="color: #daa520;">&gt;&gt;</span>
+            <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
+            <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
+            <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
+            <span style="color: #98f5ff;">d2</span> 
+        <span style="color: #a2cd5a;">}</span>
 
-  <span style="color: #00bfff;">\layout</span> <span style="color: #a2cd5a;">{</span>
-    <span style="color: #00bfff;">\context</span> <span style="color: #a2cd5a;">{</span>
-      <span style="color: #a2cd5a;">\Staff</span>
-      <span style="color: #00bfff;">\consists</span> <span style="color: #deb887;">"Custos_engraver"</span>
-      <span style="color: #00bfff;">\override</span> Custos <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'mensural</span>
+        <span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span> 
+            Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
+        <span style="color: #a2cd5a;">}</span>
+    <span style="color: #daa520;">&gt;&gt;</span>
+
+    <span style="color: #00bfff;">\layout</span> <span style="color: #a2cd5a;">{</span>
+        <span style="color: #00bfff;">\context</span> <span style="color: #a2cd5a;">{</span>
+            <span style="color: #a2cd5a;">\Staff</span>
+            <span style="color: #00bfff;">\consists</span> <span style="color: #deb887;">"Custos_engraver"</span>
+            <span style="color: #00bfff;">\override</span> Custos <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'mensural</span>
+        <span style="color: #a2cd5a;">}</span>
     <span style="color: #a2cd5a;">}</span>
-  <span style="color: #a2cd5a;">}</span>
 <span style="color: #a2cd5a;">}</span>
 </pre>
 </div>
