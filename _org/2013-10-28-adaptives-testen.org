@@ -18,7 +18,8 @@ Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den
     |                              |
     +------------------------------+
 #+END_SRC
-
+                    
+                    
 #+RESULTS:
 [[file:/images/adaptiveditaa.png]]
 
@@ -1009,10 +1010,10 @@ info.rest.SD
 
 ##### Calculate the benefit of an adaptive test with non-adaptive data.
 #
-# Use data.dat to predict answers of items.
-# Return a database (database.dat) of proposed items for each individual.
-# Draw a curve of the linear and adaptive test.
-# Afterwards, search.sh should be run to update the database.
+#  Use data.dat to predict answers of items.
+#  Return a database (database.dat) of proposed items for each individual.
+#  Draw a curve of the linear and adaptive test.
+#  Afterwards, search.sh should be run to update the database.
 # 
 #####
 
