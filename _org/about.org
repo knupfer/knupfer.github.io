@@ -6,23 +6,23 @@ title: Über mich
 ---
 #+END_COMMENT
 
-* Hobbies
-** Kultur
-*** Kochen
-*** Sprachen
-*** Reisen
-*** Typographie
-** Technik
-*** Tablets
-*** Elektroautos
-*** Energieproduktion
-* Musiker
-** Orgel
-*** Literatur
-*** Improvisation
-** Gesang
-*** Bass
-*** Altus
+# * Hobbies
+# ** Kultur
+# *** Kochen
+# *** Sprachen
+# *** Reisen
+# *** Typographie
+# ** Technik
+# *** Tablets
+# *** Elektroautos
+# *** Energieproduktion
+# * Musiker
+# ** Orgel
+# *** Literatur
+# *** Improvisation
+# ** Gesang
+# *** Bass
+# *** Altus
 * Curriculum Vitae
 ** Ausbildung
 |-----------+----------------------------------------------------------------------------------|
