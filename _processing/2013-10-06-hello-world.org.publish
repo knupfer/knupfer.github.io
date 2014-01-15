@@ -171,63 +171,7 @@ Bindestrichen durch zwei Bindestriche eresetzt, um nicht keine Probleme mit Jeky
 
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">!/bin/</span><span style="color: #00bfff;">sh</span>
-
-<span style="color: #4eee94;">TEMP</span>=<span style="color: #deb887;">'../_processing'</span><span style="color: #00c5cd;">;</span>
-<span style="color: #4eee94;">TOC</span>=<span style="color: #deb887;">'totalindex'</span><span style="color: #00c5cd;">;</span>
-
-<span style="color: #f08080;">echo</span> <span style="color: #deb887;">'--</span>
-<span style="color: #deb887;">layout: default</span>
-<span style="color: #deb887;">title: Index</span>
-<span style="color: #deb887;">--</span>
-<span style="color: #deb887;">&lt;div id="table-of-contents2"&gt;</span>
-<span style="color: #deb887;">&lt;h3&gt;Index&lt;/h3&gt;</span>
-<span style="color: #deb887;">&lt;div id="text-table-of-contents2"&gt;</span>
-<span style="color: #deb887;">&lt;ul&gt;'</span> &gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">TOC</span><span style="color: #00c5cd;">;</span>
-
-<span style="color: #00bfff;">for</span> FILE<span style="color: #00bfff;"> in</span> *<span style="color: #00c5cd;">.</span>org
-<span style="color: #00bfff;">do</span>
-    <span style="color: #4eee94;">DATEI</span>=$<span style="color: #00c5cd;">(</span><span style="color: #fa8072;">echo</span> $<span style="color: #4eee94;">FILE</span> | sed <span style="color: #deb887;">'s_\(.*\).org_\1_'</span><span style="color: #00c5cd;">);</span>
-    <span style="color: #4eee94;">URL</span>=$<span style="color: #00c5cd;">(</span><span style="color: #fa8072;">echo</span> /$<span style="color: #4eee94;">DATEI</span> | sed <span style="color: #deb887;">'s_-_/_; s_-_/_; s_-_/_; s_$_.html_'</span><span style="color: #00c5cd;">)</span>
-    <span style="color: #4eee94;">TITLE</span>=$<span style="color: #00c5cd;">(</span><span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'3,/--/ s_title: *"*\([^"]*\)"*_\1_p'</span> $<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>org<span style="color: #00c5cd;">);</span>
-    <span style="color: #4eee94;">FATHER</span>=$<span style="color: #00c5cd;">(</span><span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'3,/--/ s_father: *"*\([^"]*\)"*_\1_p'</span> $<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>org<span style="color: #00c5cd;">);</span>
-
-    <span style="color: #f08080;">test</span> -e $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>html &amp;&amp;
-    <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href="'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'"&gt;'</span>$<span style="color: #4eee94;">TITLE</span><span style="color: #deb887;">'&lt;/a&gt;'</span> &gt;&gt; categorie<span style="color: #00c5cd;">.</span>$<span style="color: #4eee94;">FATHER</span> &amp;&amp;
-    sed -n <span style="color: #deb887;">'/&lt;div id="text-table-of-contents"&gt;/,/&lt;\/div&gt;/p'</span> $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>html | 
-        tail -n +2 | 
-        head -n -1 | 
-        sed <span style="color: #deb887;">'s:\(href="\)#:\1'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'#:g'</span> &gt;&gt; categorie<span style="color: #00c5cd;">.</span>$<span style="color: #4eee94;">FATHER</span> &amp;&amp;
-    sed -n <span style="color: #deb887;">'3,/--/ p'</span> $<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>org &gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>org<span style="color: #00c5cd;">.</span>publish &amp;&amp;
-    sed <span style="color: #deb887;">'N;</span>
-<span style="color: #deb887;">        s_[(&lt;/ul&gt;)(&lt;/dl&gt;)]\n&lt;/div&gt;_&amp;&lt;p&gt;&lt;/p&gt;_;</span>
-<span style="color: #deb887;">        P;</span>
-<span style="color: #deb887;">        s_/_/_;</span>
-<span style="color: #deb887;">        s_&lt;h2&gt;Table of Contents&lt;/h2&gt;_&lt;h3&gt;Inhaltsverzeichnis&lt;/h3&gt;_;</span>
-<span style="color: #deb887;">        D'</span> $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>html &gt;&gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>org<span style="color: #00c5cd;">.</span>publish &amp;&amp;
-    cat $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>org<span style="color: #00c5cd;">.</span>publish &gt; <span style="color: #00c5cd;">..</span>/_posts/$<span style="color: #4eee94;">DATEI</span><span style="color: #00c5cd;">.</span>html<span style="color: #00c5cd;">;</span>
-<span style="color: #00bfff;">done</span>
-
-mv categorie<span style="color: #00c5cd;">.</span> categorie<span style="color: #00c5cd;">.</span>zzz
-
-<span style="color: #00bfff;">for</span> INDEX<span style="color: #00bfff;"> in</span> categorie<span style="color: #00c5cd;">.</span>*
-<span style="color: #00bfff;">do</span>
-    <span style="color: #00bfff;">if</span> <span style="color: #00c5cd;">[</span> <span style="color: #deb887;">"$(</span><span style="color: #fa8072;">echo</span><span style="color: #deb887;"> $INDEX | sed 's_categorie\.\(.*\)_\1_')"</span> <span style="color: #00c5cd;">!</span>= <span style="color: #deb887;">'zzz'</span> <span style="color: #00c5cd;">]</span>
-    <span style="color: #00bfff;">then</span>
-        <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href=""&gt;'</span> $<span style="color: #00c5cd;">(</span><span style="color: #fa8072;">echo</span> $<span style="color: #4eee94;">INDEX</span> | 
-            sed <span style="color: #deb887;">'s_categorie\.\(.*\)_\1_'</span><span style="color: #00c5cd;">)</span> <span style="color: #deb887;">'&lt;/a&gt;'</span> <span style="color: #deb887;">'&lt;ul&gt;'</span> &gt;&gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">TOC</span><span style="color: #00c5cd;">;</span>
-    <span style="color: #00bfff;">else</span>
-        <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href=""&gt;'</span> Verschiedenes <span style="color: #deb887;">'&lt;/a&gt;'</span> <span style="color: #deb887;">'&lt;ul&gt;'</span> &gt;&gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">TOC</span>
-    <span style="color: #00bfff;">fi</span>
-    cat $<span style="color: #4eee94;">INDEX</span> &gt;&gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">TOC</span><span style="color: #00c5cd;">;</span>
-    <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;/ul&gt;'</span> &gt;&gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">TOC</span><span style="color: #00c5cd;">;</span>
-<span style="color: #00bfff;">done</span>
-
-<span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;'</span> &gt;&gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">TOC</span><span style="color: #00c5cd;">;</span>
-cp $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">TOC</span>  <span style="color: #00c5cd;">..</span>/$<span style="color: #4eee94;">TOC</span><span style="color: #00c5cd;">.</span>html<span style="color: #00c5cd;">;</span>
-mv categorie<span style="color: #00c5cd;">.</span>* $<span style="color: #4eee94;">TEMP</span><span style="color: #00c5cd;">;</span>
-cp <span style="color: #00c5cd;">..</span>/_posts/about<span style="color: #00c5cd;">.</span>html <span style="color: #00c5cd;">..</span>/about<span style="color: #00c5cd;">.</span>html<span style="color: #00c5cd;">;</span>
-<span style="color: #f08080;">test</span> -e *<span style="color: #00c5cd;">.</span>org~ &amp;&amp; rm *<span style="color: #00c5cd;">.</span>org~ <span style="color: #00c5cd;">;</span>
+<pre class="src src-sh">nil
 </pre>
 </div><p></p>
 </div><p></p>

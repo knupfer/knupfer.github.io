@@ -13,8 +13,8 @@ father: Linux
 <ul>
 <li>
 <ul>
-<li><a href="#sec-3-0-1">3.0.1. offener Punkt</a></li>
-<li><a href="#sec-3-0-2">3.0.2. abgeschlossener Punkt.</a></li>
+<li><a href="#sec-3-0-1">3.0.1. <span class="todo TODO">TODO</span> offener Punkt</a></li>
+<li><a href="#sec-3-0-2">3.0.2. <span class="done DONE">DONE</span> abgeschlossener Punkt.</a></li>
 </ul>
 </li>
 <li><a href="#sec-3-1">3.1. Agendas</a></li>
@@ -61,7 +61,7 @@ Org-Mode bietet sehr elaborierte Outlinefähigkeiten. Hierarchien werden mit ein
 
 <div class="org-src-container">
 
-<pre class="src src-org"><span style="color: #87ceff;">* Erste &#220;berschrift</span>
+<pre class="src src-org"><span style="color: #87ceff; font-weight: bold;">* Erste &#220;berschrift</span>
 Text
 
 <span style="color: #98f5ff;">** Unter&#252;berschrift</span>
@@ -70,7 +70,7 @@ Text
 <span style="color: #cae1ff;">*** Unterunter&#252;berschrift</span>
 Text
 
-<span style="color: #87ceff;">* Zweite &#220;berschrift</span>
+<span style="color: #87ceff; font-weight: bold;">* Zweite &#220;berschrift</span>
 </pre>
 </div><p></p>
 
@@ -84,8 +84,8 @@ Um sich einen Überblick zu verschaffen und in seinem Dokument effizient zu navi
 
 <div class="org-src-container">
 
-<pre class="src src-org"><span style="color: #87ceff;">* Erste &#220;berschrift...</span>
-<span style="color: #87ceff;">* Zweite &#220;berschrift</span>
+<pre class="src src-org"><span style="color: #87ceff; font-weight: bold;">* Erste &#220;berschrift...</span>
+<span style="color: #87ceff; font-weight: bold;">* Zweite &#220;berschrift</span>
 </pre>
 </div><p></p>
 
@@ -203,7 +203,7 @@ Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden, sondern auch na
 <div class="org-src-container">
 
 <pre class="src src-org"><span style="color: #7f7f7f;">#+BEGIN_SRC org</span>
-<span style="color: #87ceff;">* Test&#252;berschrift</span>
+<span style="color: #87ceff; font-weight: bold;">* Test&#252;berschrift</span>
 <span style="color: #7f7f7f;">#+END_SRC</span>
 </pre>
 </div><p></p>
@@ -224,71 +224,14 @@ Hier nun ein Beispiel eines Programmcodes in Python, welcher beim Export direkt 
 <pre class="src src-python"><span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Fibonacci-Reihe</span>
 <span style="color: #4eee94;">x</span> = 5
 <span style="color: #4eee94;">y</span> = 5
-<span style="color: #4eee94;">fib</span> = <span style="color: #00c5cd;">[[</span>0<span style="color: #00c5cd;">]</span> * x <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span><span style="color: #00c5cd;">(</span>y<span style="color: #00c5cd;">)]</span>
-fib<span style="color: #00c5cd;">[</span>0<span style="color: #00c5cd;">][</span>0<span style="color: #00c5cd;">]</span> = 1
-<span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span><span style="color: #00c5cd;">(</span>x * y<span style="color: #00c5cd;">):</span>
-    <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span> <span style="color: #00c5cd;">(</span>1<span style="color: #00c5cd;">,</span> 3<span style="color: #00c5cd;">):</span>
-        fib<span style="color: #00c5cd;">[</span>i % y<span style="color: #00c5cd;">][</span>i // y<span style="color: #00c5cd;">]</span> += fib<span style="color: #00c5cd;">[(</span>i - j<span style="color: #00c5cd;">)</span> % y<span style="color: #00c5cd;">][(</span>i - j<span style="color: #00c5cd;">)</span> // y<span style="color: #00c5cd;">]</span>
+<span style="color: #4eee94;">fib</span> = [[0] * x <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(y)]
+fib[0][0] = 1
+<span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(x * y):
+    <span style="color: #00bfff;">for</span> j <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span> (1, 3):
+        fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
 <span style="color: #00bfff;">return</span> fib
 </pre>
 </div><p></p>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="right" />
-
-<col  class="right" />
-
-<col  class="right" />
-
-<col  class="right" />
-
-<col  class="right" />
-</colgroup>
-<tbody>
-<tr>
-<td class="right">1</td>
-<td class="right">8</td>
-<td class="right">89</td>
-<td class="right">987</td>
-<td class="right">10946</td>
-</tr>
-
-<tr>
-<td class="right">1</td>
-<td class="right">13</td>
-<td class="right">144</td>
-<td class="right">1597</td>
-<td class="right">17711</td>
-</tr>
-
-<tr>
-<td class="right">2</td>
-<td class="right">21</td>
-<td class="right">233</td>
-<td class="right">2584</td>
-<td class="right">28657</td>
-</tr>
-
-<tr>
-<td class="right">3</td>
-<td class="right">34</td>
-<td class="right">377</td>
-<td class="right">4181</td>
-<td class="right">46368</td>
-</tr>
-
-<tr>
-<td class="right">5</td>
-<td class="right">55</td>
-<td class="right">610</td>
-<td class="right">6765</td>
-<td class="right">75025</td>
-</tr>
-</tbody>
-</table>
 
 <p>
 Ferner ist es möglich, die Ergebnisse eines Sourceblocks für den Input eines anderen Sourceblocks zu verwenden. Dementsprechend können, ähnlich zu Shellscripten, Pipes zwischen verschiedenen Programmiersprachen gebaut werden. Das Ergebnis kann an jeder beliebigen Stelle im Dokument durch einen Platzhalter eingefügt werden, wodurch es möglich ist, Tabellen und Grafiken automatisch immer auf den aktuellen Datenstand darzustellen.
@@ -328,112 +271,6 @@ Man kann sich auch vorstellen, dass backupscripte die Datei automatisch bei jede
 <span style="color: #00bfff;">return</span> Resultat
 </pre>
 </div><p></p>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="right" />
-
-<col  class="right" />
-</colgroup>
-<tbody>
-<tr>
-<td class="right">2</td>
-<td class="right">1111101000</td>
-</tr>
-
-<tr>
-<td class="right">3</td>
-<td class="right">1101001</td>
-</tr>
-
-<tr>
-<td class="right">4</td>
-<td class="right">33220</td>
-</tr>
-
-<tr>
-<td class="right">5</td>
-<td class="right">13000</td>
-</tr>
-
-<tr>
-<td class="right">6</td>
-<td class="right">4344</td>
-</tr>
-
-<tr>
-<td class="right">7</td>
-<td class="right">2626</td>
-</tr>
-
-<tr>
-<td class="right">8</td>
-<td class="right">1750</td>
-</tr>
-
-<tr>
-<td class="right">9</td>
-<td class="right">1331</td>
-</tr>
-
-<tr>
-<td class="right">10</td>
-<td class="right">1000</td>
-</tr>
-
-<tr>
-<td class="right">11</td>
-<td class="right">82:</td>
-</tr>
-
-<tr>
-<td class="right">12</td>
-<td class="right">6;4</td>
-</tr>
-
-<tr>
-<td class="right">13</td>
-<td class="right">5;&lt;</td>
-</tr>
-
-<tr>
-<td class="right">14</td>
-<td class="right">516</td>
-</tr>
-
-<tr>
-<td class="right">15</td>
-<td class="right">46:</td>
-</tr>
-
-<tr>
-<td class="right">16</td>
-<td class="right">3&gt;8</td>
-</tr>
-
-<tr>
-<td class="right">17</td>
-<td class="right">37&gt;</td>
-</tr>
-
-<tr>
-<td class="right">18</td>
-<td class="right">31:</td>
-</tr>
-
-<tr>
-<td class="right">19</td>
-<td class="right">2&gt;&lt;</td>
-</tr>
-
-<tr>
-<td class="right">20</td>
-<td class="right">2:0</td>
-</tr>
-</tbody>
-</table>
 </div><p></p>
 </div><p></p>
 </div><p></p>
@@ -454,28 +291,28 @@ Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschied
 <div class="outline-text-5" id="text-4-2-2-1">
 <div class="org-src-container">
 
-<pre class="src src-lilypond"><span style="color: #00bfff;">\version</span> <span style="color: #deb887;">"2.16.0"</span>
-<span style="color: #deb887;">#(ly:set-option 'resolution 140)</span>
+<pre class="src src-lilypond"><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">version</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">"</span><span style="color: #deb887;">2</span><span style="color: #22aaaa;">.</span><span style="color: #deb887;">16</span><span style="color: #22aaaa;">.</span><span style="color: #deb887;">0</span><span style="color: #22aaaa;">"</span>
+<span style="color: #22aaaa;">#(</span><span style="color: #deb887;">ly</span><span style="color: #22aaaa;">:</span><span style="color: #deb887;">set</span><span style="color: #22aaaa;">-</span><span style="color: #deb887;">option</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">'</span><span style="color: #deb887;">resolution</span><span style="color: #000000;"> </span><span style="color: #deb887;">140</span><span style="color: #22aaaa;">)</span>
 
-<span style="color: #00bfff;">\paper</span><span style="color: #a2cd5a;">{</span>
-    <span style="color: #4eee94;">indent</span>=<span style="color: #4eee94;">0</span><span style="color: #00bfff;">\mm</span>
-    <span style="color: #4eee94;">line-width</span>=<span style="color: #4eee94;">90</span><span style="color: #00bfff;">\mm</span>
-    <span style="color: #4eee94;">oddFooterMarkup</span>=<span style="color: #deb887;">##f</span>
-    <span style="color: #4eee94;">oddHeaderMarkup</span>=<span style="color: #deb887;">##f</span>
-    <span style="color: #4eee94;">bookTitleMarkup</span>=<span style="color: #deb887;">##f</span>
-    <span style="color: #4eee94;">scoreTitleMarkup</span>=<span style="color: #deb887;">##f</span>
-<span style="color: #a2cd5a;">}</span>
+<span style="color: #22aaaa;">\</span><span style="color: #00bfff;">paper</span><span style="color: #22aaaa;">{</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">indent</span><span style="color: #22aaaa;">=</span><span style="color: #4eee94;">0</span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">mm</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">line</span><span style="color: #22aaaa;">-</span><span style="color: #4eee94;">width</span><span style="color: #22aaaa;">=</span><span style="color: #4eee94;">90</span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">mm</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">oddFooterMarkup</span><span style="color: #22aaaa;">=##</span><span style="color: #deb887;">f</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">oddHeaderMarkup</span><span style="color: #22aaaa;">=##</span><span style="color: #deb887;">f</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">bookTitleMarkup</span><span style="color: #22aaaa;">=##</span><span style="color: #deb887;">f</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">scoreTitleMarkup</span><span style="color: #22aaaa;">=##</span><span style="color: #deb887;">f</span>
+<span style="color: #22aaaa;">}</span>
 
-<span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span>
-    <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
-    <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
-    <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
-    <span style="color: #98f5ff;">d2</span> 
-<span style="color: #a2cd5a;">}</span>
+<span style="color: #22aaaa;">\</span><span style="color: #00bfff;">relative</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">c</span><span style="color: #22aaaa;">'</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">{</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #98f5ff;">r2</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">e</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">|</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #98f5ff;">e</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">f2</span><span style="color: #22aaaa;">.</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">e8</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">c2</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">|</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #98f5ff;">c4</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">e</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">f</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">g2</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">f4</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">e4</span><span style="color: #22aaaa;">.</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d8</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d2</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">c4</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">|</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #98f5ff;">d2</span><span style="color: #000000;"> </span>
+<span style="color: #22aaaa;">}</span>
 
-<span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span>
-    Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
-<span style="color: #a2cd5a;">}</span>
+<span style="color: #22aaaa;">\</span><span style="color: #00bfff;">addlyrics</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">{</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span>Et<span style="color: #000000;"> </span><span style="color: #98f5ff;">a</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">--</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">s</span>cen<span style="color: #000000;"> </span><span style="color: #22aaaa;">--</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d</span>it<span style="color: #000000;"> </span>in<span style="color: #000000;"> </span><span style="color: #98f5ff;">c</span>oe<span style="color: #000000;"> </span><span style="color: #22aaaa;">--</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span>lum<span style="color: #22aaaa;">.</span><span style="color: #000000;"> </span>
+<span style="color: #22aaaa;">}</span>
 </pre>
 </div><p></p>
 
@@ -491,50 +328,50 @@ Kombiniert mit den programmatischen Möglichkeiten, die sich durch die verschied
 <div class="outline-text-5" id="text-4-2-2-2">
 <div class="org-src-container">
 
-<pre class="src src-lilypond"><span style="color: #00bfff;">\version</span> <span style="color: #deb887;">"2.16.0"</span>
-<span style="color: #deb887;">#(ly:set-option 'resolution 140)</span>
+<pre class="src src-lilypond"><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">version</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">"</span><span style="color: #deb887;">2</span><span style="color: #22aaaa;">.</span><span style="color: #deb887;">16</span><span style="color: #22aaaa;">.</span><span style="color: #deb887;">0</span><span style="color: #22aaaa;">"</span>
+<span style="color: #22aaaa;">#(</span><span style="color: #deb887;">ly</span><span style="color: #22aaaa;">:</span><span style="color: #deb887;">set</span><span style="color: #22aaaa;">-</span><span style="color: #deb887;">option</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">'</span><span style="color: #deb887;">resolution</span><span style="color: #000000;"> </span><span style="color: #deb887;">140</span><span style="color: #22aaaa;">)</span>
 
-<span style="color: #00bfff;">\paper</span><span style="color: #a2cd5a;">{</span>
-    <span style="color: #4eee94;">indent</span>=<span style="color: #4eee94;">0</span><span style="color: #00bfff;">\mm</span>
-    <span style="color: #4eee94;">line-width</span>=<span style="color: #4eee94;">90</span><span style="color: #00bfff;">\mm</span>
-    <span style="color: #4eee94;">oddFooterMarkup</span>=<span style="color: #deb887;">##f</span>
-    <span style="color: #4eee94;">oddHeaderMarkup</span>=<span style="color: #deb887;">##f</span>
-    <span style="color: #4eee94;">bookTitleMarkup</span>=<span style="color: #deb887;">##f</span>
-    <span style="color: #4eee94;">scoreTitleMarkup</span>=<span style="color: #deb887;">##f</span>
-<span style="color: #a2cd5a;">}</span>
+<span style="color: #22aaaa;">\</span><span style="color: #00bfff;">paper</span><span style="color: #22aaaa;">{</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">indent</span><span style="color: #22aaaa;">=</span><span style="color: #4eee94;">0</span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">mm</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">line</span><span style="color: #22aaaa;">-</span><span style="color: #4eee94;">width</span><span style="color: #22aaaa;">=</span><span style="color: #4eee94;">90</span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">mm</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">oddFooterMarkup</span><span style="color: #22aaaa;">=##</span><span style="color: #deb887;">f</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">oddHeaderMarkup</span><span style="color: #22aaaa;">=##</span><span style="color: #deb887;">f</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">bookTitleMarkup</span><span style="color: #22aaaa;">=##</span><span style="color: #deb887;">f</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #4eee94;">scoreTitleMarkup</span><span style="color: #22aaaa;">=##</span><span style="color: #deb887;">f</span>
+<span style="color: #22aaaa;">}</span>
 
-<span style="color: #00bfff;">\language</span> <span style="color: #deb887;">"deutsch"</span>
+<span style="color: #22aaaa;">\</span><span style="color: #00bfff;">language</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">"</span><span style="color: #deb887;">deutsch</span><span style="color: #22aaaa;">"</span>
 
-<span style="color: #00bfff;">\score</span> <span style="color: #a2cd5a;">{</span>
-    <span style="color: #daa520;">&lt;&lt;</span>
-        <span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Voice</span> = <span style="color: #4eee94;">mel</span> <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span> 
-            <span style="color: #00bfff;">\set</span> <span style="color: #4eee94;">Score.defaultBarType</span> = <span style="color: #deb887;">"-"</span>
-            <span style="color: #00bfff;">\clef</span> <span style="color: #deb887;">"petrucci-c3"</span>
-            <span style="color: #daa520;">\autoBeamOff</span>
-            <span style="color: #00bfff;">\override</span> NoteHead <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'petrucci</span>
-            <span style="color: #00bfff;">\override</span> <span style="color: #4eee94;">Staff</span>.TimeSignature <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'neomensural</span>
+<span style="color: #22aaaa;">\</span><span style="color: #00bfff;">score</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">{</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">&lt;&lt;</span>
+<span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">new</span><span style="color: #000000;"> </span><span style="color: #4eee94;">Voice</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">=</span><span style="color: #000000;"> </span><span style="color: #4eee94;">mel</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">relative</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">c</span><span style="color: #22aaaa;">'</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">{</span><span style="color: #000000;"> </span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">set</span><span style="color: #000000;"> </span><span style="color: #4eee94;">Score</span><span style="color: #22aaaa;">.</span><span style="color: #4eee94;">defaultBarType</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">=</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">"-"</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">clef</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">"</span><span style="color: #deb887;">petrucci</span><span style="color: #22aaaa;">-</span><span style="color: #deb887;">c3</span><span style="color: #22aaaa;">"</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #daa520;">autoBeamOff</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">override</span><span style="color: #000000;"> </span>NoteHead<span style="color: #000000;"> </span><span style="color: #22aaaa;">#'</span><span style="color: #deb887;">style</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">=</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">#'</span><span style="color: #deb887;">petrucci</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">override</span><span style="color: #000000;"> </span><span style="color: #4eee94;">Staff</span><span style="color: #22aaaa;">.</span>TimeSignature<span style="color: #000000;"> </span><span style="color: #22aaaa;">#'</span><span style="color: #deb887;">style</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">=</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">#'</span><span style="color: #deb887;">neomensural</span>
 
-            <span style="color: #00bfff;">\time</span> 2/2
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">time</span><span style="color: #000000;"> </span>2<span style="color: #22aaaa;">/</span>2
 
-            <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
-            <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
-            <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
-            <span style="color: #98f5ff;">d2</span> 
-        <span style="color: #a2cd5a;">}</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #98f5ff;">r2</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">e</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">|</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #98f5ff;">e</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">f2</span><span style="color: #22aaaa;">.</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">e8</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">c2</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">|</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #98f5ff;">c4</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">e</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">f</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">g2</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">f4</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">e4</span><span style="color: #22aaaa;">.</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d8</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d2</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">c4</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">|</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #98f5ff;">d2</span><span style="color: #000000;"> </span>
+<span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">}</span>
 
-        <span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span> 
-            Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
-        <span style="color: #a2cd5a;">}</span>
-    <span style="color: #daa520;">&gt;&gt;</span>
+<span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">addlyrics</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">{</span><span style="color: #000000;"> </span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span>Et<span style="color: #000000;"> </span><span style="color: #98f5ff;">a</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">--</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">s</span>cen<span style="color: #000000;"> </span><span style="color: #22aaaa;">--</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #98f5ff;">d</span>it<span style="color: #000000;"> </span>in<span style="color: #000000;"> </span><span style="color: #98f5ff;">c</span>oe<span style="color: #000000;"> </span><span style="color: #22aaaa;">--</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">_</span><span style="color: #000000;"> </span>lum<span style="color: #22aaaa;">.</span><span style="color: #000000;"> </span>
+<span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">}</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">&gt;&gt;</span>
 
-    <span style="color: #00bfff;">\layout</span> <span style="color: #a2cd5a;">{</span>
-        <span style="color: #00bfff;">\context</span> <span style="color: #a2cd5a;">{</span>
-            <span style="color: #a2cd5a;">\Staff</span>
-            <span style="color: #00bfff;">\consists</span> <span style="color: #deb887;">"Custos_engraver"</span>
-            <span style="color: #00bfff;">\override</span> Custos <span style="color: #deb887;">#'style</span> = <span style="color: #deb887;">#'mensural</span>
-        <span style="color: #a2cd5a;">}</span>
-    <span style="color: #a2cd5a;">}</span>
-<span style="color: #a2cd5a;">}</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">layout</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">{</span>
+<span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">context</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">{</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #a2cd5a;">Staff</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">consists</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">"</span><span style="color: #deb887;">Custos</span><span style="color: #22aaaa;">_</span><span style="color: #deb887;">engraver</span><span style="color: #22aaaa;">"</span>
+<span style="color: #113333;"> </span><span style="color: #000000;">   </span><span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">\</span><span style="color: #00bfff;">override</span><span style="color: #000000;"> </span>Custos<span style="color: #000000;"> </span><span style="color: #22aaaa;">#'</span><span style="color: #deb887;">style</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">=</span><span style="color: #000000;"> </span><span style="color: #22aaaa;">#'</span><span style="color: #deb887;">mensural</span>
+<span style="color: #114444;"> </span><span style="color: #000000;">   </span><span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">}</span>
+<span style="color: #006666;"> </span><span style="color: #000000;">   </span><span style="color: #22aaaa;">}</span>
+<span style="color: #22aaaa;">}</span>
 </pre>
 </div><p></p>
 

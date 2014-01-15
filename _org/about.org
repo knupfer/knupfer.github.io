@@ -5,24 +5,54 @@ layout: default
 title: Über mich
 ---
 #+END_COMMENT
+Lieber Leser,
 
-# * Hobbies
-# ** Kultur
-# *** Kochen
-# *** Sprachen
-# *** Reisen
-# *** Typographie
-# ** Technik
-# *** Tablets
-# *** Elektroautos
-# *** Energieproduktion
-# * Musiker
-# ** Orgel
-# *** Literatur
-# *** Improvisation
-# ** Gesang
-# *** Bass
-# *** Altus
+hier findet sich nun also mein CV zur Einsicht. 
+Zu den in CVs üblichen Inhalten gibt es hier noch Raum für Informelleres, meine Hobbies sind die folgenden:
+
+
+- Kochen (vor allem exotische Küche)  
+
+- Sprachen
+    - Englisch
+    - Spanisch
+    - Französisch
+    - Russisch
+    - Nächste anvisierte Sprachen:
+        - Arabisch
+        - Chinesisch
+        - Koreanisch
+
+- Reisen
+- Typographie
+- Technik
+    - Tablets
+    - Elektroautos
+    - Energieproduktion
+        - Wasserkraft
+        - Windkraft
+        - Kernenergie
+            - Fussionsreaktoren
+            - Fissionsreaktoren
+- Musik
+    - Orgel
+        - Literatur
+            - Durufle
+            - Couperin
+            - Reger
+        - Improvisation
+            - Impressionismus
+            - Romantik
+    - Gesang
+        - Bass
+            - Monteverdi
+            - Bach
+            - Schubert
+        - Altus
+            - Monteverdi
+            - Viadana
+            - Xenakis
+
 * Curriculum Vitae
 ** Ausbildung
 |-----------+----------------------------------------------------------------------------------|
