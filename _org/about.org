@@ -11,47 +11,47 @@ hier findet sich nun also mein CV zur Einsicht.
 Zu den in CVs üblichen Inhalten gibt es hier noch Raum für Informelleres, meine Hobbies sind die folgenden:
 
 
-- Kochen (vor allem exotische Küche)  
+1. Kochen (vor allem exotische Küche)  
 
-- Sprachen
-    - Englisch
-    - Spanisch
-    - Französisch
-    - Russisch
-    - Nächste anvisierte Sprachen:
-        - Arabisch
-        - Chinesisch
-        - Koreanisch
+2. Sprachen
+     1. Englisch
+     2. Spanisch
+     3. Französisch
+     4. Russisch
+     5. Nächste anvisierte Sprachen:
+          1. Arabisch
+          2. Chinesisch
+          3. Koreanisch
 
-- Reisen
-- Typographie
-- Technik
-    - Tablets
-    - Elektroautos
-    - Energieproduktion
-        - Wasserkraft
-        - Windkraft
-        - Kernenergie
-            - Fussionsreaktoren
-            - Fissionsreaktoren
-- Musik
-    - Orgel
-        - Literatur
-            - Durufle
-            - Couperin
-            - Reger
-        - Improvisation
-            - Impressionismus
-            - Romantik
-    - Gesang
-        - Bass
-            - Monteverdi
-            - Bach
-            - Schubert
-        - Altus
-            - Monteverdi
-            - Viadana
-            - Xenakis
+3. Reisen
+4. Typographie
+5. Technik
+     1. Tablets
+     2. Elektroautos
+     3. Energieproduktion
+          1. Wasserkraft
+          2. Windkraft
+          3. Kernenergie
+               1. Fussionsreaktoren
+               2. Fissionsreaktoren
+6. Musik
+     1. Orgel
+          1. Literatur
+               1. Durufle
+               2. Couperin
+               3. Reger
+          2. Improvisation
+               1. Impressionismus
+               2. Romantik
+     2. Gesang
+          1. Bass
+               1. Monteverdi
+               2. Bach
+               3. Schubert
+          3. Altus
+               1. Monteverdi
+               2. Viadana
+               3. Xenakis
 
 * Curriculum Vitae
 ** Ausbildung
