@@ -9,11 +9,11 @@ father: Computer
 
 Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine Homepage versioniere und auf Github publiziere, befand ich die Zeit reif dafür, mich genauer mit Git auseinanderzusetzen.
 
-** Git
+* Git
 Git wurde von Linus Torvalds für die Versionierung des Linuxkernels programmiert.
 Da die Funktionalität sehr umfangreich ist, erfreute sich Git schnell großer Beliebtheit.
 
-*** Funktionsweise
+** Funktionsweise
 Es wird in dem Repository, also in dem Verzeichnis, in dem man seine Dateien aufbewahrt werden, welche versioniert werden sollen (i.d.R. Quellcode) ein .git Verzeichnis erstellt, welches zunächst einer Kopie aller Dateien entspricht.
 Daraufhin werden Änderungen in den Staging-Bereich gebracht: src_shell{git add -A}. 
 Sobald man dort alle Änderungen hinzugefügt hat, welche man versionieren möchte, macht man einen Commit, welcher einen Text enthält, welcher beschreibt, welche Änderungen vorgenommen werden: src_shell{git commit -m 'bugfix'}.
@@ -43,11 +43,10 @@ Somit ist nun die Änderung gespeichert und kann mit dem vorherigen Stand vergli
     |-------
 #+END_SRC
 
+#+RESULTS:
+[[file:/images/git.png]]
 
-
-
-Emacs Magit bietet ein vielseitiges Interface, das praktischerweise sehr gut in Emacs integriert ist. 
-
-
-
-
+* Magit
+Mit Magit kann man auf komfortable Weise diffs, also Vergleiche zwischen zwei Versionen ansehen.
+Ferner hat man den Staging-Bereich, und den Bereich der Änderungen, die noch nicht im Staging-Bereich sind im Blick, was den großen Vorteil bietet, dass nur die Änderungen, die eine logische Einheit bilden, in den Staging-Bereich aufgenommen werden können, um die diese zu commiten.
+Andere Änderungen werden erst in darauffolgenden Commits mit entsprechender Beschreibung publiziert.
