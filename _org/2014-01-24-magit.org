@@ -1,0 +1,16 @@
+* Einleitung
+#+BEGIN_COMMENT
+---
+layout: post
+title: Emacs Magit
+father: Computer
+---
+#+END_COMMENT
+
+Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine Homepage versioniere und auf Github publiziere, befand ich die Zeit reif dafür, mich genauer mit Git auseinanderzusetzen.
+
+Emacs Magit bietet ein vielseitiges Interface, das praktischerweise sehr gut in Emacs integriert ist. 
+
+
+
+
