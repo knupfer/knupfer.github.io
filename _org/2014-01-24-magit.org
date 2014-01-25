@@ -9,6 +9,43 @@ father: Computer
 
 Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine Homepage versioniere und auf Github publiziere, befand ich die Zeit reif dafür, mich genauer mit Git auseinanderzusetzen.
 
+** Git
+Git wurde von Linus Torvalds für die Versionierung des Linuxkernels programmiert.
+Da die Funktionalität sehr umfangreich ist, erfreute sich Git schnell großer Beliebtheit.
+
+*** Funktionsweise
+Es wird in dem Repository, also in dem Verzeichnis, in dem man seine Dateien aufbewahrt werden, welche versioniert werden sollen (i.d.R. Quellcode) ein .git Verzeichnis erstellt, welches zunächst einer Kopie aller Dateien entspricht.
+Daraufhin werden Änderungen in den Staging-Bereich gebracht: src_shell{git add -A}. 
+Sobald man dort alle Änderungen hinzugefügt hat, welche man versionieren möchte, macht man einen Commit, welcher einen Text enthält, welcher beschreibt, welche Änderungen vorgenommen werden: src_shell{git commit -m 'bugfix'}.
+Somit ist nun die Änderung gespeichert und kann mit dem vorherigen Stand verglichen werden, neue Änderungen gemacht werden, oder die Änderungen zu einem Remote-Repository übertragen werden: src_shell{git push origin master}.
+
+#+BEGIN_SRC ditaa :file /images/git.png 
++--------------------+ 
+| Arbeitsverzeichnis +<------|
++-----------------|--+       |
+                  |          |
+ |---git add-------          |
+ |                           |
+ |  +-----|                  |
+ -->|Stage|-----|            |
+    |------     |            |
+                |            |
+ |---git commit--            |
+ |                           |
+ |  |-----------             |
+ -->|Repository|-|           |
+    -----------| |           |
+                 |           |
+ |---git push-----           |
+ |                           |
+ |  +------|                 |
+ -->|Remote|--git pull-------|
+    |-------
+#+END_SRC
+
+
+
+
 Emacs Magit bietet ein vielseitiges Interface, das praktischerweise sehr gut in Emacs integriert ist. 
 
 
