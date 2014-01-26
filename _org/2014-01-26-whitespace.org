@@ -1,0 +1,20 @@
+* Einleitung
+#+BEGIN_COMMENT
+---
+layout: post
+title: Emacs whitespace.el
+father: Computer
+---
+#+END_COMMENT
+
+* Vergleich mit anderen Methoden
+** farbige Pipes und kein farbiger Hintergrund
+
+* Vorteile
+** In aktuellen Emacs-Versionen inbegriffen
+** verschiedene Farben für verschiedene Indentation-Tiefe
+* Nachteile
+** Bugs
+*** langsam für restlichen Whitespace, wenn der Point darübergeht...
+*** in Teilen inkompatibel mit org-mode indentation-mode
+
