@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd ~git/knupfer.github.io/_org
+cd ~/git/knupfer.github.io/_org
 
 TEMP='../_processing';
 TOC='totalindex';
