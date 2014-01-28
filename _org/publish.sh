@@ -22,7 +22,7 @@ do
         DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
         URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
         TITLE=$(sed -n '3,/---/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
-        FATHER=$(sed -n '3,/---/ s_father: *"*\([^"]*\)"*_\1_p' $DATEI.org);
+        FATHER=$(echo $DIRECTORY | sed 's:/::')
         
         test -e ../$TEMP/$DIRECTORY/$DATEI.html &&
         echo '<li><a href="'$URL'">'$TITLE'</a>' >> ../categorie.$FATHER &&
@@ -30,7 +30,8 @@ do
         tail -n +2 | 
         head -n -1 | 
         sed 's:\(href="\)#:\1'$URL'#:g' >> ../categorie.$FATHER &&
-        sed -n '3,/---/ p' $DATEI.org > ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        sed -n '3,/---/ p' $DATEI.org | head --lines=-1 > ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        echo 'father: '$DIRECTORY | sed 's:/::' >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
         sed 'N;
             s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
             P;
