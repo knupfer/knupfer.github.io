@@ -1,0 +1,52 @@
+* Einleitung
+#+BEGIN_COMMENT
+---
+layout: post
+title: Emacs Magit
+father: Computer
+---
+#+END_COMMENT
+mumobar
+Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine Homepage versioniere und auf Github publiziere, befand ich die Zeit reif dafür, mich genauer mit Git auseinanderzusetzen.
+
+* Git
+Git wurde von Linus Torvalds für die Versionierung des Linuxkernels programmiert.
+Da die Funktionalität sehr umfangreich ist, erfreute sich Git schnell großer Beliebtheit.
+
+** Funktionsweise
+Es wird in dem Repository, also in dem Verzeichnis, in dem man seine Dateien aufbewahrt werden, welche versioniert werden sollen (i.d.R. Quellcode) ein .git Verzeichnis erstellt, welches zunächst einer Kopie aller Dateien entspricht.
+Daraufhin werden Änderungen in den Staging-Bereich gebracht: src_shell{git add -A}. 
+Sobald man dort alle Änderungen hinzugefügt hat, welche man versionieren möchte, macht man einen Commit, welcher einen Text enthält, welcher beschreibt, welche Änderungen vorgenommen werden: src_shell{git commit -m 'bugfix'}.
+Somit ist nun die Änderung gespeichert und kann mit dem vorherigen Stand verglichen werden, neue Änderungen gemacht werden, oder die Änderungen zu einem Remote-Repository übertragen werden: src_shell{git push origin master}.
+
+#+BEGIN_SRC ditaa :file /images/git.png 
++--------------------+ 
+| Arbeitsverzeichnis +<------|
++-----------------|--+       |
+                  |          |
+ |---git add-------          |
+ |                           |
+ |  +-----|                  |
+ -->|Stage|-----|            |
+    |------     |            |
+                |            |
+ |---git commit--            |
+ |                           |
+ |  |-----------             |
+ -->|Repository|-|           |
+    -----------| |           |
+                 |           |
+ |---git push-----           |
+ |                           |
+ |  +------|                 |
+ -->|Remote|--git pull-------|
+    |-------
+#+END_SRC
+
+#+RESULTS:
+[[file:/images/git.png]]
+
+* Magit
+Mit Magit kann man auf komfortable Weise diffs, also Vergleiche zwischen zwei Versionen ansehen.
+Ferner hat man den Staging-Bereich, und den Bereich der Änderungen, die noch nicht im Staging-Bereich sind im Blick, was den großen Vorteil bietet, dass nur die Änderungen, die eine logische Einheit bilden, in den Staging-Bereich aufgenommen werden können, um die diese zu commiten.
+Andere Änderungen werden erst in darauffolgenden Commits mit entsprechender Beschreibung publiziert.
