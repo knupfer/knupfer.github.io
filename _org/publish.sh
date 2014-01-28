@@ -18,7 +18,7 @@ title: Index
 for DIRECTORY in */
 do
     cd $DIRECTORY
-    for FILE in *.org
+    test -e *.org && for FILE in *.org
     do
         DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
         URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
