@@ -32,6 +32,7 @@ do
         sed 's:\(href="\)#:\1'$URL'#:g' >> ../categorie.$FATHER &&
         sed -n '3,/---/ p' $DATEI.org | head --lines=-1 > ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
         echo 'father: '$DIRECTORY | sed 's:/::' >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        echo '---' >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
         sed 'N;
             s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
             P;
