@@ -14,6 +14,34 @@ title: Index
 <div id="text-table-of-contents2">
 <ul>' > $TEMP/$TOC;
 
+for DIRECTORY in */
+do
+    cd $DIRECTORY
+    for FILE in *.org
+    do
+        DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
+        URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
+        TITLE=$(sed -n '3,/---/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
+        FATHER=$(sed -n '3,/---/ s_father: *"*\([^"]*\)"*_\1_p' $DATEI.org);
+        
+        test -e ../$TEMP/$DIRECTORY/$DATEI.html &&
+        echo '<li><a href="'$URL'">'$TITLE'</a>' >> ../categorie.$FATHER &&
+        sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' ../$TEMP/$DIRECTORY/$DATEI.html | 
+        tail -n +2 | 
+        head -n -1 | 
+        sed 's:\(href="\)#:\1'$URL'#:g' >> ../categorie.$FATHER &&
+        sed -n '3,/---/ p' $DATEI.org > ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        sed 'N;
+            s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
+            P;
+            s_file:///_/_;
+            s_<h2>Table of Contents</h2>_<h3>Inhaltsverzeichnis</h3>_;
+            D' ../$TEMP/$DIRECTORY/$DATEI.html >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        cat ../$TEMP/$DIRECTORY/$DATEI.org.publish > ../../_posts/$DATEI.html;
+    done
+    cd ..
+done
+
 for FILE in *.org
 do
     DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
@@ -24,9 +52,9 @@ do
     test -e $TEMP/$DATEI.html &&
     echo '<li><a href="'$URL'">'$TITLE'</a>' >> categorie.$FATHER &&
     sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' $TEMP/$DATEI.html | 
-        tail -n +2 | 
-        head -n -1 | 
-        sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
+    tail -n +2 | 
+    head -n -1 | 
+    sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
     sed -n '3,/---/ p' $DATEI.org > $TEMP/$DATEI.org.publish &&
     sed 'N;
         s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
@@ -36,6 +64,8 @@ do
         D' $TEMP/$DATEI.html >> $TEMP/$DATEI.org.publish &&
     cat $TEMP/$DATEI.org.publish > ../_posts/$DATEI.html;
 done
+
+
 
 mv categorie. categorie.zzz
 
