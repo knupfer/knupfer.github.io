@@ -1,6 +1,7 @@
 #!/bin/sh
 
 cd ~/git/knupfer.github.io/_org
+rm ~/git/knupfer.github.io/_posts/*
 
 TEMP='../_processing';
 TOC='totalindex';
@@ -87,5 +88,5 @@ done
 echo '</ul></div></div>' >> $TEMP/$TOC;
 cp $TEMP/$TOC  ../$TOC.html;
 mv categorie.* $TEMP;
-cp ../_posts/about.html ../about.html;
+mv ../_posts/about.html ../about.html;
 test -e *.org~ && rm *.org~ ;
