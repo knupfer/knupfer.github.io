@@ -3,10 +3,9 @@
 ---
 layout: post
 title: Emacs Magit
-father: Computer
 ---
 #+END_COMMENT
-
+mumobar2
 Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine Homepage versioniere und auf Github publiziere, befand ich die Zeit reif dafür, mich genauer mit Git auseinanderzusetzen.
 
 * Git
