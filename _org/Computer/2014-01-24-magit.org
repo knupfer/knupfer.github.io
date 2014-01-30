@@ -17,7 +17,7 @@ Daraufhin werden Änderungen in den Staging-Bereich gebracht: src_shell{git add 
 Sobald man dort alle Änderungen hinzugefügt hat, welche man versionieren möchte, macht man einen Commit, welcher einen Text enthält, welcher beschreibt, welche Änderungen vorgenommen werden: src_shell{git commit -m 'bugfix'}.
 Somit ist nun die Änderung gespeichert und kann mit dem vorherigen Stand verglichen werden, neue Änderungen gemacht werden, oder die Änderungen zu einem Remote-Repository übertragen werden: src_shell{git push origin master}.
 
-#+BEGIN_SRC ditaa :file /images/git.png 
+#+BEGIN_SRC ditaa :file /images/git.png :exports result
  +------------------+ 
  |Arbeitsverzeichnis+<-------+
  +----------------+-+        |
