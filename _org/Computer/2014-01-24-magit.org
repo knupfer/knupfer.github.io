@@ -49,8 +49,8 @@ Mit Magit kann man auf komfortable Weise diffs, also Vergleiche zwischen zwei Ve
 Ferner hat man den Staging-Bereich, und den Bereich der Änderungen, die noch nicht im Staging-Bereich sind im Blick, was den großen Vorteil bietet, dass nur die Änderungen, die eine logische Einheit bilden, in den Staging-Bereich aufgenommen werden können, um die diese zu commiten.
 Andere Änderungen werden erst in darauffolgenden Commits mit entsprechender Beschreibung publiziert.
 
-Dies sieht dann Beispielsweise folgendermaßen aus:
-#+BEGIN_SRC html
+Dies sieht dann Beispielsweise folgendermaßen:
+#+BEGIN_HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <!-- Created by htmlize-1.47 in css mode. -->
 <html>
@@ -136,4 +136,4 @@ Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
 </pre>
   </body>
 </html>
-#+END_SRC
+#+END_HTML
