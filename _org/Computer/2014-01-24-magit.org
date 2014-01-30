@@ -5,7 +5,6 @@ layout: post
 title: Emacs Magit
 ---
 #+END_COMMENT
-mumobar2
 Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine Homepage versioniere und auf Github publiziere, befand ich die Zeit reif dafür, mich genauer mit Git auseinanderzusetzen.
 
 * Git
@@ -19,30 +18,31 @@ Sobald man dort alle Änderungen hinzugefügt hat, welche man versionieren möch
 Somit ist nun die Änderung gespeichert und kann mit dem vorherigen Stand verglichen werden, neue Änderungen gemacht werden, oder die Änderungen zu einem Remote-Repository übertragen werden: src_shell{git push origin master}.
 
 #+BEGIN_SRC ditaa :file /images/git.png 
-+--------------------+ 
-| Arbeitsverzeichnis +<------|
-+-----------------|--+       |
+ +------------------+ 
+ |Arbeitsverzeichnis+<-------+
+ +----------------+-+        |
                   |          |
- |---git add-------          |
+ +---git add------+          |
  |                           |
- |  +-----|                  |
- -->|Stage|-----|            |
-    |------     |            |
+ |  +-----+                  |
+ +->|Stage|-----+            |
+    +-----+     |            |
                 |            |
- |---git commit--            |
+ +---git commit-+            |
  |                           |
- |  |-----------             |
- -->|Repository|-|           |
-    -----------| |           |
+ |  +----------+             |
+ +->|Repository+-+           |
+    +----------+ |           |
                  |           |
- |---git push-----           |
+ +---git push----+           |
  |                           |
- |  +------|                 |
- -->|Remote|--git pull-------|
-    |-------
+ |  +------+                 |
+ +->|Remote|--git pull-------+
+    +------+
 #+END_SRC
 
 #+RESULTS:
+
 [[file:/images/git.png]]
 
 * Magit
