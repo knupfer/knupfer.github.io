@@ -37,12 +37,11 @@ Somit ist nun die Änderung gespeichert und kann mit dem vorherigen Stand vergli
  +---git push----+           |
  |                           |
  |  +------+                 |
- +->|Remote|--git pull-------+
+ +->|Remote+--git pull-------+
     +------+
 #+END_SRC
 
 #+RESULTS:
-
 [[file:/images/git.png]]
 
 * Magit
