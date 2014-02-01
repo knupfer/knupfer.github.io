@@ -17,8 +17,7 @@ Es wird innerhalb der Testung auf Grund der bereits beantworteten Fragen auf den
     |                              |
     +------------------------------+
 #+END_SRC
-                    
-                    
+
 #+RESULTS:
 [[file:/images/adaptiveditaa.png]]
 
@@ -50,7 +49,7 @@ plot(x,y,type="l",xlab=expression(Lösungswahrscheinlichkeit),ylab=expression("E
 Mit der Formel für tatsächliche und für maximale Entropie kann die Redundanz ausgerechnet werden, welche in einer Testkonstruktion als Indikator für das Potential der Verbesserung durch ein adaptives Testverfahren benutzt werden kann.
 $$ R = H_{max} - H $$
 
-Somit kann im binären ein Test im idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen.
+Somit kann im binären ein Test im Idealfall um $R$ Fragen verkleinert werden, ohne an Informationen einzubüßen.
 Befinden sich im Test auch Fragen, die nicht binär sind, so verändert sich die Situation ein wenig.
 Die Entropie wird stets maximal bei gleichen Wahrscheinlichkeiten.
 Gibt es nun bei einer Frage z.B. 0, 1, 2 oder 3 Punkte gibt es eine maximale Entropie von $H_{max} = - \log_2{0.25} = 2 \mathrm{bit}$. Somit kann man einen Test auch um $R/2$ solcher Fragen ohne Informationsverlust verkleinern.
