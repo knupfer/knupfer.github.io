@@ -50,7 +50,7 @@ Ferner hat man den Staging-Bereich, und den Bereich der Änderungen, die noch ni
 Andere Änderungen werden erst in darauffolgenden Commits mit entsprechender Beschreibung publiziert.
 
 Dies sieht dann Beispielsweise folgendermaßen:
-#+BEGIN_HTML
+#+BEGIN_SRC html :exports results
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <!-- Created by htmlize-1.47 in css mode. -->
 <html>
@@ -136,4 +136,4 @@ Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
 </pre>
   </body>
 </html>
-#+END_HTML
+#+END_SRC
