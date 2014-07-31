@@ -1,8 +1,3 @@
-/*****************************************************************************/
-/*
-/* Common
-/*
-/*****************************************************************************/
 * {
   margin: 0;
   padding: 0;
@@ -14,23 +9,18 @@ html, body {
     height:40px!important;
     position:relative;
     z-index:20;
-    padding:10px 15px!important;
     background:#333!important;
     border-bottom:5px #0bb solid!important
 }
 #sitelogo {
     float:left!important;
     z-index: 200;
-    margin:0!important;
-    padding:0!important;
     height:40px!important;
     width:250px!important;
     background:url(/images/name.png) no-repeat!important
 }
 #sitelogo h1 {
-    margin:0!important;
     z-index: 200;
-    padding:0!important;
     text-indent:-9999px!important
 }
 #sitelogo a {
@@ -47,7 +37,6 @@ html, body {
     top: 0px;
     width: 100%;
     padding:0px 15px!important;
-    background:#333!important;
     border-bottom:5px #0bb solid!important
 }
 #smalllowerborder {
@@ -58,7 +47,6 @@ html, body {
     bottom: 0;
     width: 100%;
     padding:0px 15px!important;
-    background:#333!important;
     border-bottom:5px #0bb solid!important
 }
 #biglowerborder {
@@ -87,31 +75,23 @@ body {
     text-align: center; 
 }
 .todo { 
-    font-family: serif; 
+    text-indent: -10px;
     color: #800; 
-    left: 10px;
 }
 .done { 
+    text-indent: -20px;
     color: #080; 
-    left: -10px;
-}
-.tag { 
-    background-color: #eee; 
-    font-family: monospace;
-    padding: 2px; 
-    font-size: 80%; 
-    font-weight: normal; 
 }
 .timestamp { 
     color: #fff; 
 }
 .right { 
     margin-left: auto; 
-    margin-right: 0px;  
+    margin-right: 0;  
     text-align: right; 
 }
 .left { 
-    margin-left: 0px;  
+    margin-left: 0;  
     margin-right: auto; 
     text-align: left; 
 }
@@ -130,7 +110,6 @@ pre {
     font-family: monospace;
     font-size: tiny;
     overflow: auto;
-    margin: 0em;
 }
 pre.src {
     position: relative;
@@ -183,10 +162,6 @@ colgroup col:hover {
 textarea { 
     overflow-x: auto; 
 }
-.code-highlighted {  
-    font-weight: bold; 
-    color: #FFF;
-}
 ol {
     color: #066;
 }
@@ -215,23 +190,20 @@ ul ul ul ul {
     list-style-type: circle;
 }
 h2 {
-    font-size: 160%; 
+    font-size: 200%; 
     font-family: serif;
 }
 h3 {
-    font-size: 135%; 
+    font-size: 150%; 
     font-family: serif;
 }
 h4 {
-    font-size: 110%; 
+    font-size: 125%; 
     font-family: serif;
 }
 h5, h6 {
     font-size: 100%; 
     font-family: serif;
-}
-h1 { 
-    margin-bottom: 1em; 
 }
 p { 
     margin: 1em 0; 
@@ -247,11 +219,6 @@ a {
 a:hover {  
     color: #5DD;
 }
-/*****************************************************************************/
-/*
-/* Home
-/*
-/*****************************************************************************/
 ul.posts {
     list-style-type: none;
     margin-bottom: 2em;
@@ -264,11 +231,6 @@ ul.posts span {
     font-family: serif;
     font-size: 80%;
 }
-/*****************************************************************************/
-/*
-/* Site
-/*
-/*****************************************************************************/
 .site {
     font-size: 115%;
     text-align: justify;
@@ -284,22 +246,6 @@ ul.posts span {
     display: inline-block;
     margin-bottom: 2em;
 }
-.site .header h1.title a {
-    color: #088;
-}
-.site .header h1.title a:hover {
-    color: #000;
-}
-.site .header a.extra {
-    color: #aaa;
-    margin-left: 1em;
-}
-.site .header a.extra:hover {
-    color: #000;
-}
-.site .meta {
-    color: #aaa;
-}
 .site .footer {
     font-size: 80%;
     color: #444;
@@ -314,11 +260,6 @@ ul.posts span {
 .site .footer .contact a {
     color: #099;
 }
-/*****************************************************************************/
-/*
-/* Posts
-/*
-/*****************************************************************************/
 .post pre {
     color: #DDD;
     background-color: #050505;
