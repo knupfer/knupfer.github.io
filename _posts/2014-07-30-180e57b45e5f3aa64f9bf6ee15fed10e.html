@@ -1,0 +1,52 @@
+---
+layout: post
+title: Exportskript
+---
+<div class="outline-text-2" id="text-9">
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">[2014-07-30 Wed]</span></span>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-emacs-lisp">(<span style="color: #00bfff;">defun</span> <span style="color: #daa520;">knu-split-org-articles</span> (file-name)
+  <span style="color: #ffe4b5;">"Take the base of a .org file and extract all headings with timestamps in</span>
+<span style="color: #ffe4b5;">different html files for jekyll."</span>
+  (<span style="color: #00bfff;">with-temp-buffer</span>
+    (<span style="color: #00006DE06DE0;">insert-file-contents</span> file-name)
+    (<span style="color: #00006DE06DE0;">delete-file</span> file-name)
+    (<span style="color: #00006DE06DE0;">delete-directory</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>) t)
+    (<span style="color: #00006DE06DE0;">mkdir</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>))
+    (<span style="color: #00bfff;">let</span> ((articles (<span style="color: #00006DE06DE0;">split-string</span> (<span style="color: #00006DE06DE0;">buffer-string</span>) <span style="color: #deb887;">".*\n&lt;h2 .*&lt;/span&gt;"</span>)))
+      (<span style="color: #00bfff;">while</span> articles
+        (<span style="color: #00bfff;">with-temp-buffer</span>
+          (<span style="color: #00006DE06DE0;">insert</span> (<span style="color: #00006DE06DE0;">concat</span> <span style="color: #deb887;">"---\nlayout: post\ntitle:"</span> (<span style="color: #00006DE06DE0;">pop</span> articles)))
+          (<span style="color: #00006DE06DE0;">re-search-backward</span> <span style="color: #deb887;">"&lt;/div&gt;"</span> nil t)
+          (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">""</span> nil nil)
+          (<span style="color: #00006DE06DE0;">goto-char</span> (<span style="color: #00006DE06DE0;">point-min</span>))
+          (<span style="color: #00bfff;">when</span> (<span style="color: #00006DE06DE0;">re-search-forward</span> <span style="color: #deb887;">"title: </span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">.*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">&lt;/h2&gt;</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">"</span> nil t)
+            (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">"\n---"</span> nil nil nil 2)
+            (<span style="color: #00bfff;">let</span> ((title (<span style="color: #00006DE06DE0;">match-string</span> 1)))
+              (<span style="color: #00bfff;">when</span> (<span style="color: #00006DE06DE0;">re-search-forward</span>
+                     <span style="color: #deb887;">"&lt;span class=\"timestamp\"&gt;\\[</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">[0-9-]*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">"</span> nil t)
+                (<span style="color: #00006DE06DE0;">write-file</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>
+                                    (<span style="color: #00006DE06DE0;">match-string</span> 1)
+                                    <span style="color: #deb887;">"-"</span> (<span style="color: #00006DE06DE0;">md5</span> title) <span style="color: #deb887;">".html"</span>))))))))))
+(<span style="color: #00006DE06DE0;">run-with-idle-timer</span>
+ 0.5 nil '<span style="color: #00006DE06DE0;">knu-split-org-articles</span>
+ (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-sans-extension</span> (<span style="color: #00006DE06DE0;">buffer-file-name</span>)) <span style="color: #deb887;">".html"</span>))
+</pre>
+</div>
+
+<pre class="example">
+[nil 0 0 500000 nil knu-split-org-articles ("/home/quxbar/git/knupfer.github.io.minimalism/master.html") idle 0]
+</pre>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Created: 2014-07-31 Thu 11:43</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.7b)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+
+</body>
+</html>
