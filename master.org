@@ -1567,7 +1567,6 @@ Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
 </html>
 #+END_SRC
 
-
 * Emacs Org-Mode
 [2013-10-13 Sun]
 ** Einleitung
@@ -1592,9 +1591,8 @@ Erweiterung, für den Texteditor Emacs. Org-Mode dient, wie der Name
 bereits impliziert, der Organisation.
 
 ** Outliner
-[2014-07-30 Wed] Org-Mode bietet sehr elaborierte
-Outlinefähigkeiten. Hierarchien werden mit einer unterschiedlichen
-Anzahl an Sternen gezeigt.
+Org-Mode bietet sehr elaborierte Outlinefähigkeiten. Hierarchien
+werden mit einer unterschiedlichen Anzahl an Sternen gezeigt.
 
 #+BEGIN_SRC org
  * Erste Überschrift
@@ -1864,7 +1862,6 @@ dann stets, bei gleichem Layout, verwendet werden kann.
 #+RESULTS:
 [[file:images/lily-beispiel.png]]
 
-
 * Emacs whitespace.el
 [2014-01-26 Sun]
 ** Einleitung
@@ -1886,7 +1883,6 @@ habe, habe ich mich für Leerzeichen entschieden.
 *** Bugs
 **** langsam für restlichen Whitespace, wenn der Point darübergeht...
 **** in Teilen inkompatibel mit org-mode indentation-mode
-
 
 
 
@@ -2246,7 +2242,6 @@ an, der gut auch auf Touch-screens und Tablets verwendet werden kann.
 
 
 
-
 * Hello World!
 [2013-10-06 Sun]
 ** Einleitung
@@ -2484,8 +2479,15 @@ different html files for jekyll."
       (while articles
         (with-temp-buffer
           (insert (concat "---\nlayout: post\ntitle:" (pop articles)))
+          (goto-char (point-min))
+          (when (re-search-forward "<div id=\"postamble\" class=\"status\">*" nil t)
+            (delete-region (match-beginning 0) (point-max)))
+          (goto-char (point-max))
           (re-search-backward "</div>" nil t)
           (replace-match "" nil nil)
+          (goto-char (point-min))
+          (while (re-search-forward "<img src=\"images/" nil t)
+            (replace-match "<img src=\"/images/"))
           (goto-char (point-min))
           (when (re-search-forward "title: \\(.*\\)\\(</h2>\\)" nil t)
             (replace-match "\n---" nil nil nil 2)
@@ -2498,4 +2500,5 @@ different html files for jekyll."
 (run-with-idle-timer
  0.5 nil 'knu-split-org-articles
  (concat (file-name-sans-extension (buffer-file-name)) ".html"))
+nil
 #+END_SRC
