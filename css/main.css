@@ -70,8 +70,6 @@ body {
     font: 13.34px sans-serif;
     font-size: small;
     text-align: center;
-    margin-bottom: 15pt;
-    margin-top: 15pt
 }
 .title { 
     text-align: center; 
@@ -188,6 +186,9 @@ ul ul ul {
 }
 ul ul ul ul {
     list-style-type: circle;
+}
+h {
+    margin-top: 20px
 }
 h2 {
     font-size: 200%; 
