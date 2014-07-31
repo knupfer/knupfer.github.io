@@ -153,10 +153,10 @@ dt {
 .figure p { 
     text-align: center; 
 }
-tr: hover { 
+tr:hover { 
     background-color: #eee;
 } 
-colgroup col: hover { 
+colgroup col:hover { 
     background-color: #aee;
 } 
 textarea { 
@@ -236,7 +236,7 @@ a {
     -moz-transition: color .3s linear; 
     transition: color .3s linear;  
 }
-a: hover {  
+a:hover {  
     color: #5DD;
 }
 ul.posts {
