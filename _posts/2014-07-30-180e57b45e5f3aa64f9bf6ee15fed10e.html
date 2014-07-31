@@ -31,7 +31,7 @@ title: Exportskript
           (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">""</span> nil nil)
           (<span style="color: #00006DE06DE0;">goto-char</span> (<span style="color: #00006DE06DE0;">point-min</span>))
           (<span style="color: #00bfff;">while</span> (<span style="color: #00006DE06DE0;">re-search-forward</span>
-                  <span style="color: #deb887;">"&lt;span class=\"section-number.*&lt;/span&gt;"</span> nil t)
+                  <span style="color: #deb887;">"&lt;span class=\"section-number[</span><span style="color: #deb887;">^</span><span style="color: #deb887;">/]*&lt;/span&gt;"</span> nil t)
             (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">""</span>))
           (<span style="color: #00006DE06DE0;">goto-char</span> (<span style="color: #00006DE06DE0;">point-min</span>))
           (<span style="color: #00bfff;">while</span> (<span style="color: #00006DE06DE0;">re-search-forward</span> <span style="color: #deb887;">"&lt;img src=\"images/"</span> nil t)

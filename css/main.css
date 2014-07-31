@@ -88,10 +88,12 @@ body {
 }
 .todo { 
     font-family: serif; 
-    color: #a00; 
+    color: #800; 
+    left: 10px;
 }
 .done { 
-    color: #0f0; 
+    color: #080; 
+    left: -10px;
 }
 .tag { 
     background-color: #eee; 

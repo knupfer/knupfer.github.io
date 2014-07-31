@@ -1885,7 +1885,6 @@ habe, habe ich mich für Leerzeichen entschieden.
 **** in Teilen inkompatibel mit org-mode indentation-mode
 
 
-
 * Neo Layout
 [2013-10-21 Mon]
 ** Einleitung
@@ -2241,7 +2240,6 @@ inkompatibel. Es strebt einen primitiven (leicht benutzbaren) Desktop
 an, der gut auch auf Touch-screens und Tablets verwendet werden kann.
 
 
-
 * Hello World!
 [2013-10-06 Sun]
 ** Einleitung
@@ -2490,7 +2488,7 @@ different html files for jekyll."
           (replace-match "" nil nil)
           (goto-char (point-min))
           (while (re-search-forward
-                  "<span class=\"section-number.*</span>" nil t)
+                  "<span class=\"section-number[^/]*</span>" nil t)
             (replace-match ""))
           (goto-char (point-min))
           (while (re-search-forward "<img src=\"images/" nil t)
