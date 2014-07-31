@@ -2480,11 +2480,18 @@ different html files for jekyll."
         (with-temp-buffer
           (insert (concat "---\nlayout: post\ntitle:" (pop articles)))
           (goto-char (point-min))
-          (when (re-search-forward "<div id=\"postamble\" class=\"status\">*" nil t)
-            (delete-region (match-beginning 0) (point-max)))
+          (when (re-search-forward
+                 "<div id=\"postamble\" class=\"status\">" nil t)
+            (goto-char (match-beginning 0))
+            (forward-line -1)
+            (delete-region (point) (point-max)))
           (goto-char (point-max))
           (re-search-backward "</div>" nil t)
           (replace-match "" nil nil)
+          (goto-char (point-min))
+          (while (re-search-forward
+                  "<span class=\"section-number.*</span>" nil t)
+            (replace-match ""))
           (goto-char (point-min))
           (while (re-search-forward "<img src=\"images/" nil t)
             (replace-match "<img src=\"/images/"))

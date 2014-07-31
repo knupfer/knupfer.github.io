@@ -10,7 +10,7 @@
 html, body { 
     height: 100%; 
 }
-#navbar {
+#bigupperborder {
     height:40px!important;
     position:relative;
     z-index:20;
@@ -18,7 +18,7 @@ html, body {
     background:#333!important;
     border-bottom:5px #0bb solid!important
 }
-#navbarlogo {
+#sitelogo {
     float:left!important;
     z-index: 200;
     margin:0!important;
@@ -27,19 +27,19 @@ html, body {
     width:250px!important;
     background:url(/images/name.png) no-repeat!important
 }
-#navbarlogo h1 {
+#sitelogo h1 {
     margin:0!important;
     z-index: 200;
     padding:0!important;
     text-indent:-9999px!important
 }
-#navbarlogo a {
+#sitelogo a {
     display:block!important;
     z-index: 200;
     height:40px!important;
     width:250px!important
 }
-#navbar2 {
+#smallupperborder {
     height:0px!important;
     z-index: 10;
     position: fixed;
@@ -50,18 +50,18 @@ html, body {
     background:#333!important;
     border-bottom:5px #0bb solid!important
 }
-#navbar3 {
-    height:0px!important;
+#smalllowerborder {
+    height:0!important;
     z-index: 10;
     position: fixed;
-    left: 0px;
-    bottom: 0px;
+    left: 0;
+    bottom: 0;
     width: 100%;
     padding:0px 15px!important;
     background:#333!important;
     border-bottom:5px #0bb solid!important
 }
-#navbar4 {
+#biglowerborder {
     margin-top:300px;
     height:400px!important; 
     position:relative; 
@@ -76,15 +76,6 @@ img.random {
     max-height: 380px;
     margin-bottom: 10pt;
     border: 1px solid black;
-}
-@font-face {
-    font-family: "SourceCode";
-    src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Regular.otf.woff') format('woff');
-} 
-@font-face {
-    font-family: "SourceCode";
-    src: url('/fonts/SourceCodePro/WOFF/OTF/SourceCodePro-Black.otf.woff') format('woff');
-    font-weight: bold;
 }
 body {
     background-color: #FFF;
@@ -144,15 +135,6 @@ pre.src {
     overflow: auto;
     padding-top: 1.2em;
 }
-/* pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
- }*/
 table {
     border-collapse:collapse;  
 }
@@ -196,11 +178,6 @@ tr:hover {
 colgroup col:hover { 
     background-color: #aee;
 } 
-/*#org-div-home-and-up { 
-    text-align: right; 
-    font-size: 70%; 
-    white-space: nowrap; 
-}*/
 textarea { 
     overflow-x: auto; 
 }
@@ -234,9 +211,6 @@ ul ul ul {
 }
 ul ul ul ul {
     list-style-type: circle;
-}
-h1 {
-    font-size: 100%;
 }
 h2 {
     font-size: 160%; 
