@@ -204,7 +204,7 @@ h5, h6 {
     font-family: serif;
 }
 p { 
-    margin: 1em 0; 
+    margin: 1em 1em; 
 }
 a {
     color: #AAA; 
@@ -220,6 +220,7 @@ a: hover {
 ul.posts {
     list-style-type: none;
     margin-bottom: 2em;
+    margin-top: 1em;
 }
 ul.posts li {
     line-height: 1.75em;
@@ -243,6 +244,7 @@ ul.posts span {
 .site .header h1.title {
     display: inline-block;
     margin-bottom: 2em;
+    margin-top: 1em;
 }
 .site .footer {
     font-size: 80%;
