@@ -161,7 +161,14 @@ textarea {
     overflow-x: auto; 
 }
 ol {
+    margin-top: 15px;
+    margin-bottom: 15px;
     color: #066;
+}
+
+ol ol {
+    margin-top: 0;
+    margin-bottom: 0
 }
 ol div {
     color: #000;
