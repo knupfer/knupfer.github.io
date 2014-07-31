@@ -190,17 +190,17 @@ ul ul ul ul {
 h2 {
     font-size: 200%; 
     font-family: serif;
-    margin-top: 20px
+    margin-top: 50px
 }
 h3 {
     font-size: 150%; 
     font-family: serif;
-    margin-top: 20px
+    margin-top: 40px
 }
 h4 {
     font-size: 125%; 
     font-family: serif;
-    margin-top: 20px
+    margin-top: 30px
 }
 h5, h6 {
     font-size: 100%; 
@@ -209,6 +209,7 @@ h5, h6 {
 }
 p { 
     margin: 1em 0; 
+    margin-top: 20px
 }
 a {
     color: #AAA; 
