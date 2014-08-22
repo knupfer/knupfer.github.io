@@ -1,5 +1,4 @@
-* About
-[2014-07-30 Wed]
+* [2013-10-05 Sat] About
 ** Einleitung
 Lieber Leser,
 
@@ -112,8 +111,7 @@ Hobbies sind die folgenden:
 |   | Lilypond | Auszeichnungssprache für professionellen Notensatz   |
 |---+----------+------------------------------------------------------|
 
-* Adaptives Testen
-[2013-10-28 Mon]
+* [2013-10-28 Mon] Adaptives Testen
 ** Einleitung
 Beim adaptiven Testen werden die Möglichkeiten einer computerbasierten
 Testung in erweitertem Maße ausgenutzt.  Es wird innerhalb der Testung
@@ -123,7 +121,7 @@ diesen reflektiert.
 
 #+BEGIN_SRC ditaa :file images/adaptiveditaa.png :exports results
 +---------+   +--------+   +---------------+
-|  Item-  |-->| Modell |-->|   Schätzung   |
+|  Item-  |-->| Modell |-->|   Schätzung   | 
 | antwort |   +--------+   | nächstes Item |
 +---------+                +-------+-------+
     ^                              |
@@ -143,7 +141,7 @@ die Entropie maximal ist.
 
 Entropie stellt nicht nur Chaos, sondern auch Informationsdichte nach
 Shannon dar (vgl. [[http://de.wikipedia.org/wiki/Entropie_%28Informationstheorie%29][Wikipedia]]).  Die folgende Formel ergiebt die
-Entropie eines Ereignisses. Hierbei ist $n$ die Anzahl der
+Entropie eines Ereignisses.  Hierbei ist $n$ die Anzahl der
 Möglichkeiten und $p_i$ die jeweiligen Wahrscheinlichkeiten dieser
 (sich ausschließender) Möglichkeiten.  $$ H = - \sum_{i=1}^n p_i \cdot
 \log_2{p_i} $$
@@ -1415,8 +1413,7 @@ legend(length(test)/4, length(test), c(names(summe), round(benchmark[length(benc
 #+RESULTS: grafik
 [[file:images/entropie2.png]]
 
-* Magit!
-[2014-01-24 Fri]
+* [2014-01-24 Fri] Magit!
 ** Einleitung
 Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine
 Homepage versioniere und auf Github publiziere, befand ich die Zeit
@@ -1575,8 +1572,7 @@ Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
 </html>
 #+END_SRC
 
-* Emacs Org-Mode
-[2013-10-13 Sun]
+* [2013-10-13 Sun] Emacs Org-Mode
 ** Einleitung
 #+name: paper
 #+begin_src lilypond :exports none
@@ -1815,8 +1811,8 @@ dann stets, bei gleichem Layout, verwendet werden kann.
   
 \relative c' {
     r2 e |
-    e f2. e8 d c2 |
-    c4 e f g2 f4 d e4. d8 d2 c4 |
+    e f2. e8 d c2 | 
+    c4 e f g2 f4 d e4. d8 d2 c4 | 
     d2 
 }
 
@@ -1870,8 +1866,7 @@ dann stets, bei gleichem Layout, verwendet werden kann.
 #+RESULTS:
 [[file:images/lily-beispiel.png]]
 
-* Emacs whitespace.el
-[2014-01-26 Sun]
+* [2014-01-26 Sun] Emacs whitespace.el
 ** Einleitung
 Als Anfänger im Programmieren habe ich mir die Frage gestellt, wie ich
 mir das Programmierenlernen so effektiv und komfortabel wie möglich
@@ -1892,9 +1887,7 @@ habe, habe ich mich für Leerzeichen entschieden.
 **** langsam für restlichen Whitespace, wenn der Point darübergeht...
 **** in Teilen inkompatibel mit org-mode indentation-mode
 
-
-* Neo Layout
-[2013-10-21 Mon]
+* [2013-10-21 Mon] Neo Layout
 ** Einleitung
 Vor zwei Jahren bin ich mehr oder minder über das alternative
 Tastaturlayout Neo gestolpert und mich seither intensiv mit Ergonomie
@@ -2005,8 +1998,7 @@ sehr gut ist, da Neo bereits einen beachtlichen Bekanntheitsgrad
 erlangt hat, so ist das Neo-Layout in jeder Linuxdistro als
 Belegungsvariante des Deutschen auswählbar.
 
-* Linuxdistributionen
-[2013-10-09 Wed]
+* [2013-10-09 Wed] Linuxdistributionen
 ** Einleitung
 Als ich vor ungefähr 2 Jahren auf Linux umgestiegen bin, stellte ich
 mir die Frage welche Distribution ich nehmen sollte. Überwältigt von
@@ -2247,9 +2239,7 @@ wenig zu tun hat. Unity ist mit nahezu allen Distros außer Ubuntu
 inkompatibel. Es strebt einen primitiven (leicht benutzbaren) Desktop
 an, der gut auch auf Touch-screens und Tablets verwendet werden kann.
 
-
-* Hello World!
-[2013-10-06 Sun]
+* [2013-10-06 Sun] Hello World!
 ** Einleitung
 Hallo, dies ist mein erster Post hier. Ich bin gespannt, ob ich mich
 für das Bloggen begeistern kann. Gleichzeitig dient diese Homepage
@@ -2338,22 +2328,22 @@ verfasst, in ein Html exportiert und danach mit einem Shellscript den
 Anforderungen von Jekyll angepasst.
 
 ***** Syntaxhighlighting
-Der Export von Syntaxhighlighting von Html ist ein wenig
-aufwendig. Man könnte zwar auf das Syntaxhighlighting von Jekyll
-zurückgreifen, dies ist aber für helle Codeboxen optimiert, was nicht
-meiner Designvorstellung entsprach. Eine Änderung dieses Highlightings
-würde mit mühevollem ändern und testen jedes einzelnen
-Codeschlüsselwortes in einer css-Datei einhergehen, worauf ich keine
-Lust habe, da es auch möglich ist, dass diese Homepage ihr Äußeres
-noch mehrfach verändert etc.
+Der Export von Syntaxhighlighting von Html ist ein wenig aufwendig.
+Man könnte zwar auf das Syntaxhighlighting von Jekyll zurückgreifen,
+dies ist aber für helle Codeboxen optimiert, was nicht meiner
+Designvorstellung entsprach.  Eine Änderung dieses Highlightings würde
+mit mühevollem ändern und testen jedes einzelnen Codeschlüsselwortes
+in einer css-Datei einhergehen, worauf ich keine Lust habe, da es auch
+möglich ist, dass diese Homepage ihr Äußeres noch mehrfach verändert
+etc.
 
 Mithilfe des Zusatzpakete htmlize.el für Emacs ist es mir gelungen,
 Emacs so einzurichten, dass er automatisch das gleiche
 Syntaxhighlighting, welches derzeit im Editor aktiv ist, in den
-Html-export übernimmt. Über ein in Org Mode implementiertes Javascript
-ist es sogar möglich, über links Referenzcodezeilen zu
-manipulieren. Die Standardeinstellung war, die ganze Zeile gelb zu
-färben, was sehr direkt war. Ich habe mich für eine dezente Version
+Html-export übernimmt.  Über ein in Org Mode implementiertes
+Javascript ist es sogar möglich, über links Referenzcodezeilen zu
+manipulieren.  Die Standardeinstellung war, die ganze Zeile gelb zu
+färben, was sehr direkt war.  Ich habe mich für eine dezente Version
 entschieden und habe den Sourcecode so geändert, dass wenn der Cursor
 über dem link ist, die entsprechende Codezeile fett dargestellt wird.
 
@@ -2470,8 +2460,7 @@ mv ../_posts/about.html ../about.html;
 test -e *.org~ && rm *.org~ ;
 #+END_SRC
 
-* Exportskript
-[2014-07-30 Wed]
+* [2014-07-30 Wed] Exportskript
 #+BEGIN_SRC emacs-lisp :exports both
 (defun knu-split-org-articles (file-name)
   "Take the base of a .org file and extract all headings with timestamps in
@@ -2481,7 +2470,7 @@ different html files for jekyll."
     (delete-file file-name)
     (delete-directory (concat (file-name-directory file-name) "_posts/") t)
     (mkdir (concat (file-name-directory file-name) "_posts/"))
-    (let ((articles (split-string (buffer-string) ".*\n<h2 .*</span>")))
+    (let ((articles (split-string (buffer-string) ".*\n<h2 [^/]*</span>")))
       (while articles
         (with-temp-buffer
           (insert (concat "---\nlayout: post\ntitle:" (pop articles)))
@@ -2502,19 +2491,19 @@ different html files for jekyll."
           (while (re-search-forward "<img src=\"images/" nil t)
             (replace-match "<img src=\"/images/"))
           (goto-char (point-min))
-          (when (re-search-forward "title: \\(.*\\)\\(</h2>\\)" nil t)
-            (replace-match "\n---" nil nil nil 2)
-            (let ((title (match-string 1)))
-
-              (when (re-search-forward
-                     ".*<span class=\"timestamp\">\\[\\([0-9-]*\\).*" nil t)
-                (let ((date (match-string 1)))
-                  (replace-match "")
+          (when (re-search-forward
+                 "<span class=\"timestamp-wrapper\"><span class=\"timestamp\">\\[\\([0-9-]*\\).*</span></span>" nil t)
+            (let ((date (match-string 1)))
+              (replace-match "")
+              (goto-char (point-min))
+              (when (re-search-forward "title: *\\(.*\\)\\(</h2>\\)" nil t)
+                (replace-match "\n---" nil nil nil 2)
+                (let ((title (match-string 1)))
                   (write-file (concat (file-name-directory file-name) "_posts/"
                                       date
                                       "-" (md5 title) ".html")))))))))))
-(run-with-idle-timer
- 0.5 nil 'knu-split-org-articles
- (concat (file-name-sans-extension (buffer-file-name)) ".html"))
-nil
+
+(progn (run-with-idle-timer 0.5 nil 'knu-split-org-articles
+                            (concat (file-name-sans-extension
+                                     (buffer-file-name)) ".html")) nil)
 #+END_SRC

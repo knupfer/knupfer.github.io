@@ -1,11 +1,8 @@
 ---
 layout: post
-title: Exportskript
+title:  Exportskript
 ---
 <div class="outline-text-2" id="text-9">
-<p>
-
-</p>
 <div class="org-src-container">
 
 <pre class="src src-emacs-lisp">(<span style="color: #00bfff;">defun</span> <span style="color: #daa520;">knu-split-org-articles</span> (file-name)
@@ -15,7 +12,7 @@ title: Exportskript
     (<span style="color: #00006DE06DE0;">insert-file-contents</span> file-name)
     (<span style="color: #00006DE06DE0;">delete-directory</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>) t)
     (<span style="color: #00006DE06DE0;">mkdir</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>))
-    (<span style="color: #00bfff;">let</span> ((articles (<span style="color: #00006DE06DE0;">split-string</span> (<span style="color: #00006DE06DE0;">buffer-string</span>) <span style="color: #deb887;">".*\n&lt;h2 .*&lt;/span&gt;"</span>)))
+    (<span style="color: #00bfff;">let</span> ((articles (<span style="color: #00006DE06DE0;">split-string</span> (<span style="color: #00006DE06DE0;">buffer-string</span>) <span style="color: #deb887;">".*\n&lt;h2 [</span><span style="color: #deb887;">^</span><span style="color: #deb887;">/]*&lt;/span&gt;"</span>)))
       (<span style="color: #00bfff;">while</span> articles
         (<span style="color: #00bfff;">with-temp-buffer</span>
           (<span style="color: #00006DE06DE0;">insert</span> (<span style="color: #00006DE06DE0;">concat</span> <span style="color: #deb887;">"---\nlayout: post\ntitle:"</span> (<span style="color: #00006DE06DE0;">pop</span> articles)))
@@ -36,21 +33,21 @@ title: Exportskript
           (<span style="color: #00bfff;">while</span> (<span style="color: #00006DE06DE0;">re-search-forward</span> <span style="color: #deb887;">"&lt;img src=\"images/"</span> nil t)
             (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">"&lt;img src=\"/images/"</span>))
           (<span style="color: #00006DE06DE0;">goto-char</span> (<span style="color: #00006DE06DE0;">point-min</span>))
-          (<span style="color: #00bfff;">when</span> (<span style="color: #00006DE06DE0;">re-search-forward</span> <span style="color: #deb887;">"title: </span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">.*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">&lt;/h2&gt;</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">"</span> nil t)
-            (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">"\n---"</span> nil nil nil 2)
-            (<span style="color: #00bfff;">let</span> ((title (<span style="color: #00006DE06DE0;">match-string</span> 1)))
-
-              (<span style="color: #00bfff;">when</span> (<span style="color: #00006DE06DE0;">re-search-forward</span>
-                     <span style="color: #deb887;">".*&lt;span class=\"timestamp\"&gt;\\[</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">[0-9-]*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">.*"</span> nil t)
-                (<span style="color: #00bfff;">let</span> ((date (<span style="color: #00006DE06DE0;">match-string</span> 1)))
-                  (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">""</span>)
+          (<span style="color: #00bfff;">when</span> (<span style="color: #00006DE06DE0;">re-search-forward</span>
+                 <span style="color: #deb887;">"&lt;span class=\"timestamp-wrapper\"&gt;&lt;span class=\"timestamp\"&gt;\\[</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">[0-9-]*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">.*&lt;/span&gt;&lt;/span&gt;"</span> nil t)
+            (<span style="color: #00bfff;">let</span> ((date (<span style="color: #00006DE06DE0;">match-string</span> 1)))
+              (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">""</span>)
+              (<span style="color: #00006DE06DE0;">goto-char</span> (<span style="color: #00006DE06DE0;">point-min</span>))
+              (<span style="color: #00bfff;">when</span> (<span style="color: #00006DE06DE0;">re-search-forward</span> <span style="color: #deb887;">"title: *</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">.*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">&lt;/h2&gt;</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">"</span> nil t)
+                (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">"\n---"</span> nil nil nil 2)
+                (<span style="color: #00bfff;">let</span> ((title (<span style="color: #00006DE06DE0;">match-string</span> 1)))
                   (<span style="color: #00006DE06DE0;">write-file</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>
                                       date
                                       <span style="color: #deb887;">"-"</span> (<span style="color: #00006DE06DE0;">md5</span> title) <span style="color: #deb887;">".html"</span>)))))))))))
-(<span style="color: #00006DE06DE0;">run-with-idle-timer</span>
- 0.5 nil '<span style="color: #00006DE06DE0;">knu-split-org-articles</span>
- (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-sans-extension</span> (<span style="color: #00006DE06DE0;">buffer-file-name</span>)) <span style="color: #deb887;">".html"</span>))
-nil
+
+(<span style="color: #00bfff;">progn</span> (<span style="color: #00006DE06DE0;">run-with-idle-timer</span> 0.5 nil '<span style="color: #00006DE06DE0;">knu-split-org-articles</span>
+                            (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-sans-extension</span>
+                                     (<span style="color: #00006DE06DE0;">buffer-file-name</span>)) <span style="color: #deb887;">".html"</span>)) nil)
 </pre>
 </div>
 </div>
