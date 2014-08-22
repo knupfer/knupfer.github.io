@@ -1,3 +1,72 @@
+* [2014-08-22 Fri] lilypond-pretty-beat-mode
+I've written a pretty nice mode for lilypond, which tries to make
+lilypond coding less error prone.  It uses functions of LilyPond-mode
+(yes, it uses CamelCase) to display the notes in a distance which
+correlates with their duration.  Therefor, the bar sign | will be all
+in one row if all is correct (the music and the parser), if the bar is
+overfull or underfull it shows +- signs alla git.
+
+That is already quite nice, but it gets even more interesting.  If you
+put after a barline the barnumber, e. g. %7, it will enumerate all
+consecutive lines which end in barlines.  If you put another barnumber
+in one of the following lines, it adjusts accordingly.  If there is a
+gap, for example by ending a voice and beginning another, it will stop
+enumerating unless it finds new numbers.  The result is a much more
+comfortable bug squashing after looking at the pdf.
+
+The last feature is a interpreter for music.  The minor mode will
+parse the entire file and count which beats are frequently used and
+marks this beats with lines colord according to the frequency.  This
+provides a robust way to determine the correct length of a bar for
+good layouting (for example 72 columns) and to aide writing music.
+You see imediatly if the notes are on heavy beats or light beats.  You
+don't even have to hear or see the music and it provides a quite
+useful impression of the measure of the piece.  If you've got piece in
+5/4, you'll see whether it is a (2+3)/4 or a (3+2)/4.  You see even
+different dances like sarabande.
+
+There are some shortcomings of this mode.  Sometimes the get-beat
+function from LilyPond-mode fails to count the beat at point.  This
+happens for more complex music, with voice splits in one voice, and in
+the first bar of every voice (it's quite possible that this bug will
+be fixed).  Another major flaw is that it can't handle changes in
+meter or changes in the emphasize pattern (for example hemiola).
+Performance was a big problem which is now resolved, by parsing the
+file line by line only when idle, aborting on user input and resuming
+after the input at the last position.  Will writing the music it keeps
+analysing it and tracking changes of the priority of beats with
+accordingly changing colors.  Depending on speed of the computer and
+size of the piece, this might take some seconds (which never block the
+user).
+
+* [2014-08-22 Fri] Migration
+In the last days, I changed the publish procedure for my homepage.
+The goals hereby were:
+- article storage :: Before I maintained a tree structure for every
+     topic and every article was in a separate file with the name
+     consisting of the date and the article title.  Now all articles
+     reside in the same file.  This is not scalable, but scalability
+     is normally not the goal of a personal blog.
+- emacs centric :: Before, the files were modifyed by a shell script
+                   and some emacs scripts, which were dependent on my
+                   .emacs file.  Now it works just with emacs
+                   org-mode, all that is needed is a html export which
+                   executes a elisp sourceblock in the org-file which
+                   splits up the resulting html into individual files.
+- simpler naming :: I use Jekyll and github for my blog, therefor the
+                    files are required to have a certain format etc.
+                    Now this is extracted automatically via
+                    org-time-stamp and a md5 hash of the title.  This
+                    results in very collision robust file names which
+                    keep the same unless the title changes, which is
+                    very nice for permalinks etc.
+This is the first article which I'm writing with the new setup, and
+it's a lot simpler and better to maintain.  I simply use org and
+haven't to worry about changes in the directory structure etc or
+renaming files and titles within files and finding files.  I just
+write in one file and thats all.  If I don't use a time stamp, it
+won't get exported.  Alternatively I can use common org-tags
+like :noexport:.
 * [2014-07-30 Wed] Exportskript
 #+BEGIN_SRC emacs-lisp :exports both
 (defun knu-split-org-articles (file-name)
