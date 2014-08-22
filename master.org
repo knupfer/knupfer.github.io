@@ -2483,6 +2483,9 @@ different html files for jekyll."
           (re-search-backward "</div>" nil t)
           (replace-match "" nil nil)
           (goto-char (point-min))
+          (while (re-search-forward "^ *\n[ \n]*" nil t)
+            (replace-match "\n"))
+          (goto-char (point-min))
           (while (re-search-forward
                   "<span class=\"section-number[^/]*</span>" nil t)
             (replace-match ""))

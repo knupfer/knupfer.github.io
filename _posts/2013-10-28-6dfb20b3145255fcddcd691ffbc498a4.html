@@ -14,7 +14,6 @@ Probanden geschätzt, um ihm als nächstes eine Frage zu geben, die
 diesen reflektiert.
 </p>
 
-
 <div class="figure">
 <p><img src="/images/adaptiveditaa.png" alt="adaptiveditaa.png" />
 </p>
@@ -62,7 +61,6 @@ Grund des \(\log_2\). Es kann also ein Informationsgehalt von 8 bit mit
 Hilfe eines bytes dargestellt werden, sprich mit 8 Nullen oder Einsen
 (z.B. 10101010).
 </p>
-
 
 <div class="figure">
 <p><img src="/images/entropie.png" alt="entropie.png" />
@@ -423,7 +421,7 @@ rest.temp = <span style="color: #98f5ff;">NULL</span>
     info.temp3 = <span style="color: #98f5ff;">NULL</span>
     fit3 = <span style="color: #98f5ff;">NULL</span>
 
-    <span style="color: #00bfff;">if</span> (i == length(test))
+<span style="color: #00bfff;">if</span> (i == length(test))
     {
         rest.temp[[i]] = rest.temp[[1]]*0
     } <span style="color: #00bfff;">else</span>
@@ -431,7 +429,7 @@ rest.temp = <span style="color: #98f5ff;">NULL</span>
         query = 1:i
         pcitems.temp = which(names(test[-query]) %<span style="color: #00bfff;">in</span>% names(test[pcitems]))
 
-        <span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
+<span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
         {
             <span style="color: #00bfff;">if</span> (j %<span style="color: #00bfff;">in</span>% pcitems.temp)
             {
@@ -442,7 +440,7 @@ rest.temp = <span style="color: #98f5ff;">NULL</span>
             }
         }
 
-        <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, trace = 0)</span>
+<span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, trace = 0)</span>
         <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, ~.^2, trace = 0)</span>
         odds3 = FUN.Odds(fit3)
         info.temp3 = FUN.info.temp(odds3)
@@ -597,7 +595,7 @@ modell[[1]] = fit[[query]]
     fit = <span style="color: #98f5ff;">NULL</span>
     pcitems.temp = which(names(test[-query]) %<span style="color: #00bfff;">in</span>% names(test[pcitems]))
 
-    <span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
+<span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
     {
         <span style="color: #00bfff;">if</span> (j %<span style="color: #00bfff;">in</span>% pcitems.temp)
         {
@@ -624,7 +622,7 @@ modell[[1]] = fit[[query]]
     fit = <span style="color: #98f5ff;">NULL</span>
     pcitems.temp = which(names(test[-query]) %<span style="color: #00bfff;">in</span>% names(test[pcitems]))
 
-    <span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
+<span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
     {
         <span style="color: #00bfff;">if</span> (j %<span style="color: #00bfff;">in</span>% pcitems.temp)
         {
@@ -719,14 +717,14 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
     query = queryinit
     entropie.rest = <span style="color: #98f5ff;">NULL</span>
 
-    <span style="color: #00bfff;">for</span> (i <span style="color: #00bfff;">in</span> 2:items)
+<span style="color: #00bfff;">for</span> (i <span style="color: #00bfff;">in</span> 2:items)
     {
         odds = <span style="color: #98f5ff;">NULL</span>
         info.temp = <span style="color: #98f5ff;">NULL</span>
         fit = <span style="color: #98f5ff;">NULL</span>
         pcitems.temp = c(0,which(names(test[-query]) %<span style="color: #00bfff;">in</span>% names(test[pcitems])))
 
-        <span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
+<span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
         {
             <span style="color: #00bfff;">if</span> (j %<span style="color: #00bfff;">in</span>% pcitems.temp)
             {
@@ -737,7 +735,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
             }
         }
 
-        <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, trace = 0)</span>
+<span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, trace = 0)</span>
         <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, ~.^2, trace = 0)</span>
         odds = fit
         info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
@@ -746,7 +744,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         modell[[i]] = fit[[which(info.temp == max(info.temp))[1]]]
     }
 
-    <span style="color: #7f7f7f;">## </span><span style="color: #7f7f7f;">calculation of last rest entropie</span>
+<span style="color: #7f7f7f;">## </span><span style="color: #7f7f7f;">calculation of last rest entropie</span>
     <span style="color: #00bfff;">if</span> (length(test) == items)
     {
         rest.temp[items] = 0
@@ -756,7 +754,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         pcitems.temp = 0
         pcitems.temp = c(0,which(names(test[-query]) %<span style="color: #00bfff;">in</span>% names(test[pcitems])))
 
-        <span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
+<span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
         {
             <span style="color: #00bfff;">if</span> (j %<span style="color: #00bfff;">in</span>% pcitems.temp)
             {
@@ -772,7 +770,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         rest.temp[items] = sum(info.temp)
     }
 
-    <span style="color: #7f7f7f;">## </span><span style="color: #7f7f7f;">calculation of the choosen modell</span>
+<span style="color: #7f7f7f;">## </span><span style="color: #7f7f7f;">calculation of the choosen modell</span>
     pcitems.temp = c(0,which(query %<span style="color: #00bfff;">in</span>% pcitems))
     info.temp = FUN.EntroMC(pcitems.temp,test[k,], modell)
     <span style="color: #00bfff;">return</span>(c(info.temp, rest.temp))
@@ -850,17 +848,17 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
 {
     query = queryinit
 
-    <span style="color: #00bfff;">for</span> (i <span style="color: #00bfff;">in</span> 2:items)
+<span style="color: #00bfff;">for</span> (i <span style="color: #00bfff;">in</span> 2:items)
     {
         info.temp = <span style="color: #98f5ff;">NULL</span>
         fit = <span style="color: #98f5ff;">NULL</span>
 
-        <span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(komus[-query]))
+<span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(komus[-query]))
         {
             fit[[j]] = glm(reformulate(names(komus[query]), names(komus[-query][j])), data = komus, family = <span style="color: #deb887;">"binomial"</span>(link=logit))
         }
 
-        <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, trace = 0)</span>
+<span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, trace = 0)</span>
         <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, ~.^2, trace = 0)</span>
         <span style="color: #7f7f7f;">## </span><span style="color: #7f7f7f;">TODO stimmt das so?</span>
         odds = simplify2array(lapply(fit, predict, komus[k,], type=<span style="color: #deb887;">"response"</span>))
@@ -870,14 +868,14 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         modell[[i]] = fit[[which((info.temp) == max((info.temp)))[1]]]
     }
 
-    <span style="color: #00bfff;">if</span> (length(komus) == items)
+<span style="color: #00bfff;">if</span> (length(komus) == items)
     {
         rest.temp[items] = 0
     } <span style="color: #00bfff;">else</span>
     {
         fit = <span style="color: #98f5ff;">NULL</span>
 
-        <span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(komus[-query]))
+<span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(komus[-query]))
         {
             fit[[j]] = glm(reformulate(names(komus[query]), names(komus[-query][j])), data = komus, family = <span style="color: #deb887;">"binomial"</span>(link=logit))
         }
@@ -887,7 +885,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         rest.temp[length(query)] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2))
     }
 
-    odds = simplify2array(lapply(modell, predict, komus[k,], type=<span style="color: #deb887;">"response"</span>))
+odds = simplify2array(lapply(modell, predict, komus[k,], type=<span style="color: #deb887;">"response"</span>))
     info.temp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2))
     <span style="color: #00bfff;">return</span>(c(info.temp, rest.temp))
 })
@@ -991,15 +989,15 @@ FUN.binarysearch = <span style="color: #00bfff;">function</span>(query)
         <span style="color: #00bfff;">return</span>(0)
     }
 
-    lower = 1
+lower = 1
     upper = length(database[, 1])
     current = upper
 
-    <span style="color: #00bfff;">while</span> (upper &gt;= lower)
+<span style="color: #00bfff;">while</span> (upper &gt;= lower)
     {
         current = round((lower+upper) / 2)
 
-        <span style="color: #00bfff;">for</span> (u <span style="color: #00bfff;">in</span> 1:length(query))
+<span style="color: #00bfff;">for</span> (u <span style="color: #00bfff;">in</span> 1:length(query))
         {
             <span style="color: #00bfff;">if</span> (answers.sorted[u] &gt; database[current, u])
             {
@@ -1023,7 +1021,7 @@ FUN.binarysearch = <span style="color: #00bfff;">function</span>(query)
         }
     }
 
-    <span style="color: #00bfff;">return</span>(0)
+<span style="color: #00bfff;">return</span>(0)
 }
 
 <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Linear search in new data, if binary search fails.</span>
@@ -1041,7 +1039,7 @@ FUN.unsortedsearch = <span style="color: #00bfff;">function</span>(query)
                     <span style="color: #00bfff;">break</span>
                 }
 
-                <span style="color: #00bfff;">if</span> (!newdata[m,(length(query)+3)] &amp;&amp; u == length(query))
+<span style="color: #00bfff;">if</span> (!newdata[m,(length(query)+3)] &amp;&amp; u == length(query))
                 {
                     <span style="color: #00bfff;">return</span>(m)
                 }
@@ -1074,23 +1072,23 @@ queryinit = query
     rest.temp = <span style="color: #98f5ff;">NULL</span>
     rest.temp2 = <span style="color: #98f5ff;">NULL</span>
 
-    calcu = 0
+calcu = 0
     calcutime = proc.time()
     answers = vector(length = (length(test)+2))
     answers[1] = query[1] + as.numeric(as.character(test[k, query[1]]))/100
 
-    <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Check existing databases.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Check existing databases.</span>
     <span style="color: #00bfff;">if</span> (file.exists(<span style="color: #deb887;">'_data/komus/sorted-database.dat'</span>))
     {
         database = read.table(<span style="color: #deb887;">'_data/komus/sorted-database.dat'</span>)
     }
 
-    <span style="color: #00bfff;">if</span> (file.exists(<span style="color: #deb887;">'_data/komus/newdata.dat'</span>))
+<span style="color: #00bfff;">if</span> (file.exists(<span style="color: #deb887;">'_data/komus/newdata.dat'</span>))
     {
         newdata = read.table(<span style="color: #deb887;">'_data/komus/newdata.dat'</span>)
     }
 
-    <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate next item.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate next item.</span>
     <span style="color: #00bfff;">for</span> (i <span style="color: #00bfff;">in</span> 2:items)
     {
         odds = <span style="color: #98f5ff;">NULL</span>
@@ -1101,10 +1099,10 @@ queryinit = query
         pcitems.temp = c(0, which(names(test[-query]) %<span style="color: #00bfff;">in</span>% names(test[pcitems])))
         answers.sorted = sort(answers[1:length(query)])
 
-        <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Search in database if pattern of answers already exists.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Search in database if pattern of answers already exists.</span>
         found = FUN.binarysearch(query)
 
-        <span style="color: #00bfff;">if</span> (found)
+<span style="color: #00bfff;">if</span> (found)
         {
             lq = length(query)
             rest.temp[i-1] = database[found, (lq+2)]
@@ -1122,24 +1120,24 @@ queryinit = query
             }
         }
 
-        <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">If pattern isn't found, calculate the new one.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">If pattern isn't found, calculate the new one.</span>
         <span style="color: #00bfff;">if</span> (!found)
         {
             calcu = calcu+1
             isgood = <span style="color: #98f5ff;">NULL</span>
 
-            <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Create a modell for each remaining item with all answers as predictors.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Create a modell for each remaining item with all answers as predictors.</span>
             <span style="color: #00bfff;">for</span> (q <span style="color: #00bfff;">in</span> 1:length(test[-query]))
             {
                 fit.formula = reformulate(names(test[query]), names(test[-query][q]))
                 fit[[q]] = FUN.modelliteration(fit.formula, pcitems.temp, q)
             }
 
-            <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate the entropie of these items and choose good ones.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate the entropie of these items and choose good ones.</span>
             info.temp = FUN.EntroMC(pcitems.temp, test[k, ], fit)
             isgood = info.temp &gt;= (max(info.temp)[1] * 0.8)
 
-            <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Multicore calculation.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Multicore calculation.</span>
             Liste = foreach(j=1:length(test[-query])) %dopar%
             {
                 <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Give the probability of each answer possibility.</span>
@@ -1152,24 +1150,24 @@ queryinit = query
                     chance[2] = 1-chance[1]
                 }
 
-                rest.temp2 = <span style="color: #98f5ff;">NULL</span>
+rest.temp2 = <span style="color: #98f5ff;">NULL</span>
 
-                <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Predict the entropie with simulated answers of good items.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Predict the entropie with simulated answers of good items.</span>
                 <span style="color: #00bfff;">if</span> (length(test[-query]) &gt; 1 &amp;&amp; isgood[j])
                 {
                     pcitems.temp2 = c(0, which(names(test[-query][-j]) %<span style="color: #00bfff;">in</span>% names(test[pcitems])))
 
-                    <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate the fitted modell of each item.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate the fitted modell of each item.</span>
                     <span style="color: #00bfff;">for</span> (n <span style="color: #00bfff;">in</span> 1:length(test[-query][-j]))
                     {
                         fit2.formula = reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n]))
                         fit2[[n]] = FUN.modelliteration(fit2.formula, pcitems.temp2, n)
                     }
 
-                    <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate the reduction of entropie multiplied by the chance of these answers.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate the reduction of entropie multiplied by the chance of these answers.</span>
                     tempdata = test[k, ]
 
-                    <span style="color: #00bfff;">if</span> (j %<span style="color: #00bfff;">in</span>% pcitems.temp)
+<span style="color: #00bfff;">if</span> (j %<span style="color: #00bfff;">in</span>% pcitems.temp)
                     {
                         <span style="color: #00bfff;">for</span> (s <span style="color: #00bfff;">in</span> 1:length(chance))
                         {
@@ -1189,7 +1187,7 @@ queryinit = query
                         rest.temp2 = sum(rest.temp2)
                     }
 
-                    fit2 = <span style="color: #98f5ff;">NULL</span>
+fit2 = <span style="color: #98f5ff;">NULL</span>
                 } <span style="color: #00bfff;">else</span>
                 {
                     <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">If the item is the last one, take it.</span>
@@ -1198,16 +1196,16 @@ queryinit = query
                     {
                         rest.temp2 = 0
 
-                    } <span style="color: #00bfff;">else</span>
+} <span style="color: #00bfff;">else</span>
                     {
                         rest.temp2 = 55555555
                     }
                 }
 
-                <span style="color: #00bfff;">return</span>(rest.temp2)
+<span style="color: #00bfff;">return</span>(rest.temp2)
             }
 
-            <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Save the best modell, add the proposed item to the list of questions.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Save the best modell, add the proposed item to the list of questions.</span>
             rest.temp2 = simplify2array(Liste)
             query = c(query, which(names(test[-query][which(rest.temp2 == min(rest.temp2))[1]]) == names(test))[1])
             modell[[i]] = fit[[which(rest.temp2 == min(rest.temp2))[1]]]
@@ -1218,9 +1216,9 @@ queryinit = query
             rest.temp[i-1] = sum(info.temp)
         }
 
-        answers[i] = query[i] + as.numeric(as.character(test[k, query[i]]))/100
+answers[i] = query[i] + as.numeric(as.character(test[k, query[i]]))/100
 
-        <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Save the new calculated pattern to the database.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Save the new calculated pattern to the database.</span>
         <span style="color: #00bfff;">if</span> (!found)
         {
             temp = answers
@@ -1230,10 +1228,10 @@ queryinit = query
             write(temp, file=<span style="color: #deb887;">'_data/komus/newdata.dat'</span>, append=<span style="color: #98f5ff;">TRUE</span>, ncolumns=length(answers))
         }
 
-        plot(rest.temp, type=<span style="color: #deb887;">'l'</span>, col=rgb(0, 0.7, 0.7))
+plot(rest.temp, type=<span style="color: #deb887;">'l'</span>, col=rgb(0, 0.7, 0.7))
     }
 
-    <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate the last remaining entropie (which may be non-nil if not all items are answered).</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Calculate the last remaining entropie (which may be non-nil if not all items are answered).</span>
     <span style="color: #00bfff;">if</span> (length(test) == items)
     {
         rest.temp[items] = 0
@@ -1242,22 +1240,22 @@ queryinit = query
         fit = <span style="color: #98f5ff;">NULL</span>
         pcitems.temp = c(0, which(names(test[-query]) %<span style="color: #00bfff;">in</span>% names(test[pcitems])))
 
-        <span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
+<span style="color: #00bfff;">for</span> (j <span style="color: #00bfff;">in</span> 1:length(test[-query]))
         {
             fit.formula = reformulate(names(test[query]), names(test[-query][j]))
             fit[[j]] = FUN.modelliteration(fit.formula, pcitems.temp, j)
         }
 
-        <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, trace = 0)</span>
+<span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, trace = 0)</span>
         <span style="color: #7f7f7f;">#</span><span style="color: #7f7f7f;">fit = lapply(fit, step, ~.^2, trace = 0)</span>
         info.temp = FUN.EntroMC(pcitems.temp, test[k, ], fit)
         rest.temp[items] = sum(info.temp)
     }
 
-    <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Save the number of new patterns and seconds for this person.</span>
+<span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Save the number of new patterns and seconds for this person.</span>
     pcitems.temp = c(0, which(query %<span style="color: #00bfff;">in</span>% pcitems))
 
-    <span style="color: #00bfff;">if</span> (calcu)
+<span style="color: #00bfff;">if</span> (calcu)
     {
         temp = vector(length=(length(test)+2))
         temp[2] = k
@@ -1266,7 +1264,7 @@ queryinit = query
         write(temp, file=<span style="color: #deb887;">'_data/komus/newdata.dat'</span>, append=<span style="color: #98f5ff;">TRUE</span>, ncolumns=length(answers))
     }
 
-    infoall[k,] = rest.temp
+infoall[k,] = rest.temp
 }
 
 <span style="color: #7f7f7f;"># </span><span style="color: #7f7f7f;">Clean-up.</span>
@@ -1428,13 +1426,13 @@ plot(0:(length(test)), type=<span style="color: #deb887;">"l"</span>, col=rgb(0,
 {
     lines(summe[,i], col=farbe[i])
 
-    <span style="color: #00bfff;">if</span> (dim(entropie.SD[names(entropie.SD) == names(summe[i])])[2] != 0)
+<span style="color: #00bfff;">if</span> (dim(entropie.SD[names(entropie.SD) == names(summe[i])])[2] != 0)
     {
         lines(summe[,i]+entropie.SD[names(summe[i])],lty = 4, col=farbeSD[i])
         lines(summe[,i]-entropie.SD[names(summe[i])],lty = 4, col=farbeSD[i])
     }
 
-    <span style="color: #00bfff;">if</span> (dim(info.rest[names(info.rest) == names(summe[i])])[2] != 0)
+<span style="color: #00bfff;">if</span> (dim(info.rest[names(info.rest) == names(summe[i])])[2] != 0)
     {
         lines(info.rest[names(summe[i])], col=farbe[i])
         lines(info.rest[names(summe[i])]+info.rest.SD[names(summe[i])],lty = 4, col=farbeSD[i])
@@ -1451,5 +1449,4 @@ legend(length(test)/4, length(test), c(names(summe), round(benchmark[length(benc
 </div>
 </div>
 </div>
-
 

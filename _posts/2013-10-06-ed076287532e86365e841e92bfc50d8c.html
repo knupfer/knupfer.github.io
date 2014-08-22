@@ -239,7 +239,7 @@ rm ~/git/knupfer.github.io/_posts/*
         <span style="color: #4eee94;">TITLE</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'3,/--/ s_title: *"*\([^"]*\)"*_\1_p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
         <span style="color: #4eee94;">FATHER</span>=$(<span style="color: #fa8072;">echo</span> $<span style="color: #4eee94;">DIRECTORY</span> | sed <span style="color: #deb887;">'s:/::'</span>)
 
-        <span style="color: #f08080;">test</span> -e ../$<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DIRECTORY</span>/$<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
+<span style="color: #f08080;">test</span> -e ../$<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DIRECTORY</span>/$<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
         <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href="'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'"&gt;'</span>$<span style="color: #4eee94;">TITLE</span><span style="color: #deb887;">'&lt;/a&gt;'</span> &gt;&gt; ../categorie.$<span style="color: #4eee94;">FATHER</span> &amp;&amp;
         sed -n <span style="color: #deb887;">'/&lt;div id="text-table-of-contents"&gt;/,/&lt;\/div&gt;/p'</span> ../$<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DIRECTORY</span>/$<span style="color: #4eee94;">DATEI</span>.html |
         tail -n +2 |
@@ -266,7 +266,7 @@ rm ~/git/knupfer.github.io/_posts/*
     <span style="color: #4eee94;">TITLE</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'3,/--/ s_title: *"*\([^"]*\)"*_\1_p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
     <span style="color: #4eee94;">FATHER</span>=$(<span style="color: #fa8072;">sed</span> -n <span style="color: #deb887;">'3,/--/ s_father: *"*\([^"]*\)"*_\1_p'</span> $<span style="color: #4eee94;">DATEI</span>.org);
 
-    <span style="color: #f08080;">test</span> -e $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
+<span style="color: #f08080;">test</span> -e $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.html &amp;&amp;
     <span style="color: #f08080;">echo</span> <span style="color: #deb887;">'&lt;li&gt;&lt;a href="'</span>$<span style="color: #4eee94;">URL</span><span style="color: #deb887;">'"&gt;'</span>$<span style="color: #4eee94;">TITLE</span><span style="color: #deb887;">'&lt;/a&gt;'</span> &gt;&gt; categorie.$<span style="color: #4eee94;">FATHER</span> &amp;&amp;
     sed -n <span style="color: #deb887;">'/&lt;div id="text-table-of-contents"&gt;/,/&lt;\/div&gt;/p'</span> $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.html |
     tail -n +2 |
@@ -281,8 +281,6 @@ rm ~/git/knupfer.github.io/_posts/*
 <span style="color: #deb887;">        D'</span> $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.html &gt;&gt; $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.org.publish &amp;&amp;
     cat $<span style="color: #4eee94;">TEMP</span>/$<span style="color: #4eee94;">DATEI</span>.org.publish &gt; ../_posts/$<span style="color: #4eee94;">DATEI</span>.html;
 <span style="color: #00bfff;">done</span>
-
-
 
 mv categorie. categorie.zzz
 
@@ -309,5 +307,4 @@ mv ../_posts/about.html ../about.html;
 </div>
 </div>
 </div>
-
 
