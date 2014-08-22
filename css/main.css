@@ -82,7 +82,7 @@ body {
 .todo { 
     color: #800;
 }
-h2.todo {
+h2 span.todo {
     font-size: 1ex
 }
 .done { 
@@ -238,6 +238,14 @@ p {
     margin-bottom: 15px
 }
 a {
+    color: #AAA; 
+    text-decoration: none;
+    font-weight: bold;
+    -webkit-transition: color .3s linear;   
+    -moz-transition: color .3s linear; 
+    transition: color .3s linear;
+}
+ul.posts a span.todo {
     color: #AAA; 
     text-decoration: none;
     font-weight: bold;
