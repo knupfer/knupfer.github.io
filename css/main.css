@@ -267,8 +267,8 @@ ul.posts {
 ul.posts:hover {
     color: #ccc;
 }
-div.outline-text-3:hover{
-    background-color: #eee
+div.outline-3:hover{
+    background-color: #efefef
 }
 ul.posts li:hover {
     color: #aaa;
