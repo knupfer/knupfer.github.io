@@ -265,13 +265,16 @@ ul.posts {
     transition: color 5s linear;
 }
 ul.posts:hover {
-    color: #fff;
+    color: #bbb;
 }
 ul.posts li:hover {
     color: #aaa;
 }
 ul.posts li {
     line-height: 1.75em;
+    -webkit-transition: color 5s linear;   
+    -moz-transition: color 5s linear; 
+    transition: color 5s linear;
 }
 ul.posts span {
     font-family: serif;
