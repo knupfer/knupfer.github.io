@@ -10,6 +10,7 @@ title:  Exportskript
 <span style="color: #ffe4b5;">different html files for jekyll."</span>
   (<span style="color: #00bfff;">with-temp-buffer</span>
     (<span style="color: #00006DE06DE0;">insert-file-contents</span> file-name)
+    (<span style="color: #00006DE06DE0;">delete-file</span> file-name)
     (<span style="color: #00006DE06DE0;">delete-directory</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>) t)
     (<span style="color: #00006DE06DE0;">mkdir</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>))
     (<span style="color: #00bfff;">let</span> ((articles (<span style="color: #00006DE06DE0;">split-string</span> (<span style="color: #00006DE06DE0;">buffer-string</span>) <span style="color: #deb887;">".*\n&lt;h2 [</span><span style="color: #deb887;">^</span><span style="color: #deb887;">/]*&lt;/span&gt;"</span>)))

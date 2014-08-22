@@ -1446,7 +1446,7 @@ Stand verglichen werden, neue Änderungen gemacht werden, oder die
 git push origin master
 #+END_SRC
 
-#+BEGIN_SRC ditaa :file images/git.png :exports result
+#+BEGIN_SRC ditaa :file images/git.png :exports results
  +------------------+ 
  |Arbeitsverzeichnis+<-------+
  +----------------+-+        |
