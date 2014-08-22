@@ -1,115 +1,230 @@
-* [2013-10-05 Sat] About
+* [2014-07-30 Wed] Exportskript
+#+BEGIN_SRC emacs-lisp :exports both
+(defun knu-split-org-articles (file-name)
+  "Take the base of a .org file and extract all headings with timestamps in
+different html files for jekyll."
+  (with-temp-buffer
+    (insert-file-contents file-name)
+    (delete-file file-name)
+    (delete-directory (concat (file-name-directory file-name) "_posts/") t)
+    (mkdir (concat (file-name-directory file-name) "_posts/"))
+    (let ((articles (split-string (buffer-string) ".*\n<h2 [^/]*</span>")))
+      (while articles
+        (with-temp-buffer
+          (insert (concat "---\nlayout: post\ntitle:" (pop articles)))
+          (goto-char (point-min))
+          (when (re-search-forward
+                 "<div id=\"postamble\" class=\"status\">" nil t)
+            (goto-char (match-beginning 0))
+            (forward-line -1)
+            (delete-region (point) (point-max)))
+          (goto-char (point-max))
+          (re-search-backward "</div>" nil t)
+          (replace-match "" nil nil)
+          (goto-char (point-min))
+          (while (re-search-forward
+                  "<span class=\"section-number[^/]*</span>" nil t)
+            (replace-match ""))
+          (goto-char (point-min))
+          (while (re-search-forward "<img src=\"images/" nil t)
+            (replace-match "<img src=\"/images/"))
+          (goto-char (point-min))
+          (when (re-search-forward
+                 "<span class=\"timestamp-wrapper\"><span class=\"timestamp\">\\[\\([0-9-]*\\).*</span></span>" nil t)
+            (let ((date (match-string 1)))
+              (replace-match "")
+              (goto-char (point-min))
+              (when (re-search-forward "title: *\\(.*\\)\\(</h2>\\)" nil t)
+                (replace-match "\n---" nil nil nil 2)
+                (let ((title (match-string 1)))
+                  (write-file (concat (file-name-directory file-name) "_posts/"
+                                      date
+                                      "-" (md5 title) ".html")))))))))))
+
+(progn (run-with-idle-timer 0.5 nil 'knu-split-org-articles
+                            (concat (file-name-sans-extension
+                                     (buffer-file-name)) ".html")) nil)
+#+END_SRC
+
+* [2014-01-26 Sun] Emacs whitespace.el
 ** Einleitung
-Lieber Leser,
+Als Anfänger im Programmieren habe ich mir die Frage gestellt, wie ich
+mir das Programmierenlernen so effektiv und komfortabel wie möglich
+gestalten kann.
 
-hier findet sich nun also mein CV zur Einsicht.  Zu den in CVs
-üblichen Inhalten gibt es hier noch Raum für Informelleres, meine
-Hobbies sind die folgenden:
+Es stellte sich zunächst die Frage, ob man nun mit Spaces oder Tabs
+indenten sollte.  Nachdem ich einige Artikel im Internet gelesen habe
+und auch über unkonventionelle Lösungen wie elastic tabs nachgedacht
+habe, habe ich mich für Leerzeichen entschieden.
 
-1. Kochen (vor allem exotische Küche)
+** Vergleich mit anderen Methoden
+*** farbige Pipes und kein farbiger Hintergrund
+** Vorteile
+*** In aktuellen Emacs-Versionen inbegriffen
+*** verschiedene Farben für verschiedene Indentation-Tiefe
+** Nachteile
+*** Bugs
+**** langsam für restlichen Whitespace, wenn der Point darübergeht...
+**** in Teilen inkompatibel mit org-mode indentation-mode
 
-2. Sprachen
-     1. Englisch
-     2. Spanisch
-     3. Französisch
-     4. Russisch
-     5. Nächste anvisierte Sprachen:
-          1. Arabisch
-          2. Chinesisch
-          3. Koreanisch
+* [2014-01-24 Fri] Magit!
+** Einleitung
+Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine
+Homepage versioniere und auf Github publiziere, befand ich die Zeit
+reif dafür, mich genauer mit Git auseinanderzusetzen.
 
-3. Reisen
-4. Typographie
-5. Technik
-     1. Tablets
-     2. Elektroautos
-     3. Energieproduktion
-          1. Wasserkraft
-          2. Windkraft
-          3. Kernenergie
-               1. Fussionsreaktoren
-               2. Fissionsreaktoren
-6. Musik
-     1. Orgel
-          1. Literatur
-               1. Durufle
-               2. Couperin
-               3. Reger
-          2. Improvisation
-               1. Impressionismus
-               2. Romantik
-     2. Gesang
-          1. Bass
-               1. Monteverdi
-               2. Bach
-               3. Schubert
-          3. Altus
-               1. Monteverdi
-               2. Viadana
-               3. Xenakis
+** Git
+Git wurde von Linus Torvalds für die Versionierung des Linuxkernels
+programmiert.  Da die Funktionalität sehr umfangreich ist, erfreute
+sich Git schnell großer Beliebtheit.
 
-** Curriculum Vitae
-*** Ausbildung
-|---+-----------+------------------------------------------------------|
-|   |       <r> | <52>                                                 |
-|   |  Aug 2013 | Staatsexamensarbeit: »Abgrenzung von Musikalität und musikalischer Kompetenz – Eine empirische Untersuchung von Over- und Underachievement bei Sechstklässlern«; Note 1,0 |
-|   | seit 2010 | Physikstudium an der Universität Vaihingen           |
-|   | seit 2008 | Doppelstudium Schulmusik und Kirchenmusik an der Hochschule für Musik und Darstellende Kunst Stuttgart |
-|   | 2007–2008 | C-Kurs Rottenburg am Neckar                          |
-| / | 1994–1998 | Grundschule Parkschule Essingen                      |
-|---+-----------+------------------------------------------------------|
+*** Funktionsweise
+Es wird in dem Repository, also in dem Verzeichnis, in dem man seine
+Dateien aufbewahrt werden, welche versioniert werden sollen
+(i.d.R. Quellcode) ein .git Verzeichnis erstellt, welches zunächst
+einer Kopie aller Dateien entspricht.  Daraufhin werden Änderungen in
+den Staging-Bereich gebracht:
+#+BEGIN_SRC sh :exports code
+git add -A
+#+END_SRC
+Sobald man dort alle Änderungen hinzugefügt hat, welche man
+versionieren möchte, macht man einen Commit, welcher einen Text
+enthält, welcher beschreibt, welche Änderungen vorgenommen werden:
+#+BEGIN_SRC sh :exports code
+git commit -m 'bugfix'
+#+END_SRC
+Somit ist nun die Änderung gespeichert und kann mit dem vorherigen
+Stand verglichen werden, neue Änderungen gemacht werden, oder die
+Änderungen zu einem Remote-Repository übertragen werden:
+#+BEGIN_SRC sh :exports code
+git push origin master
+#+END_SRC
 
-*** Preise und Stipendien
-|---+-----------+------------------------------------------------------|
-|   |       <r> | <52>                                                 |
-|   |  Feb 2013 | Stipendiat der Karin Abt-Straubinger-Stiftung für eine Sprachschule an der technischen Staatsuniversität in Irkutsk, Sibirien |
-|   |      2012 | Träger des Deutschlandstipendiums                    |
-|   |      2012 | Stipendiat des DAAD go east! Programms an der Staatlichen Landesuniversität Russlands in Moskau |
-|   |      2010 | Stipendiat des »Europäischen Chorforums für junge Komponisten« Ochsenhausen, in diesem Rahmen Aufführung eigener Werke durch das Orpheus Vokalensemble |
-|   | 1998–2007 | Theodor-Heuss-Gymnasium Aalen, Preis der Schule und Preis der DPG (Deutsche Physikalische Gesellschaft) |
-|---+-----------+------------------------------------------------------|
+#+BEGIN_SRC ditaa :file images/git.png :exports results
+ +------------------+ 
+ |Arbeitsverzeichnis+<-------+
+ +----------------+-+        |
+                  |          |
+ +---git add------+          |
+ |                           |
+ |  +-----+                  |
+ +->|Stage|-----+            |
+    +-----+     |            |
+                |            |
+ +---git commit-+            |
+ |                           |
+ |  +----------+             |
+ +->|Repository+-+           |
+    +----------+ |           |
+                 |           |
+ +---git push----+           |
+ |                           |
+ |  +------+                 |
+ +->|Remote+--git pull-------+
+    +------+
+#+END_SRC
 
-*** Musikalisches Schaffen
-|---+-----------+------------------------------------------------------|
-|   |       <r> | <52>                                                 |
-|   |  Aug 2013 | Konzert im Dom zu Schweidnitz (Polen)                |
-|   |  Jan 2013 | Leiter der Musikschule Obertürkheim Stuttgart www.musikschule-obertuerkheim.de |
-|   |      2010 | Mehrere Uraufführungen eigener Kompositionen durch den Aalener Oratorienchor |
-|   | 2008–2012 | Kirchenchorleiter und Organist der Marienwallfahrtskirche alen-Unterkochen |
-|---+-----------+------------------------------------------------------|
+#+RESULTS:
+[[file:images/git.png]]
 
-*** Sonstige Tätigkeiten
-|---+-----------+------------------------------------------------------|
-|   |       <r> | <52>                                                 |
-|   |  Feb 2013 | Mitglied im Doktorandennetzwerk des AMPF (Arbeitskreis Musikpädagogische Forschung) |
-|   | seit 2012 | Mitglied im MinD-Hochschulnetzwerk www.mhn.mensa.de  |
-|   |      2011 | Praktikum beim Landesgymnasium für Hochbegabte Schwäbisch Gmünd |
-|   |      2011 | Abschlussprüfung in Chorleitung, Orchesterleitung und in Musiktheorie |
-|   |      2010 | Studienreise nach Toulouse, Dolmetscher für die Studenten um sich in die frz. Kultur integrieren zu können |
-|   |      2008 | Studienreise nach Italien um die dortige Orgellandschaft kennenzulernen |
-|---+-----------+------------------------------------------------------|
+** Magit
+Mit Magit kann man auf komfortable Weise diffs, also Vergleiche
+zwischen zwei Versionen ansehen.  Ferner hat man den Staging-Bereich,
+und den Bereich der Änderungen, die noch nicht im Staging-Bereich sind
+im Blick, was den großen Vorteil bietet, dass nur die Änderungen, die
+eine logische Einheit bilden, in den Staging-Bereich aufgenommen
+werden können, um die diese zu commiten.  Andere Änderungen werden
+erst in darauffolgenden Commits mit entsprechender Beschreibung
+publiziert.
 
-*** Sprachen
-|---+----------+------------------------------------------------------|
-|   |          | <52>                                                 |
-|   | English  | Sehr gut in Wort und Schrift                         |
-|   | Español  | Sehr gut in Wort und Schrift                         |
-|   | Français | Sehr gut in Wort, gut in Schrift                     |
-|   | Русский  | Grundlegende Kenntnisse (A2)                         |
-|---+----------+------------------------------------------------------|
+Dies sieht dann Beispielsweise folgendermaßen aus:
+#+BEGIN_SRC html :exports results
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!-- Created by htmlize-1.47 in css mode. -->
+<html>
+  <head>
+    <title>*magit: knupfer.github.io*</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #ffffff;
+        background-color: #000000;
+      }
+      .ATTRLIST {
+        /* (:weight ultra-bold :foreground "#05ffff") */
+        color: #05ffff;
+      }
+      .ATTRLIST-1 {
+        /* (:weight ultra-bold :foreground "#e07fef") */
+        color: #e07fef;
+      }
+      .ATTRLIST-2 {
+        /* (:weight ultra-bold :foreground "#f0cf05") */
+        color: #f0cf05;
+      }
+      .ATTRLIST-3 {
+        /* (:weight ultra-bold :foreground "#ee5555") */
+        color: #ee5555;
+      }
+      .ATTRLIST-4 {
+        /* (:weight ultra-bold :foreground "#ffffff") */
+        color: #ffffff;
+      }
+      .ATTRLIST-5 {
+        /* (:weight ultra-bold :foreground "#00ff00") */
+        color: #00ff00;
+      }
+      .magit-branch {
+        /* magit-branch */
+        color: #e5e5e5;
+        background-color: #333333;
+      }
+      .magit-item-highlight {
+        /* magit-item-highlight */
+        background-color: #4a708b;
+      }
+      .magit-log-message {
+      }
+      .magit-log-sha1 {
+        /* magit-log-sha1 */
+        color: #ff6347;
+      }
+      .magit-section-title {
+        /* magit-section-title */
+        color: #e5e5e5;
+        background-color: #333333;
+      }
 
-*** Computer
-|---+----------+------------------------------------------------------|
-|   |          | <52>                                                 |
-|   | R, SPSS  | Erfahrung in quantitativer Forschung                 |
-|   | Python   | Grundlegende Programmierkenntnisse                   |
-|   | C        | Einführung an Harvard (über edx.org)                 |
-|   | Elisp    | Emacs                                                |
-|   | ILIAS    | Serverinstallation und -benutzung                    |
-|   | Org-mode | Projektplanungs- und Protokollierungserfahrung       |
-|   | LaTeX    | Textpublikationserfahrungen                          |
-|   | Lilypond | Auszeichnungssprache für professionellen Notensatz   |
-|---+----------+------------------------------------------------------|
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+Local:    <span class="magit-branch">master</span> ~/git/knupfer.github.io/
+Remote:   <span class="magit-branch">master</span> @ origin (https://github.com/knupfer/knupfer.github.io.git)
+Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
+
+<span class="magit-section-title">Untracked files:</span>
+    _org/Computer/.#2014-01-24-magit.org
+
+<span class="magit-section-title">Unpushed commits:</span>
+<span class="magit-log-sha1">1f236ae</span> <span class="magit-log-message">Bugfix in Ditaa graphic</span>
+<span class="magit-log-sha1"><span class="magit-item-highlight">da99ab0</span></span><span class="magit-item-highlight"> </span><span class="magit-log-message"><span class="magit-item-highlight">Correct connections in Ditaa graphic</span></span><span class="magit-item-highlight">
+</span><span class="magit-log-sha1">9943f8e</span> <span class="magit-log-message">Clean files with *~</span>
+
+</pre>
+  </body>
+</html>
+#+END_SRC
 
 * [2013-10-28 Mon] Adaptives Testen
 ** Einleitung
@@ -1413,164 +1528,116 @@ legend(length(test)/4, length(test), c(names(summe), round(benchmark[length(benc
 #+RESULTS: grafik
 [[file:images/entropie2.png]]
 
-* [2014-01-24 Fri] Magit!
+* [2013-10-21 Mon] Neo Layout
 ** Einleitung
-Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine
-Homepage versioniere und auf Github publiziere, befand ich die Zeit
-reif dafür, mich genauer mit Git auseinanderzusetzen.
+Vor zwei Jahren bin ich mehr oder minder über das alternative
+Tastaturlayout Neo gestolpert und mich seither intensiv mit Ergonomie
+und der Geschichte des konventionellen QWERTY-Layouts
+auseinandergesetzt.
 
-** Git
-Git wurde von Linus Torvalds für die Versionierung des Linuxkernels
-programmiert.  Da die Funktionalität sehr umfangreich ist, erfreute
-sich Git schnell großer Beliebtheit.
+** Konventionelles Tastaturlayout
+Die heutige übliche Tastaturbelegung geht auf das 19. Jahrhundert
+zurück. Ziel war, häufige Buchstabenfolgen auf der vormaligen
+alphabetischen Anordnung der Schreibmaschinentasten möglichst weit
+auseinanderzulegen, um ein Verkanten der Hämmer zu vermeiden.
 
-*** Funktionsweise
-Es wird in dem Repository, also in dem Verzeichnis, in dem man seine
-Dateien aufbewahrt werden, welche versioniert werden sollen
-(i.d.R. Quellcode) ein .git Verzeichnis erstellt, welches zunächst
-einer Kopie aller Dateien entspricht.  Daraufhin werden Änderungen in
-den Staging-Bereich gebracht:
-#+BEGIN_SRC sh :exports code
-git add -A
-#+END_SRC
-Sobald man dort alle Änderungen hinzugefügt hat, welche man
-versionieren möchte, macht man einen Commit, welcher einen Text
-enthält, welcher beschreibt, welche Änderungen vorgenommen werden:
-#+BEGIN_SRC sh :exports code
-git commit -m 'bugfix'
-#+END_SRC
-Somit ist nun die Änderung gespeichert und kann mit dem vorherigen
-Stand verglichen werden, neue Änderungen gemacht werden, oder die
-Änderungen zu einem Remote-Repository übertragen werden:
-#+BEGIN_SRC sh :exports code
-git push origin master
-#+END_SRC
+Somit wurde auf Grund einer technischen Einschränkung die Tasten
+explizit so angeordnet, dass sie für den Menschen möglichst schlecht
+liegen. Diesen technischen Einschränkungen unterliegen wir heutzutage
+natürlich nicht mehr, jedoch hat sich auf Grund von der bereits
+etablierten Konvention das bestehende Layout (bis auf regionale
+Varianten) nicht mehr geändert.
 
-#+BEGIN_SRC ditaa :file images/git.png :exports results
- +------------------+ 
- |Arbeitsverzeichnis+<-------+
- +----------------+-+        |
-                  |          |
- +---git add------+          |
- |                           |
- |  +-----+                  |
- +->|Stage|-----+            |
-    +-----+     |            |
-                |            |
- +---git commit-+            |
- |                           |
- |  +----------+             |
- +->|Repository+-+           |
-    +----------+ |           |
-                 |           |
- +---git push----+           |
- |                           |
- |  +------+                 |
- +->|Remote+--git pull-------+
-    +------+
-#+END_SRC
+Eine weitere Besonderheit ist, dass man auf der englischen Variante
+"Typewriter" komplett auf der obersten Reihe schreiben kann, was wohl
+ein Easteregg ist.
 
-#+RESULTS:
-[[file:images/git.png]]
+Der horizontale Tastenversatz liegt auch an den Hämmern, die Platz für
+ihre Traktur benötigten. Jedoch ist dieser Versatz nicht
+tippfreundlich, da man um höhere oder niedrigere Tasten zu erreichen
+man seinen Finger nicht nur strecken oder einziehen, sonder auch
+verdrehen muss.
 
-** Magit
-Mit Magit kann man auf komfortable Weise diffs, also Vergleiche
-zwischen zwei Versionen ansehen.  Ferner hat man den Staging-Bereich,
-und den Bereich der Änderungen, die noch nicht im Staging-Bereich sind
-im Blick, was den großen Vorteil bietet, dass nur die Änderungen, die
-eine logische Einheit bilden, in den Staging-Bereich aufgenommen
-werden können, um die diese zu commiten.  Andere Änderungen werden
-erst in darauffolgenden Commits mit entsprechender Beschreibung
-publiziert.
+** Alternative Tastaturlayouts
+Mit der Zeit bildeten sich Alternativen heraus, die aber allesamt
+nicht sehr populär sind, was daran liegen mag, da:
+1. Viele kein Zehnfingersystem benutzen
+2. QWERTY der ubiquitäre Standard ist
+3. Die Nachteile nicht bekannt sind
+4. Die alternativen Layouts unbekannt sind
 
-Dies sieht dann Beispielsweise folgendermaßen aus:
-#+BEGIN_SRC html :exports results
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<!-- Created by htmlize-1.47 in css mode. -->
-<html>
-  <head>
-    <title>*magit: knupfer.github.io*</title>
-    <style type="text/css">
-    <!--
-      body {
-        color: #ffffff;
-        background-color: #000000;
-      }
-      .ATTRLIST {
-        /* (:weight ultra-bold :foreground "#05ffff") */
-        color: #05ffff;
-      }
-      .ATTRLIST-1 {
-        /* (:weight ultra-bold :foreground "#e07fef") */
-        color: #e07fef;
-      }
-      .ATTRLIST-2 {
-        /* (:weight ultra-bold :foreground "#f0cf05") */
-        color: #f0cf05;
-      }
-      .ATTRLIST-3 {
-        /* (:weight ultra-bold :foreground "#ee5555") */
-        color: #ee5555;
-      }
-      .ATTRLIST-4 {
-        /* (:weight ultra-bold :foreground "#ffffff") */
-        color: #ffffff;
-      }
-      .ATTRLIST-5 {
-        /* (:weight ultra-bold :foreground "#00ff00") */
-        color: #00ff00;
-      }
-      .magit-branch {
-        /* magit-branch */
-        color: #e5e5e5;
-        background-color: #333333;
-      }
-      .magit-item-highlight {
-        /* magit-item-highlight */
-        background-color: #4a708b;
-      }
-      .magit-log-message {
-      }
-      .magit-log-sha1 {
-        /* magit-log-sha1 */
-        color: #ff6347;
-      }
-      .magit-section-title {
-        /* magit-section-title */
-        color: #e5e5e5;
-        background-color: #333333;
-      }
+*** Dvorak
+Das bekannteste und auch älteste Reformlayout ist das Dvorak-Layout,
+welches 1930 entwickelt wurde.
 
-      a {
-        color: inherit;
-        background-color: inherit;
-        font: inherit;
-        text-decoration: inherit;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-    -->
-    </style>
-  </head>
-  <body>
-    <pre>
-Local:    <span class="magit-branch">master</span> ~/git/knupfer.github.io/
-Remote:   <span class="magit-branch">master</span> @ origin (https://github.com/knupfer/knupfer.github.io.git)
-Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
+**** Ergebnisse
+Hierfür wurden verschiedene Studien bezüglich Ergonomie und Effizienz
+durchgeführt. Wichtige, auch in aktuelleren Reformbelegungen präsente,
+Ergebnisse waren, dass:
+- Die Finger möglichst kurze Bewegungen durchführen sollten
+- Dementsprechend sollten möglichst häufige Buchstaben in der
+  Ruheposition der Finger sich befinden
+- Der gleiche Finger nicht wiederholt werden sollte
+- Im besonderen Maße sollten Sprünge des gleichen Fingers von der
+  obern auf die untere Reihe, oder andersrum vermieden werden
+- Dass sich die Hände im optimalfall abwechseln
+- Bigramme, also häufige Buchstabenkombinationen, sollten weit
+  entfernt liegen
+- Die Hände sollten ungefähr gleich viel zu tun haben
+- Die starken Finger sollten häufiger verwendet werden als die
+  schwachen, um Ermüdungserscheinungen zu vermeiden
 
-<span class="magit-section-title">Untracked files:</span>
-    _org/Computer/.#2014-01-24-magit.org
+**** Umsetzung
+Diese Ergebnisse konnten jedoch nur händisch umgesetzt werden, da
+entsprechende Computer zur Berechnung und Optimierung nicht zur
+Verfügung standen.
 
-<span class="magit-section-title">Unpushed commits:</span>
-<span class="magit-log-sha1">1f236ae</span> <span class="magit-log-message">Bugfix in Ditaa graphic</span>
-<span class="magit-log-sha1"><span class="magit-item-highlight">da99ab0</span></span><span class="magit-item-highlight"> </span><span class="magit-log-message"><span class="magit-item-highlight">Correct connections in Ditaa graphic</span></span><span class="magit-item-highlight">
-</span><span class="magit-log-sha1">9943f8e</span> <span class="magit-log-message">Clean files with *~</span>
+Nichts desto trotz wurde eine auch heute noch beliebte und
+ergonomische Tastaturbelegung erstellt, die in modernen
+Betriebssystemen als Standard einstellbar ist.
 
-</pre>
-  </body>
-</html>
-#+END_SRC
+*** Ristome
+*** Neo
+Diese Layout wurde 2004 entwickelt und speziell auf die deutsche
+Sprache optimiert. Die Ergebnisse Dvoraks wurden hier verwendet, um
+computergestützt das Layout zu optimieren. Jedoch waren die
+Optimierungsmöglichkeiten selbst noch nicht ausgereift, was zu der
+Entstehung von Neo2 führte.
+
+**** Neo2
+Hier wurde das gesamte Layout nochmals computergestützt deutlich
+verbessert, so werden die Finger viel weniger bewegt. Beispielsweise
+kann man 60% eines normalen deutschen Textes auf der Grundreihe
+tippen.
+
+Eine phantastische Besonderheit des Neolayouts, welche mich damals
+dazu bewog, es zu lernen, ist, dass es noch zusätzliche Ebenen
+besitzt. Dies bedeutet, dass man über Spezialtasten die Belegung des
+Layouts ändern kann (wie z.B. bei Shift, welches für Großbuchstaben
+sorgt). So gibt es eine Ebene mit einem Zahlen- und Navigationsblock,
+welche unglaublich praktisch ist. So kann ich, während ich diesen Text
+hier schreibe, in der Grundposition ohne Probleme Zahlen eingeben, zum
+letzten Wortanfang springen, zum Zeilenanfang springen, in beide
+Richtungen Zeichen-, Wort-, Absatz- oder sogar Dokumentenweise
+löschen. Eine andere Ebene beinhaltet typische Programmierzeichen,
+eine weitere enthält griechische Buchstaben (für Formeln) und die
+letzte enthält mathematisch Spezialzeichen (Summationszeichen etc.).
+
+**** AdNW
+Dieses Layout steht für „Aus der Neo-Welt“ und sieht sich selbst als
+Nachfolger des Neo-Layoutes. Hier wurde das Layout noch weiter
+verfeinert und nicht nur an deutschen, sondern auch an englischen
+Texten ausgerichtet. Somit ist dieses Layout weit internationaler und
+trotzdem auch in der deutschen Sprache dem Neo-Layout deutlich
+überlegen.
+
+Meines Wissens nach ist dies derzeit das beste und vielseitigste
+Tastaturlayout. Es wurde von vielen auch schon unter dem Namen Neo3
+vorgeschlagen, jedoch gibt es manch eine Unstimmigkeit zwischen den
+Projekten. Parallel dazu wird an einem anderen Neo3 gearbeitet, was
+sehr gut ist, da Neo bereits einen beachtlichen Bekanntheitsgrad
+erlangt hat, so ist das Neo-Layout in jeder Linuxdistro als
+Belegungsvariante des Deutschen auswählbar.
 
 * [2013-10-13 Sun] Emacs Org-Mode
 ** Einleitung
@@ -1865,138 +1932,6 @@ dann stets, bei gleichem Layout, verwendet werden kann.
 
 #+RESULTS:
 [[file:images/lily-beispiel.png]]
-
-* [2014-01-26 Sun] Emacs whitespace.el
-** Einleitung
-Als Anfänger im Programmieren habe ich mir die Frage gestellt, wie ich
-mir das Programmierenlernen so effektiv und komfortabel wie möglich
-gestalten kann.
-
-Es stellte sich zunächst die Frage, ob man nun mit Spaces oder Tabs
-indenten sollte.  Nachdem ich einige Artikel im Internet gelesen habe
-und auch über unkonventionelle Lösungen wie elastic tabs nachgedacht
-habe, habe ich mich für Leerzeichen entschieden.
-
-** Vergleich mit anderen Methoden
-*** farbige Pipes und kein farbiger Hintergrund
-** Vorteile
-*** In aktuellen Emacs-Versionen inbegriffen
-*** verschiedene Farben für verschiedene Indentation-Tiefe
-** Nachteile
-*** Bugs
-**** langsam für restlichen Whitespace, wenn der Point darübergeht...
-**** in Teilen inkompatibel mit org-mode indentation-mode
-
-* [2013-10-21 Mon] Neo Layout
-** Einleitung
-Vor zwei Jahren bin ich mehr oder minder über das alternative
-Tastaturlayout Neo gestolpert und mich seither intensiv mit Ergonomie
-und der Geschichte des konventionellen QWERTY-Layouts
-auseinandergesetzt.
-
-** Konventionelles Tastaturlayout
-Die heutige übliche Tastaturbelegung geht auf das 19. Jahrhundert
-zurück. Ziel war, häufige Buchstabenfolgen auf der vormaligen
-alphabetischen Anordnung der Schreibmaschinentasten möglichst weit
-auseinanderzulegen, um ein Verkanten der Hämmer zu vermeiden.
-
-Somit wurde auf Grund einer technischen Einschränkung die Tasten
-explizit so angeordnet, dass sie für den Menschen möglichst schlecht
-liegen. Diesen technischen Einschränkungen unterliegen wir heutzutage
-natürlich nicht mehr, jedoch hat sich auf Grund von der bereits
-etablierten Konvention das bestehende Layout (bis auf regionale
-Varianten) nicht mehr geändert.
-
-Eine weitere Besonderheit ist, dass man auf der englischen Variante
-"Typewriter" komplett auf der obersten Reihe schreiben kann, was wohl
-ein Easteregg ist.
-
-Der horizontale Tastenversatz liegt auch an den Hämmern, die Platz für
-ihre Traktur benötigten. Jedoch ist dieser Versatz nicht
-tippfreundlich, da man um höhere oder niedrigere Tasten zu erreichen
-man seinen Finger nicht nur strecken oder einziehen, sonder auch
-verdrehen muss.
-
-** Alternative Tastaturlayouts
-Mit der Zeit bildeten sich Alternativen heraus, die aber allesamt
-nicht sehr populär sind, was daran liegen mag, da:
-1. Viele kein Zehnfingersystem benutzen
-2. QWERTY der ubiquitäre Standard ist
-3. Die Nachteile nicht bekannt sind
-4. Die alternativen Layouts unbekannt sind
-
-*** Dvorak
-Das bekannteste und auch älteste Reformlayout ist das Dvorak-Layout,
-welches 1930 entwickelt wurde.
-
-**** Ergebnisse
-Hierfür wurden verschiedene Studien bezüglich Ergonomie und Effizienz
-durchgeführt. Wichtige, auch in aktuelleren Reformbelegungen präsente,
-Ergebnisse waren, dass:
-- Die Finger möglichst kurze Bewegungen durchführen sollten
-- Dementsprechend sollten möglichst häufige Buchstaben in der
-  Ruheposition der Finger sich befinden
-- Der gleiche Finger nicht wiederholt werden sollte
-- Im besonderen Maße sollten Sprünge des gleichen Fingers von der
-  obern auf die untere Reihe, oder andersrum vermieden werden
-- Dass sich die Hände im optimalfall abwechseln
-- Bigramme, also häufige Buchstabenkombinationen, sollten weit
-  entfernt liegen
-- Die Hände sollten ungefähr gleich viel zu tun haben
-- Die starken Finger sollten häufiger verwendet werden als die
-  schwachen, um Ermüdungserscheinungen zu vermeiden
-
-**** Umsetzung
-Diese Ergebnisse konnten jedoch nur händisch umgesetzt werden, da
-entsprechende Computer zur Berechnung und Optimierung nicht zur
-Verfügung standen.
-
-Nichts desto trotz wurde eine auch heute noch beliebte und
-ergonomische Tastaturbelegung erstellt, die in modernen
-Betriebssystemen als Standard einstellbar ist.
-
-*** Ristome
-*** Neo
-Diese Layout wurde 2004 entwickelt und speziell auf die deutsche
-Sprache optimiert. Die Ergebnisse Dvoraks wurden hier verwendet, um
-computergestützt das Layout zu optimieren. Jedoch waren die
-Optimierungsmöglichkeiten selbst noch nicht ausgereift, was zu der
-Entstehung von Neo2 führte.
-
-**** Neo2
-Hier wurde das gesamte Layout nochmals computergestützt deutlich
-verbessert, so werden die Finger viel weniger bewegt. Beispielsweise
-kann man 60% eines normalen deutschen Textes auf der Grundreihe
-tippen.
-
-Eine phantastische Besonderheit des Neolayouts, welche mich damals
-dazu bewog, es zu lernen, ist, dass es noch zusätzliche Ebenen
-besitzt. Dies bedeutet, dass man über Spezialtasten die Belegung des
-Layouts ändern kann (wie z.B. bei Shift, welches für Großbuchstaben
-sorgt). So gibt es eine Ebene mit einem Zahlen- und Navigationsblock,
-welche unglaublich praktisch ist. So kann ich, während ich diesen Text
-hier schreibe, in der Grundposition ohne Probleme Zahlen eingeben, zum
-letzten Wortanfang springen, zum Zeilenanfang springen, in beide
-Richtungen Zeichen-, Wort-, Absatz- oder sogar Dokumentenweise
-löschen. Eine andere Ebene beinhaltet typische Programmierzeichen,
-eine weitere enthält griechische Buchstaben (für Formeln) und die
-letzte enthält mathematisch Spezialzeichen (Summationszeichen etc.).
-
-**** AdNW
-Dieses Layout steht für „Aus der Neo-Welt“ und sieht sich selbst als
-Nachfolger des Neo-Layoutes. Hier wurde das Layout noch weiter
-verfeinert und nicht nur an deutschen, sondern auch an englischen
-Texten ausgerichtet. Somit ist dieses Layout weit internationaler und
-trotzdem auch in der deutschen Sprache dem Neo-Layout deutlich
-überlegen.
-
-Meines Wissens nach ist dies derzeit das beste und vielseitigste
-Tastaturlayout. Es wurde von vielen auch schon unter dem Namen Neo3
-vorgeschlagen, jedoch gibt es manch eine Unstimmigkeit zwischen den
-Projekten. Parallel dazu wird an einem anderen Neo3 gearbeitet, was
-sehr gut ist, da Neo bereits einen beachtlichen Bekanntheitsgrad
-erlangt hat, so ist das Neo-Layout in jeder Linuxdistro als
-Belegungsvariante des Deutschen auswählbar.
 
 * [2013-10-09 Wed] Linuxdistributionen
 ** Einleitung
@@ -2460,50 +2395,117 @@ mv ../_posts/about.html ../about.html;
 test -e *.org~ && rm *.org~ ;
 #+END_SRC
 
-* [2014-07-30 Wed] Exportskript
-#+BEGIN_SRC emacs-lisp :exports both
-(defun knu-split-org-articles (file-name)
-  "Take the base of a .org file and extract all headings with timestamps in
-different html files for jekyll."
-  (with-temp-buffer
-    (insert-file-contents file-name)
-    (delete-file file-name)
-    (delete-directory (concat (file-name-directory file-name) "_posts/") t)
-    (mkdir (concat (file-name-directory file-name) "_posts/"))
-    (let ((articles (split-string (buffer-string) ".*\n<h2 [^/]*</span>")))
-      (while articles
-        (with-temp-buffer
-          (insert (concat "---\nlayout: post\ntitle:" (pop articles)))
-          (goto-char (point-min))
-          (when (re-search-forward
-                 "<div id=\"postamble\" class=\"status\">" nil t)
-            (goto-char (match-beginning 0))
-            (forward-line -1)
-            (delete-region (point) (point-max)))
-          (goto-char (point-max))
-          (re-search-backward "</div>" nil t)
-          (replace-match "" nil nil)
-          (goto-char (point-min))
-          (while (re-search-forward
-                  "<span class=\"section-number[^/]*</span>" nil t)
-            (replace-match ""))
-          (goto-char (point-min))
-          (while (re-search-forward "<img src=\"images/" nil t)
-            (replace-match "<img src=\"/images/"))
-          (goto-char (point-min))
-          (when (re-search-forward
-                 "<span class=\"timestamp-wrapper\"><span class=\"timestamp\">\\[\\([0-9-]*\\).*</span></span>" nil t)
-            (let ((date (match-string 1)))
-              (replace-match "")
-              (goto-char (point-min))
-              (when (re-search-forward "title: *\\(.*\\)\\(</h2>\\)" nil t)
-                (replace-match "\n---" nil nil nil 2)
-                (let ((title (match-string 1)))
-                  (write-file (concat (file-name-directory file-name) "_posts/"
-                                      date
-                                      "-" (md5 title) ".html")))))))))))
+* [2013-10-05 Sat] About
+** Einleitung
+Lieber Leser,
 
-(progn (run-with-idle-timer 0.5 nil 'knu-split-org-articles
-                            (concat (file-name-sans-extension
-                                     (buffer-file-name)) ".html")) nil)
-#+END_SRC
+hier findet sich nun also mein CV zur Einsicht.  Zu den in CVs
+üblichen Inhalten gibt es hier noch Raum für Informelleres, meine
+Hobbies sind die folgenden:
+
+1. Kochen (vor allem exotische Küche)
+
+2. Sprachen
+     1. Englisch
+     2. Spanisch
+     3. Französisch
+     4. Russisch
+     5. Nächste anvisierte Sprachen:
+          1. Arabisch
+          2. Chinesisch
+          3. Koreanisch
+
+3. Reisen
+4. Typographie
+5. Technik
+     1. Tablets
+     2. Elektroautos
+     3. Energieproduktion
+          1. Wasserkraft
+          2. Windkraft
+          3. Kernenergie
+               1. Fussionsreaktoren
+               2. Fissionsreaktoren
+6. Musik
+     1. Orgel
+          1. Literatur
+               1. Durufle
+               2. Couperin
+               3. Reger
+          2. Improvisation
+               1. Impressionismus
+               2. Romantik
+     2. Gesang
+          1. Bass
+               1. Monteverdi
+               2. Bach
+               3. Schubert
+          3. Altus
+               1. Monteverdi
+               2. Viadana
+               3. Xenakis
+
+** Curriculum Vitae
+*** Ausbildung
+|---+-----------+------------------------------------------------------|
+|   |       <r> | <52>                                                 |
+|   |  Aug 2013 | Staatsexamensarbeit: »Abgrenzung von Musikalität und musikalischer Kompetenz – Eine empirische Untersuchung von Over- und Underachievement bei Sechstklässlern«; Note 1,0 |
+|   | seit 2010 | Physikstudium an der Universität Vaihingen           |
+|   | seit 2008 | Doppelstudium Schulmusik und Kirchenmusik an der Hochschule für Musik und Darstellende Kunst Stuttgart |
+|   | 2007–2008 | C-Kurs Rottenburg am Neckar                          |
+| / | 1994–1998 | Grundschule Parkschule Essingen                      |
+|---+-----------+------------------------------------------------------|
+
+*** Preise und Stipendien
+|---+-----------+------------------------------------------------------|
+|   |       <r> | <52>                                                 |
+|   |  Feb 2013 | Stipendiat der Karin Abt-Straubinger-Stiftung für eine Sprachschule an der technischen Staatsuniversität in Irkutsk, Sibirien |
+|   |      2012 | Träger des Deutschlandstipendiums                    |
+|   |      2012 | Stipendiat des DAAD go east! Programms an der Staatlichen Landesuniversität Russlands in Moskau |
+|   |      2010 | Stipendiat des »Europäischen Chorforums für junge Komponisten« Ochsenhausen, in diesem Rahmen Aufführung eigener Werke durch das Orpheus Vokalensemble |
+|   | 1998–2007 | Theodor-Heuss-Gymnasium Aalen, Preis der Schule und Preis der DPG (Deutsche Physikalische Gesellschaft) |
+|---+-----------+------------------------------------------------------|
+
+*** Musikalisches Schaffen
+|---+-----------+------------------------------------------------------|
+|   |       <r> | <52>                                                 |
+|   |  Aug 2013 | Konzert im Dom zu Schweidnitz (Polen)                |
+|   |  Jan 2013 | Leiter der Musikschule Obertürkheim Stuttgart www.musikschule-obertuerkheim.de |
+|   |      2010 | Mehrere Uraufführungen eigener Kompositionen durch den Aalener Oratorienchor |
+|   | 2008–2012 | Kirchenchorleiter und Organist der Marienwallfahrtskirche alen-Unterkochen |
+|---+-----------+------------------------------------------------------|
+
+*** Sonstige Tätigkeiten
+|---+-----------+------------------------------------------------------|
+|   |       <r> | <52>                                                 |
+|   |  Feb 2013 | Mitglied im Doktorandennetzwerk des AMPF (Arbeitskreis Musikpädagogische Forschung) |
+|   | seit 2012 | Mitglied im MinD-Hochschulnetzwerk www.mhn.mensa.de  |
+|   |      2011 | Praktikum beim Landesgymnasium für Hochbegabte Schwäbisch Gmünd |
+|   |      2011 | Abschlussprüfung in Chorleitung, Orchesterleitung und in Musiktheorie |
+|   |      2010 | Studienreise nach Toulouse, Dolmetscher für die Studenten um sich in die frz. Kultur integrieren zu können |
+|   |      2008 | Studienreise nach Italien um die dortige Orgellandschaft kennenzulernen |
+|---+-----------+------------------------------------------------------|
+
+*** Sprachen
+|---+----------+------------------------------------------------------|
+|   |          | <52>                                                 |
+|   | English  | Sehr gut in Wort und Schrift                         |
+|   | Español  | Sehr gut in Wort und Schrift                         |
+|   | Français | Sehr gut in Wort, gut in Schrift                     |
+|   | Русский  | Grundlegende Kenntnisse (A2)                         |
+|---+----------+------------------------------------------------------|
+
+*** Computer
+|---+----------+------------------------------------------------------|
+|   |          | <52>                                                 |
+|   | R, SPSS  | Erfahrung in quantitativer Forschung                 |
+|   | Python   | Grundlegende Programmierkenntnisse                   |
+|   | C        | Einführung an Harvard (über edx.org)                 |
+|   | Elisp    | Emacs                                                |
+|   | ILIAS    | Serverinstallation und -benutzung                    |
+|   | Org-mode | Projektplanungs- und Protokollierungserfahrung       |
+|   | LaTeX    | Textpublikationserfahrungen                          |
+|   | Lilypond | Auszeichnungssprache für professionellen Notensatz   |
+|---+----------+------------------------------------------------------|
+
+
