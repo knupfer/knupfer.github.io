@@ -59,6 +59,9 @@ html, body {
     background: #333;
     border-top: 5px #0bb solid
 }
+img {
+    max-width: 100%
+}
 img.random {
     max-width: 750px;
     max-height: 380px;
