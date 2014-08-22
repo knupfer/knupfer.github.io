@@ -243,9 +243,15 @@ a {
     -moz-transition: color .3s linear; 
     transition: color .3s linear;  */
 }
-a span {
+a span:hover {
     color: #0F0;
     font-size: 200%
+}
+span:hover {
+    color: #F00
+}
+a.todo:hover {
+   color: #000
 }
 a:hover {  
     color: #5DD;
