@@ -265,7 +265,10 @@ ul.posts {
     transition: color 5s linear;
 }
 ul.posts:hover {
-    color: #bbb;
+    color: #ccc;
+}
+div.outline-text-3:hover{
+    background-color: #eee
 }
 ul.posts li:hover {
     color: #aaa;
