@@ -1,299 +1,981 @@
-* [2014-08-22 Fri] lilypond-pretty-beat-mode
-I've written a pretty nice mode for lilypond, which tries to make
-lilypond coding less error prone.  It uses functions of LilyPond-mode
-(yes, it uses CamelCase) to display the notes in a distance which
-correlates with their duration.  Therefor, the bar sign | will be all
-in one row if all is correct (the music and the parser), if the bar is
-overfull or underfull it shows +- signs alla git.
-
-That is already quite nice, but it gets even more interesting.  If you
-put after a barline the barnumber, e. g. %7, it will enumerate all
-consecutive lines which end in barlines.  If you put another barnumber
-in one of the following lines, it adjusts accordingly.  If there is a
-gap, for example by ending a voice and beginning another, it will stop
-enumerating unless it finds new numbers.  The result is a much more
-comfortable bug squashing after looking at the pdf.
-
-The last feature is a interpreter for music.  The minor mode will
-parse the entire file and count which beats are frequently used and
-marks this beats with lines colord according to the frequency.  This
-provides a robust way to determine the correct length of a bar for
-good layouting (for example 72 columns) and to aide writing music.
-You see imediatly if the notes are on heavy beats or light beats.  You
-don't even have to hear or see the music and it provides a quite
-useful impression of the measure of the piece.  If you've got piece in
-5/4, you'll see whether it is a (2+3)/4 or a (3+2)/4.  You see even
-different dances like sarabande.
-
-There are some shortcomings of this mode.  Sometimes the get-beat
-function from LilyPond-mode fails to count the beat at point.  This
-happens for more complex music, with voice splits in one voice, and in
-the first bar of every voice (it's quite possible that this bug will
-be fixed).  Another major flaw is that it can't handle changes in
-meter or changes in the emphasize pattern (for example hemiola).
-Performance was a big problem which is now resolved, by parsing the
-file line by line only when idle, aborting on user input and resuming
-after the input at the last position.  Will writing the music it keeps
-analysing it and tracking changes of the priority of beats with
-accordingly changing colors.  Depending on speed of the computer and
-size of the piece, this might take some seconds (which never block the
-user).
-
-* [2014-08-22 Fri] Migration
-In the last days, I changed the publish procedure for my homepage.
-The goals hereby were:
-- article storage :: Before I maintained a tree structure for every
-     topic and every article was in a separate file with the name
-     consisting of the date and the article title.  Now all articles
-     reside in the same file.  This is not scalable, but scalability
-     is normally not the goal of a personal blog.
-- emacs centric :: Before, the files were modifyed by a shell script
-                   and some emacs scripts, which were dependent on my
-                   .emacs file.  Now it works just with emacs
-                   org-mode, all that is needed is a html export which
-                   executes a elisp sourceblock in the org-file which
-                   splits up the resulting html into individual files.
-- simpler naming :: I use Jekyll and github for my blog, therefor the
-                    files are required to have a certain format etc.
-                    Now this is extracted automatically via
-                    org-time-stamp and a md5 hash of the title.  This
-                    results in very collision robust file names which
-                    keep the same unless the title changes, which is
-                    very nice for permalinks etc.
-This is the first article which I'm writing with the new setup, and
-it's a lot simpler and better to maintain.  I simply use org and
-haven't to worry about changes in the directory structure etc or
-renaming files and titles within files and finding files.  I just
-write in one file and thats all.  If I don't use a time stamp, it
-won't get exported.  Alternatively I can use common org-tags
-like :noexport:.
-* [2014-07-30 Wed] Exportskript
-#+BEGIN_SRC emacs-lisp :exports both
-(defun knu-split-org-articles (file-name)
-  "Take the base of a .org file and extract all headings with timestamps in
-different html files for jekyll."
-  (with-temp-buffer
-    (insert-file-contents file-name)
-    (delete-file file-name)
-    (delete-directory (concat (file-name-directory file-name) "_posts/") t)
-    (mkdir (concat (file-name-directory file-name) "_posts/"))
-    (let ((articles (split-string (buffer-string) ".*\n<h2 [^/]*</span>")))
-      (while articles
-        (with-temp-buffer
-          (insert (concat "---\nlayout: post\ntitle:" (pop articles)))
-          (goto-char (point-min))
-          (when (re-search-forward
-                 "<div id=\"postamble\" class=\"status\">" nil t)
-            (goto-char (match-beginning 0))
-            (forward-line -1)
-            (delete-region (point) (point-max)))
-          (goto-char (point-max))
-          (re-search-backward "</div>" nil t)
-          (replace-match "" nil nil)
-          (goto-char (point-min))
-          (while (re-search-forward
-                  "<span class=\"section-number[^/]*</span>" nil t)
-            (replace-match ""))
-          (goto-char (point-min))
-          (while (re-search-forward "<img src=\"images/" nil t)
-            (replace-match "<img src=\"/images/"))
-          (goto-char (point-min))
-          (when (re-search-forward
-                 "<span class=\"timestamp-wrapper\"><span class=\"timestamp\">\\[\\([0-9-]*\\).*</span></span>" nil t)
-            (let ((date (match-string 1)))
-              (replace-match "")
-              (goto-char (point-min))
-              (when (re-search-forward "title: *\\(.*\\)\\(</h2>\\)" nil t)
-                (replace-match "\n---" nil nil nil 2)
-                (let ((title (match-string 1)))
-                  (write-file (concat (file-name-directory file-name) "_posts/"
-                                      date
-                                      "-" (md5 title) ".html")))))))))))
-
-(progn (run-with-idle-timer 0.5 nil 'knu-split-org-articles
-                            (concat (file-name-sans-extension
-                                     (buffer-file-name)) ".html")) nil)
-#+END_SRC
-
-* [2014-01-26 Sun] Emacs whitespace.el
+* [2013-10-05 Sat] About
 ** Einleitung
-Als Anfänger im Programmieren habe ich mir die Frage gestellt, wie ich
-mir das Programmierenlernen so effektiv und komfortabel wie möglich
-gestalten kann.
+Lieber Leser,
 
-Es stellte sich zunächst die Frage, ob man nun mit Spaces oder Tabs
-indenten sollte.  Nachdem ich einige Artikel im Internet gelesen habe
-und auch über unkonventionelle Lösungen wie elastic tabs nachgedacht
-habe, habe ich mich für Leerzeichen entschieden.
+hier findet sich nun also mein CV zur Einsicht.  Zu den in CVs
+üblichen Inhalten gibt es hier noch Raum für Informelleres, meine
+Hobbies sind die folgenden:
 
-** Vergleich mit anderen Methoden
-*** farbige Pipes und kein farbiger Hintergrund
-** Vorteile
-*** In aktuellen Emacs-Versionen inbegriffen
-*** verschiedene Farben für verschiedene Indentation-Tiefe
-** Nachteile
-*** Bugs
-**** langsam für restlichen Whitespace, wenn der Point darübergeht...
-**** in Teilen inkompatibel mit org-mode indentation-mode
+1. Kochen (vor allem exotische Küche)
 
-* [2014-01-24 Fri] Magit!
+2. Sprachen
+     1. Englisch
+     2. Spanisch
+     3. Französisch
+     4. Russisch
+     5. Nächste anvisierte Sprachen:
+          1. Arabisch
+          2. Chinesisch
+          3. Koreanisch
+
+3. Reisen
+4. Typographie
+5. Technik
+     1. Tablets
+     2. Elektroautos
+     3. Energieproduktion
+          1. Wasserkraft
+          2. Windkraft
+          3. Kernenergie
+               1. Fussionsreaktoren
+               2. Fissionsreaktoren
+6. Musik
+     1. Orgel
+          1. Literatur
+               1. Durufle
+               2. Couperin
+               3. Reger
+          2. Improvisation
+               1. Impressionismus
+               2. Romantik
+     2. Gesang
+          1. Bass
+               1. Monteverdi
+               2. Bach
+               3. Schubert
+          3. Altus
+               1. Monteverdi
+               2. Viadana
+               3. Xenakis
+
+** Curriculum Vitae
+*** Ausbildung
+|---+-----------+------------------------------------------------------|
+|   |       <r> | <52>                                                 |
+|   |  Aug 2013 | Staatsexamensarbeit: »Abgrenzung von Musikalität und musikalischer Kompetenz – Eine empirische Untersuchung von Over- und Underachievement bei Sechstklässlern«; Note 1,0 |
+|   | seit 2010 | Physikstudium an der Universität Vaihingen           |
+|   | seit 2008 | Doppelstudium Schulmusik und Kirchenmusik an der Hochschule für Musik und Darstellende Kunst Stuttgart |
+|   | 2007–2008 | C-Kurs Rottenburg am Neckar                          |
+| / | 1994–1998 | Grundschule Parkschule Essingen                      |
+|---+-----------+------------------------------------------------------|
+
+*** Preise und Stipendien
+|---+-----------+------------------------------------------------------|
+|   |       <r> | <52>                                                 |
+|   |  Feb 2013 | Stipendiat der Karin Abt-Straubinger-Stiftung für eine Sprachschule an der technischen Staatsuniversität in Irkutsk, Sibirien |
+|   |      2012 | Träger des Deutschlandstipendiums                    |
+|   |      2012 | Stipendiat des DAAD go east! Programms an der Staatlichen Landesuniversität Russlands in Moskau |
+|   |      2010 | Stipendiat des »Europäischen Chorforums für junge Komponisten« Ochsenhausen, in diesem Rahmen Aufführung eigener Werke durch das Orpheus Vokalensemble |
+|   | 1998–2007 | Theodor-Heuss-Gymnasium Aalen, Preis der Schule und Preis der DPG (Deutsche Physikalische Gesellschaft) |
+|---+-----------+------------------------------------------------------|
+
+*** Musikalisches Schaffen
+|---+-----------+------------------------------------------------------|
+|   |       <r> | <52>                                                 |
+|   |  Aug 2013 | Konzert im Dom zu Schweidnitz (Polen)                |
+|   |  Jan 2013 | Leiter der Musikschule Obertürkheim Stuttgart www.musikschule-obertuerkheim.de |
+|   |      2010 | Mehrere Uraufführungen eigener Kompositionen durch den Aalener Oratorienchor |
+|   | 2008–2012 | Kirchenchorleiter und Organist der Marienwallfahrtskirche alen-Unterkochen |
+|---+-----------+------------------------------------------------------|
+
+*** Sonstige Tätigkeiten
+|---+-----------+------------------------------------------------------|
+|   |       <r> | <52>                                                 |
+|   |  Feb 2013 | Mitglied im Doktorandennetzwerk des AMPF (Arbeitskreis Musikpädagogische Forschung) |
+|   | seit 2012 | Mitglied im MinD-Hochschulnetzwerk www.mhn.mensa.de  |
+|   |      2011 | Praktikum beim Landesgymnasium für Hochbegabte Schwäbisch Gmünd |
+|   |      2011 | Abschlussprüfung in Chorleitung, Orchesterleitung und in Musiktheorie |
+|   |      2010 | Studienreise nach Toulouse, Dolmetscher für die Studenten um sich in die frz. Kultur integrieren zu können |
+|   |      2008 | Studienreise nach Italien um die dortige Orgellandschaft kennenzulernen |
+|---+-----------+------------------------------------------------------|
+
+*** Sprachen
+|---+----------+------------------------------------------------------|
+|   |          | <52>                                                 |
+|   | English  | Sehr gut in Wort und Schrift                         |
+|   | Español  | Sehr gut in Wort und Schrift                         |
+|   | Français | Sehr gut in Wort, gut in Schrift                     |
+|   | Русский  | Grundlegende Kenntnisse (A2)                         |
+|---+----------+------------------------------------------------------|
+
+*** Computer
+|---+----------+------------------------------------------------------|
+|   |          | <52>                                                 |
+|   | R, SPSS  | Erfahrung in quantitativer Forschung                 |
+|   | Python   | Grundlegende Programmierkenntnisse                   |
+|   | C        | Einführung an Harvard (über edx.org)                 |
+|   | Elisp    | Emacs                                                |
+|   | ILIAS    | Serverinstallation und -benutzung                    |
+|   | Org-mode | Projektplanungs- und Protokollierungserfahrung       |
+|   | LaTeX    | Textpublikationserfahrungen                          |
+|   | Lilypond | Auszeichnungssprache für professionellen Notensatz   |
+|---+----------+------------------------------------------------------|
+
+* [2013-10-06 Sun] Hello World!
 ** Einleitung
-Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine
-Homepage versioniere und auf Github publiziere, befand ich die Zeit
-reif dafür, mich genauer mit Git auseinanderzusetzen.
+Hallo, dies ist mein erster Post hier. Ich bin gespannt, ob ich mich
+für das Bloggen begeistern kann. Gleichzeitig dient diese Homepage
+dazu, gemeinschaftlich über Probleme nachzudenken. Diese können aus
+ganz verschiedenen Bereichen kommen. Hier im Speziellen wird es sich
+um Themen der Musikpädagogik, der Empirie, des Computers und der
+Typography drehen.
 
-** Git
-Git wurde von Linus Torvalds für die Versionierung des Linuxkernels
-programmiert.  Da die Funktionalität sehr umfangreich ist, erfreute
-sich Git schnell großer Beliebtheit.
+*** Zu meiner Person
+Ich bin derzeit Student der Schul- und Kirchenmusik und der
+Physik. Ich plane nach dem Studium einen Doktor in empirischer
+Musikpädagogik zu machen und beschäftige mich deswegen nun seit ein
+paar Wochen mit dem Programmieren.  Angefangen habe ich mit Python;
+als pädagogische Programmiersprache erschien mir dies besonders
+Sinnvoll in anbetracht meiner mangelnden Erfahrung. Nach ein paar
+ersten Progrämmchen verlor ich ein wenig die Motivation aufgrund von
+fehlenden Problemstellungen.
 
-*** Funktionsweise
-Es wird in dem Repository, also in dem Verzeichnis, in dem man seine
-Dateien aufbewahrt werden, welche versioniert werden sollen
-(i.d.R. Quellcode) ein .git Verzeichnis erstellt, welches zunächst
-einer Kopie aller Dateien entspricht.  Daraufhin werden Änderungen in
-den Staging-Bereich gebracht:
+Dann bin ich auf die Lernplattform [[http://www.edx.org][EdX]] gestoßen. Diese bietet
+kostenlose MOOCs an, also Vorlesungen (meist vom MIT oder Harvard),
+die den regulären Studenten auch angeboten werden. Dort bin ich nun in
+CS50 eingeschrieben und besuche regelmäßig Vorlesungen zum
+Programmieren und bearbeite auch die dortigen Aufgaben. So bin ich
+erst zu C und dann zu PHP gekommen.
+
+** Programmierung der Homepage
+Die Grundlagen dieser durch [[http://www.jekyllrb.com][Jekyll]] compilierten Homepage haben mich
+einige Tage gekostet, da ich noch kaum Erfahrung mit Markup-Sprachen
+hatte. Ferner wollte ich einige Prozesse automatisieren und
+verbessern, was mir manch einen Nerv geraubt hat.
+
+*** Jekyll
+Jekyll ist ein statischer Homepage generierer der vor allem bei
+Programmieren sehr beliebt ist. Dies liegt an Verschiedenem.
+
+**** Statische Homepages
+Der große Vorteil an statischen Homepages ist, dass diese keine
+Datenbank wie MySQL benötigen. Zudem benötigen sie kein PHP und sind
+somit nicht nur sehr sicher, sondern auch auf jedem Web-Server
+funktionsfähig. Weiterhin sind statische Homepages sehr performant.
+
+**** GitHub
+Ein weiterer fantastischer Vorteil 0ist, dass die
+Open-Soure-Entwicklungsplattform [[http://www.github.com][GitHub]] Jekyll-Seiten kostenlos ohne
+Werbung publizieren lässt. So ist diese Seite kostenfrei unter
+[[http://knupfer.github.io]] gehostet. Dieser Service ist aber nicht
+alles, GitHub kompiliert für einen sogar den Sourcecode der
+Homepage. Jedoch gibt es hier auch kleine Einschränkungen, so werden
+zusätzliche Plugins beispielsweise aus Sicherheitsgründen nicht
+unterstützt.
+
+*** Emacs
+Emacs ist wohl einer der ältesten und umfangreichesten
+Texteditoren. Dass ein Texteditor umfangreich oder gar komplex sein
+kann, mag zunächst überraschen, jedoch kann Emacs äußerst erstaunlich
+Dinge:
+- Programmcode kann im Editor kompiliert werden
+- Syntaxhighlighting
+- Verschiedene Themes
+- Sehr starke und umfangreiche Navigationswerkzeuge, z. B.:
+  - Cursorbewegung durch Shortcuts
+  - Löschen von Buchstaben, Wörtern oder ganzen Absätzen
+  - Wechseln von verschiedenen Fenstern per Shortcut
+  - Fenstersplitting usw.
+- Durch seine Programmierbarkeit starke Erweiterbarkeit:
+  - kann der Editor direkt als Taschenrechner verwendet werden
+  - gibt viele IDE, die für Emacs von der Community programmiert
+    wurden
+
+**** Org Mode
+[[http://www.orgmode.org][Org Mode]] ist eine von vielen möglichen Erweiterungen von Emacs, die
+selbst so umfangreich ist, dass die Dokumentation ein sehr dickes Buch
+füllt. Mit Org Mode kann man, wie der Name bereits sugeriert, sich
+organisieren. Dies fängt von ganz simplen Aufgaben wie Todo-Listen an,
+geht weiter zu einem sehr guten Outliner und auch zu mehrsprachigem
+(Computersprachen) literateprogramming.
+
+***** Exportfunktionen
+Eine große Stärke von Org Mode sind die Exportfunktionen. Es
+kann u. a. nach LaTeX, Html, Docbook und Ascii exportiert
+werden. Dieses Feature ist so sehr ausgereift, dass die resultierenden
+Dokumente oft sehr gut aussehen. Automatisch wird ein
+Inhaltsverzeichnis generiert, ausgezeichnet, ggf. code compiliert
+uvm. Aller Text dieser Homepage ist ausschließlich in Org Mode
+verfasst, in ein Html exportiert und danach mit einem Shellscript den
+Anforderungen von Jekyll angepasst.
+
+***** Syntaxhighlighting
+Der Export von Syntaxhighlighting von Html ist ein wenig aufwendig.
+Man könnte zwar auf das Syntaxhighlighting von Jekyll zurückgreifen,
+dies ist aber für helle Codeboxen optimiert, was nicht meiner
+Designvorstellung entsprach.  Eine Änderung dieses Highlightings würde
+mit mühevollem ändern und testen jedes einzelnen Codeschlüsselwortes
+in einer css-Datei einhergehen, worauf ich keine Lust habe, da es auch
+möglich ist, dass diese Homepage ihr Äußeres noch mehrfach verändert
+etc.
+
+Mithilfe des Zusatzpakete htmlize.el für Emacs ist es mir gelungen,
+Emacs so einzurichten, dass er automatisch das gleiche
+Syntaxhighlighting, welches derzeit im Editor aktiv ist, in den
+Html-export übernimmt.  Über ein in Org Mode implementiertes
+Javascript ist es sogar möglich, über links Referenzcodezeilen zu
+manipulieren.  Die Standardeinstellung war, die ganze Zeile gelb zu
+färben, was sehr direkt war.  Ich habe mich für eine dezente Version
+entschieden und habe den Sourcecode so geändert, dass wenn der Cursor
+über dem link ist, die entsprechende Codezeile fett dargestellt wird.
+
+*** Das Shellscript
+Da Jekyll einen speziellen Head einer Html-Datei benötigt, blieb mir
+nichts anderes übrig, diesen Anfang über ein Shellscript in das durch
+Emacs exportierte Html einzufügen. Ich habe Emacs so konfiguriert,
+dass es nur den Body der Html exportiert und habe das Javascript für
+das Syntaxhighlighting seperat abgespeichert. In dem Shellscript wird
+der [[(head)][Head]] aus der .org-Datei flexibel extrahiert und in einer neuen
+Datei abgespeichert, daraufhin das [[(java)][Javascript]] eingefügt und dann der
+Html-Body. Zum Schluss wird noch die Datei umbenannt und in den von
+Jekyll verabeiteten _posts-Ordner [[(move)][verschoben]]. Das Skript macht diese
+Prozedur automatisch, [[(for)][mit allen .org-Dateien]], die exportiert wurden,
+sprich die verändert wurden. Bereits aktuelle Posts werden nicht
+modifiziert, so bleibt das Datum des Posts erhalten.
+
+Hier zum nachlesen und nachdenken das Shellscript, natürlich mit
+Syntaxhighlighting usw. Es wurden Gruppen von drei Bindestrichen durch
+zwei Bindestriche eresetzt, um keine Probleme mit Jekyll zu bereiten.
+
 #+BEGIN_SRC sh :exports code
-git add -A
-#+END_SRC
-Sobald man dort alle Änderungen hinzugefügt hat, welche man
-versionieren möchte, macht man einen Commit, welcher einen Text
-enthält, welcher beschreibt, welche Änderungen vorgenommen werden:
-#+BEGIN_SRC sh :exports code
-git commit -m 'bugfix'
-#+END_SRC
-Somit ist nun die Änderung gespeichert und kann mit dem vorherigen
-Stand verglichen werden, neue Änderungen gemacht werden, oder die
-Änderungen zu einem Remote-Repository übertragen werden:
-#+BEGIN_SRC sh :exports code
-git push origin master
+#!/bin/sh
+
+cd ~/git/knupfer.github.io/_org
+rm ~/git/knupfer.github.io/_posts/*
+
+TEMP='../_processing';
+TOC='totalindex';
+
+echo '--
+layout: default
+title: Index
+--
+<div id="table-of-contents2">
+<h3>Index</h3>
+<div id="text-table-of-contents2">
+<ul>' > $TEMP/$TOC;
+
+for DIRECTORY in */
+do
+    cd $DIRECTORY
+    for FILE in *.org
+    do
+        DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
+        URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
+        TITLE=$(sed -n '3,/--/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
+        FATHER=$(echo $DIRECTORY | sed 's:/::')
+
+        test -e ../$TEMP/$DIRECTORY/$DATEI.html &&
+        echo '<li><a href="'$URL'">'$TITLE'</a>' >> ../categorie.$FATHER &&
+        sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' ../$TEMP/$DIRECTORY/$DATEI.html |
+        tail -n +2 |
+        head -n -1 |
+        sed 's:\(href="\)#:\1'$URL'#:g' >> ../categorie.$FATHER &&
+        sed -n '3,/--/ p' $DATEI.org | head --lines=-1 > ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        echo 'father: '$DIRECTORY | sed 's:/::' >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        echo '--' >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        sed 'N;
+            s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
+            P;
+            s_file:///_/_;
+            s_<h2>Table of Contents</h2>_<h3>Inhaltsverzeichnis</h3>_;
+            D' ../$TEMP/$DIRECTORY/$DATEI.html >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
+        cat ../$TEMP/$DIRECTORY/$DATEI.org.publish > ../../_posts/$DATEI.html;
+    done
+    cd ..
+done
+
+for FILE in *.org
+do
+    DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
+    URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
+    TITLE=$(sed -n '3,/--/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
+    FATHER=$(sed -n '3,/--/ s_father: *"*\([^"]*\)"*_\1_p' $DATEI.org);
+
+    test -e $TEMP/$DATEI.html &&
+    echo '<li><a href="'$URL'">'$TITLE'</a>' >> categorie.$FATHER &&
+    sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' $TEMP/$DATEI.html |
+    tail -n +2 |
+    head -n -1 |
+    sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
+    sed -n '3,/--/ p' $DATEI.org > $TEMP/$DATEI.org.publish &&
+    sed 'N;
+        s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
+        P;
+        s_file:///_/_;
+        s_<h2>Table of Contents</h2>_<h3>Inhaltsverzeichnis</h3>_;
+        D' $TEMP/$DATEI.html >> $TEMP/$DATEI.org.publish &&
+    cat $TEMP/$DATEI.org.publish > ../_posts/$DATEI.html;
+done
+
+
+
+mv categorie. categorie.zzz
+
+for INDEX in categorie.*
+do
+    if [ "$(echo $INDEX | sed 's_categorie\.\(.*\)_\1_')" != 'zzz' ]
+    then
+        echo '<li><a href="">' $(echo $INDEX |
+            sed 's_categorie\.\(.*\)_\1_') '</a>' '<ul>' >> $TEMP/$TOC;
+    else
+        echo '<li><a href="">' Verschiedenes '</a>' '<ul>' >> $TEMP/$TOC
+    fi
+    cat $INDEX >> $TEMP/$TOC;
+    echo '</ul>' >> $TEMP/$TOC;
+done
+
+echo '</ul></div></div>' >> $TEMP/$TOC;
+cp $TEMP/$TOC  ../$TOC.html;
+mv categorie.* $TEMP;
+mv ../_posts/about.html ../about.html;
+test -e *.org~ && rm *.org~ ;
 #+END_SRC
 
-#+BEGIN_SRC ditaa :file images/git.png :exports results
- +------------------+
- |Arbeitsverzeichnis+<-------+
- +----------------+-+        |
-                  |          |
- +---git add------+          |
- |                           |
- |  +-----+                  |
- +->|Stage|-----+            |
-    +-----+     |            |
-                |            |
- +---git commit-+            |
- |                           |
- |  +----------+             |
- +->|Repository+-+           |
-    +----------+ |           |
-                 |           |
- +---git push----+           |
- |                           |
- |  +------+                 |
- +->|Remote+--git pull-------+
-    +------+
+* [2013-10-09 Wed] Linuxdistributionen
+** Einleitung
+Als ich vor ungefähr 2 Jahren auf Linux umgestiegen bin, stellte ich
+mir die Frage welche Distribution ich nehmen sollte. Überwältigt von
+der Vielfalt und zunächst nicht im Stande Desktopumgebungen (Xcfe,
+Lxde, Gnome …) von Distributionen zu unterscheiden entschied ich mich
+für Ubuntu.
+
+Nach einer Eingewöhnungszeit wurde mir klar, dass Cannonical (die
+Firma hinter Ubuntu) Interessen hatte, die mit den meinigen
+unvereinbar waren. So wechselte ich zu Debian und stellte nach kurzer
+Zeit die Repository auf Testing. Hier hatte ich mich nun auch an
+verschiedene Desktopumgebungen rangemacht.
+
+** Distributionen
+Distributionen kann man durch mehrere Elemente charakterisieren:
+
+- Packetmanager :: Sie sind für Update- und Installationsprozesse
+                   verantwortlich.
+- Desktopumgebung :: Diese stellt eine grafische Oberfläche und
+     verschiedene Standardprogramme bereit, da diese besonders wichtig
+     für die Usability sind, wird hier auch noch detailiert darauf
+     eingegangen.
+- Free vs. Nonfree :: Manche Distributionen enthalten (fast) nur freie
+     Software (z.B. Debian) was zur Konsequenz hat, dass diese von
+     Haus aus die meisten Videocodecs nicht unterstützen. Andere
+     Distribution sind komfortabler (z.B. Mint), da sie alles
+     Notwendige enthalten, um beispielsweise eine DVD oder
+     Youtube-Videos zu sehen.
+- Zielgruppe :: Hier gibt es große Unterschiede, vor allem Ubuntu wird
+                immer Anfängern empfohlen, da vieles ohne
+                Konfiguration funktioniert und technisches unter
+                grafischen Elementen versteckt wird. Arch hingegen hat
+                vor allem erfahrene Nutzer im Blick. Auf ein
+                grafisches Verstecken wird bewusst verzichtet, um
+                maximal präzise Konfiguartionen zu
+                ermöglichen. Erfahrene Nutzer können terminalbasiert
+                schneller arbeiten, ferner wird die CPU durch die
+                fehlenden Extravaganzen geschont.
+- Entwicklungsstrategie :: Hier wird zwischen Rolling- und
+     Nonrolling-release unterschieden. Da dieses Thema für mich
+     besonders interessant ist, wird im Folgenden darauf genauer
+     eingegangen.
+
+*** Nonrolling-release
+Die meiste Software hat eine Nonrolling-release-Entwicklung. Sprich es
+werden stabile Versionen eines Programmes publiziert, von denen man
+dann Updates zur nächsten stabilen Version machen kann. Bei mancher
+Software, wie z.B. bei vielen Distributionen ist hierfür eine
+Neuinstallation notwendig.
+
+**** Debian
+Debian ist eine sehr alte Distribution mit sehr vielen
+Entwicklern. Der Entwicklungsprozess ist sehr konservativ; es werden
+ungefähr alle zwei Jahre neue Versionen publiziert, welche in der
+gesamten Zwischenzeit keinen neuen Features, sondern nur
+Sicherheitsupdates bekommen. Da diese Versionen außerordentlich stabil
+sind werden diese meist für Server verwendet.
+
+***** Repositorys
+Die Repositorys von Debian sind weiterhin in Experimental, Unstable
+und Testing unterteilt.
+
+****** Experimental
+Hier befinden sich Programme, die große Systemveränderungen benötigen
+oder noch sehr unstabil laufen. Experimental ist kein vollständiges
+Repository, sondern kann nur zusammen mit Unstable verwendet
+werden. Generell sollte man dieses Repository meiden, außer man möchte
+explizit bei der Debianentwicklung mitarbeiten.
+
+****** Unstable
+Unstable ist ein vollständiges Repository, welches verwendet werden
+kann um sehr aktuelle Software zu installieren. Unstable ist ein
+Rolling-release, Neuinstallationen sind also nurnoch notwendig, falls
+einem die unstabile Software zu viele Probleme bereitet. Auch von
+diesem Repository wird i.d.R. abgeraten.
+
+****** Testing
+Dieses Repository hat schon eine gewisse Stabilität erreicht, da hier
+nur Software gelagert wird, die eine Zeit lang ohne Probleme in
+Unstable war. Jedoch benutzt Testing kein volles
+Rolling-release-Modell mehr, da immer ein halbes Jahr vor einer neuen
+stabilen Debianversion es einen Featuerfreeze gibt, in dem die
+Entwickler sich auf Fehlerbehandlung fokussieren.
+
+***** Derivate
+Wegen des Alters und der Größe von Debian entstanden Derivate, also
+Modifikationen, welche sich vor allem im Bezug zur freien Software
+unterscheiden.
+
+****** Ubuntu
+Die bekannteste Linuxdistro nennt sich Ubuntu, was so viel wie
+Menschlichkeit bedeutet. Sie ist auf einfache Benutzung und somit auf
+unerfahrene Benutzer hin optimiert.
+
+******* Kritik
+******** Kommerz
+In der letzten Zeit wurde Ubuntu immer mehr kommerzialisiert. Auch
+wenn die Benutzung weiterhin kostenlos ist, so werden nun Verhalten
+der Benutzer protokolliert und an Amazon verkauft. Ferner strebt die
+Distribution gewisse Inkompatibilitäten an, welche zu einer
+Monopolstellung (vor allem auf dem Smartphone-Markt) führen sollen.
+
+******** Stabilität
+Weiterhin baut Ubuntu auf dem Unstable-release von Debian auf, ohne
+jedoch selbst ein Rolling-release zu sein. Dies hat zur Konsequenz,
+dass zwar aktuelle Software verwendet wird, jedoch diese aber nicht
+neu gehalten wird, was aber gerade bei unstabiler Software besonders
+wichtig ist.
+
+****** Mint
+Diese Distro ist ein Fork von Ubuntu. Sie hat auch eher unerfahrene
+Benutzer im Blick, lässt jedoch mehr Freiheiten und
+Konfigurierbarkeiten. Zudem setzt mint auf einen klassischen Desktop,
+im Gegensatz zu Ubuntu.
+
+******* Kritik
+******** Codebase
+Problematisch dürfte die Basis Ubuntu sein, da dieses immer
+inkompatibler wird. Somit dürften die Modifikationen, die Mint
+vornimmt immer schwieriger und monolithischer werden, was den
+UNIX-Prinzipien widerspricht. Um dem entgegenzutreten wurde eine
+Version von Mint erstellt, welche direkt auf Debian aufbaut ([[Mint LMDE][LMDE]]).
+
+******** Unfrei
+Ferner wird kritisiert, dass Mint standardmäßig eine Vielzahl an
+unfreier Software installiert (was andererseits zu einer komfortablen
+Nutzungserfahrung führt).
+
+**** Fedora
+Diese Distribution unterscheidet sich in mancherlei Hinsicht von
+Debian. Sie hat einen anderen Packetmanager, ist (immer) modern und
+hat eine große Firma im Rücken (Red Hat).
+
+**** OpenSuse
+Eine deutsche, weitverbreitete Distro, welche das freie Pendant zu
+Suse darstellt. Sie hat also auch eine Firma im Rücken (welche
+unliebsamen Einfluss nehmen kann).
+
+*** Rolling-release
+Bei Rolling-release-software hat der Anwender stets eine aktuelle
+Version der Software und kann jederzeit auf den derzeitigen
+Entwicklungsstand updaten. In aller Regel geschieht dies ohne
+Neuinstallation. Da es hier aber keine klar definierten Versionen
+gibt, sondern nur Snapshots, sind evtl. auch mehr Fehler oder Probleme
+zu finden. Dementsprechend sind die meisten
+Rolling-release-distributionen für erfahrene Nutzer konzipiert.
+
+**** Arch
+[[http://archlinux.org][Arch]] ist eine sehr berühmte Rolling-releas-distro, welche sich vor
+allem an sehr erfahrene Nutzer wendet. Beispielsweise installiert der
+Installer (welcher rein Terminalbasiert ist) nur ein minimales
+System. Eine Desktopumgebung, Videocodecs und Büroprogramme etc. muss
+selbst installiert werden. Dies hat den unschlagbaren Vorteil, dass
+nur das installiert wird, was man auch wirklich möchte. Andererseits
+werden unerfahrene Benutzer mit einem nicht funktionsfähigen System
+konfrontiert. Um im selbstversuch zu lernen, werde ich vermutlich als
+nächstes Arch installieren.
+
+***** Aktualität
+Eines der Hauptziele von Arch ist es, möglichst nahe der bleeding Edge
+zu sein. Dies hat den Vorzug stets aktuelle Software zu besitzen und
+nie wieder das System neu installieren zu müssen, jedoch auch den
+Nachteil, dass das ganze System hin und wieder unstabil oder gar
+defekt sein kann. Da die Community sehr aktiv ist, werden Fehler
+schnell behoben; dennoch empfiehlt sich diese Distro nicht für Server
+oder sensible Daten.
+
+***** Manjaro
+Hier werden versucht, die Vorzüge von Arch mit denen von Mint zu
+kombinieren, dementsprechend nutzt auch Manjaro standardmäßig die von
+Mint entwickelte klassische Desktopumgebung Cinnamon. Ferner sind
+Videocodecs etc. bereits installiert. Leider büßt diese Distro an
+Aktualität ein, da sie trotz der Codebase Updatepackages verteilt und
+somit kein volles Rolling-release mehr ist.
+
+**** Debian
+Da Debian zwei Repositories hat, die ständig entwickelt werden, kann
+Debian unter Verwendung dieser auch als Rolling-release-distribution
+betrachtet werden. Da dies aber nicht der eigentlich konservativen
+Philosophie Debians entspricht gibt es einige Forks, die auf diesen
+Repositories aufbauen, nicht aber auf dieser Philosophie.
+
+***** Derivate
+****** Aptosid
+Eine auf dem Unstable-repository aufbauende Distro.
+
+****** Crunchbang
+Ebenso auf Unstable bauend.
+
+****** Mint LMDE
+Auf Testing aufbauend, mit der Behauptung (oder Traum), ein
+Rolling-release zu sein. Da aber das DE viele Probleme bereitet,
+vertreibt Mint Updatepackages. Trotz dass die Idee eines
+debianbasierten hervorragend ist, so ist doch die Umsetzung viel
+schlechter als bei dem originalen Mint.
+
+** Desktopumgebungen
+Ein Betriebssystem besteht auf den ersten Blick vor allem aus
+Programmen und einer grafischen Oberfläche (GUI). Diese Elemente sind
+aber nicht eigentlicher Teil eines Linuxbetriebssystemes, sondern Teil
+von Desktopumgebungen. Hier sieht man einen grundlegenden Unterschied
+zwischen Linux und Windows besonders deutlich: Linux ist modular, und
+nicht monolithisch.
+
+*** LXde
+Eine besonders ressourcenschonende Desktopumgebung, die vor allem für
+ältere Rechner gedacht ist. Kritikpunkte sind die alte Software und
+das sehr kleine Entwicklerteam, was ein verwaisen der Software
+ermöglicht.
+
+*** Xfce
+Auch ressourcenschonend, jedoch weiter verbreitet, moderner und mit
+größerem Entwicklungsteam.
+
+*** Kde
+Sehr verbreitet, großes Entwicklerteam, grafisch aufwendig und
+dementsprechend langsam.
+
+*** Gnome
+Diese DE hat eine lange Entwicklungsgeschichte hinter sich und ist bei
+vielen Distros der Standard. Jedoch löste das Gnome-Projekt auch eine
+sehr große Kontroverse mit Gnome3 aus, welches sich vom damaligen
+klassischen Desktopparadigma (und somit von vielen Nutzern) abwandte.
+
+**** Mate
+Ein Fork von Gnome2, welcher versucht, den alten Desktop zu pflegen
+und mit Sicherheitsaktualisierungen zu versorgen.
+
+**** Cinnamon
+Ein Fork von Gnome3, welcher versucht, trotz Integration neuster
+Softwaretechnologie immernoch eine klassische DE
+bereitzustellen. Cinnamon ist die Standard-DE von Mint und von Manjaro
+und erfreut sich großer Beliebtheit.
+
+**** Unity
+Ebenso ein Gnome-fork, welcher aber mit dem Original nurnoch sehr
+wenig zu tun hat. Unity ist mit nahezu allen Distros außer Ubuntu
+inkompatibel. Es strebt einen primitiven (leicht benutzbaren) Desktop
+an, der gut auch auf Touch-screens und Tablets verwendet werden kann.
+* [2013-10-13 Sun] Emacs Org-Mode
+** Einleitung
+#+name: paper
+#+begin_src lilypond :exports none
+\version "2.16.0"
+#(ly:set-option 'resolution 140)
+
+\paper{
+    indent=0\mm
+    line-width=90\mm
+    oddFooterMarkup=##f
+    oddHeaderMarkup=##f
+    bookTitleMarkup=##f
+    scoreTitleMarkup=##f
+}
+#+end_src
+
+Org-Mode stellt eine der interessantesten Entdeckungen dar, die ich
+die letzten Monate gemacht habe. Org-Mode ist ein Modus, also eine
+Erweiterung, für den Texteditor Emacs. Org-Mode dient, wie der Name
+bereits impliziert, der Organisation.
+
+** Outliner
+Org-Mode bietet sehr elaborierte Outlinefähigkeiten. Hierarchien
+werden mit einer unterschiedlichen Anzahl an Sternen gezeigt.
+
+#+BEGIN_SRC org
+ * Erste Überschrift
+ Text
+
+ ** Unterüberschrift
+ Text
+
+ *** Unterunterüberschrift
+ Text
+
+ * Zweite Überschrift
+#+END_SRC
+
+Jede Unterüberschrift kann nur genau ein Elternteil (Überschrift)
+haben, jedoch kann jede Überschrift beliebig viele Kinder
+(Unterüberschriften) haben. Dies verhält sich also genau so, wie man
+es in einer geschriebenen Arbeit erwarten würde.
+
+Um sich einen Überblick zu verschaffen und in seinem Dokument
+effizient zu navigieren, kann man einzelne Überschriften mit Hilfe der
+Tabulatortaste falten (ausblenden). Das obige Beispiel sieht gefaltet
+wie folgt aus:
+
+#+BEGIN_SRC org
+ * Erste Überschrift...
+ * Zweite Überschrift
+#+END_SRC
+
+Zudem kann man ganze Hierarchiebäume verschieben und auch befördern
+bzw. degradieren.
+
+** Todo-Listen
+Es können Todo-Listen einfach erstellt werden und mit Tastenkürzel
+verändert werden, beispielsweise als erledigt markiert werden und
+automatisch einen Zeitstempel hinzufügen.
+
+**** TODO offener Punkt
+**** DONE abgeschlossener Punkt.
+   CLOSED: [2013-10-13 Sun 12:31]
+
+Und folgendermaßen sehen die beiden Punkte im Quelltext aus:
+
+#+BEGIN_SRC org
+ *** TODO offener Punkt
+ *** DONE abgeschlossener Punkt.
+    CLOSED: [2013-10-13 Sun 12:31]
+#+END_SRC
+
+*** Agendas
+Mit Hilfe dieser Todo-Listen können sich Projektpläne erstellen
+lassen, ferner können die Todos mit einer Frist versehen werden und
+die ganze Liste an Fristen dann in einen Terminkalender
+exportieren. Erledigte Punkte können per Tastenkürzel in eine andere
+Datei archiviert werden.
+
+Ferner lassen sich per Befehl auch alle Todos eines Projektes, welches
+aus mehreren .org Dateien bestehen kann anzeigen und exportieren.
+
+** Export
+Da Org-Mode alles in simplen Textdateien speichert ist zwar einerseits
+die Kompatibilität und die Portabilität sehr hoch (man könnte
+Org-Mode-Dateien sogar mit Notepad erstellen), aber das Aussehen doch
+sehr limitiert.
+
+Dementsprechend kann man in gängige, ästhetischere Formate
+exportieren:
+1. LaTeX
+   1. Entweder nur in die .tex Datei
+   2. Oder direkt in ein pdf, wobei die Datei mehrfach prozessiert wird und alle anderen dabei entstehenden Dateien automatisch gelöscht werden
+2. Odt
+3. Html
+   1. Mit Head
+   2. Ohne Head
+
+Der Export ist so hervorragend, dass die resultierenden Pdfs direkt
+gedruckt werden können. Nach bedarf können einzelne Exportoptionen
+über Variablen verändert werden.
+
+*** LaTeX
+LaTeX-Formeln können direkt in das Html exportiert werden. Hierfür
+muss keine besondere Notation bedacht werden, es ist die gleiche. Nur
+die $-Zeichen der LaTeX-Formelumgebung müssen mit der Formel anliegend
+notiert werden, um Verwechslungen mit dem Währungssymbol zu
+vermeiden. Als Beispiel der Laplace-Operator für multidimensionale
+Differentialrechnung: $$ \Delta=\sum_{k=1}^n \frac{\partial^2}{\partial x_k^2} $$
+
+Im Quelltext sieht dies folgendermaßen aus:
+
+#+BEGIN_SRC latex -r
+$\Delta=\sum_{k=1}^n \frac{\partial^2} (ref:formel)
+                          {\partial x_k^2}$
+#+END_SRC
+
+Diese komplette Homepage ist mit Org-Modes Html-Export gemacht. Ich
+exportiere nur den Body und lass das resultierende Html durch Jekyll
+automatisch prozessieren, danach ein push nach GitHub, und fertig!
+
+*** Sourceblöcke
+Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden,
+sondern auch nahezu jede Programmier- und Markupsprache. So gab es
+weiter oben bereits mehrfach Codebeispiele in Org-Mode. Diese gibt man
+einfach folgendermaßen an:
+
+#+BEGIN_SRC org
+,#+BEGIN_SRC org
+,* Testüberschrift
+,#+END_SRC
+#+END_SRC
+
+**** Python
+***** Fibonacci
+Hier nun ein Beispiel eines Programmcodes in Python, welcher beim
+Export direkt ausgeführt wird und das Ergebnis automatisch in eine
+Tabelle überführt wird. Es wurde keine Zahl händisch in die Tabelle
+eingetragen.
+
+#+BEGIN_SRC python :exports both
+    # Fibonacci-Reihe
+    x = 5
+    y = 5
+    fib = [[0] * x for i in range(y)]
+    fib[0][0] = 1
+    for i in range(x * y):
+        for j in range (1, 3):
+            fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
+    return fib
 #+END_SRC
 
 #+RESULTS:
-[[file:images/git.png]]
 
-** Magit
-Mit Magit kann man auf komfortable Weise diffs, also Vergleiche
-zwischen zwei Versionen ansehen.  Ferner hat man den Staging-Bereich,
-und den Bereich der Änderungen, die noch nicht im Staging-Bereich sind
-im Blick, was den großen Vorteil bietet, dass nur die Änderungen, die
-eine logische Einheit bilden, in den Staging-Bereich aufgenommen
-werden können, um die diese zu commiten.  Andere Änderungen werden
-erst in darauffolgenden Commits mit entsprechender Beschreibung
-publiziert.
+Ferner ist es möglich, die Ergebnisse eines Sourceblocks für den Input
+eines anderen Sourceblocks zu verwenden. Dementsprechend können,
+ähnlich zu Shellscripten, Pipes zwischen verschiedenen
+Programmiersprachen gebaut werden. Das Ergebnis kann an jeder
+beliebigen Stelle im Dokument durch einen Platzhalter eingefügt
+werden, wodurch es möglich ist, Tabellen und Grafiken automatisch
+immer auf den aktuellen Datenstand darzustellen.
 
-Dies sieht dann Beispielsweise folgendermaßen aus:
-#+BEGIN_SRC html :exports results
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<!-- Created by htmlize-1.47 in css mode. -->
-<html>
-  <head>
-    <title>*magit: knupfer.github.io*</title>
-    <style type="text/css">
-    <!--
-      body {
-        color: #ffffff;
-        background-color: #000000;
-      }
-      .ATTRLIST {
-        /* (:weight ultra-bold :foreground "#05ffff") */
-        color: #05ffff;
-      }
-      .ATTRLIST-1 {
-        /* (:weight ultra-bold :foreground "#e07fef") */
-        color: #e07fef;
-      }
-      .ATTRLIST-2 {
-        /* (:weight ultra-bold :foreground "#f0cf05") */
-        color: #f0cf05;
-      }
-      .ATTRLIST-3 {
-        /* (:weight ultra-bold :foreground "#ee5555") */
-        color: #ee5555;
-      }
-      .ATTRLIST-4 {
-        /* (:weight ultra-bold :foreground "#ffffff") */
-        color: #ffffff;
-      }
-      .ATTRLIST-5 {
-        /* (:weight ultra-bold :foreground "#00ff00") */
-        color: #00ff00;
-      }
-      .magit-branch {
-        /* magit-branch */
-        color: #e5e5e5;
-        background-color: #333333;
-      }
-      .magit-item-highlight {
-        /* magit-item-highlight */
-        background-color: #4a708b;
-      }
-      .magit-log-message {
-      }
-      .magit-log-sha1 {
-        /* magit-log-sha1 */
-        color: #ff6347;
-      }
-      .magit-section-title {
-        /* magit-section-title */
-        color: #e5e5e5;
-        background-color: #333333;
-      }
+Man kann sich auch vorstellen, dass backupscripte die Datei
+automatisch bei jedem Export sichert, oder aber für eine Website
+nachbereitet. Es ist vor allem Erfreulich, dass man sich dadurch das
+mühselige übertragen von Daten in Tabellen (beispielsweise in LaTeX)
+ersparen kann.
 
-      a {
-        color: inherit;
-        background-color: inherit;
-        font: inherit;
-        text-decoration: inherit;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-    -->
-    </style>
-  </head>
-  <body>
-    <pre>
-Local:    <span class="magit-branch">master</span> ~/git/knupfer.github.io/
-Remote:   <span class="magit-branch">master</span> @ origin (https://github.com/knupfer/knupfer.github.io.git)
-Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
+***** Zahlensystemkonverter
+#+BEGIN_SRC python :exports both
 
-<span class="magit-section-title">Untracked files:</span>
-    _org/Computer/.#2014-01-24-magit.org
+# Zahlensystemkonverter
+Konvertierungszahl = 1000
+Zahlenraum = 20
+Zahlensystem = [[0] for i in range(Zahlenraum - 1)]
+Resultat = [[''] * 2 for i in range(Zahlenraum - 1)]
 
-<span class="magit-section-title">Unpushed commits:</span>
-<span class="magit-log-sha1">1f236ae</span> <span class="magit-log-message">Bugfix in Ditaa graphic</span>
-<span class="magit-log-sha1"><span class="magit-item-highlight">da99ab0</span></span><span class="magit-item-highlight"> </span><span class="magit-log-message"><span class="magit-item-highlight">Correct connections in Ditaa graphic</span></span><span class="magit-item-highlight">
-</span><span class="magit-log-sha1">9943f8e</span> <span class="magit-log-message">Clean files with *~</span>
+for i in range(2, Zahlenraum + 1):
+    Stelle = 0
+    Zahlensystem[i-2][0] = Konvertierungszahl
+    while Zahlensystem[i-2][0] > 0:
+        Stelle += 1
+        Zahlensystem[i-2].insert(1,chr(ord('0')
+                + (Zahlensystem[i - 2][0] % i)))
+        Zahlensystem[i-2][0] //= i
+    Zahlensystem[i - 2][0] = i
 
-</pre>
-  </body>
-</html>
+for i in range(Zahlenraum - 1):
+    Resultat[i][0] = Zahlensystem[i][0]
+    for j in range(1, len(Zahlensystem[i])):
+        Resultat[i][1] += str(Zahlensystem[i][j])
+
+return Resultat
+
 #+END_SRC
+
+#+RESULTS:
+|  2 | 1111101000 |
+|  3 |    1101001 |
+|  4 |      33220 |
+|  5 |      13000 |
+|  6 |       4344 |
+|  7 |       2626 |
+|  8 |       1750 |
+|  9 |       1331 |
+| 10 |       1000 |
+| 11 |        82: |
+| 12 |        6;4 |
+| 13 |        5;< |
+| 14 |        516 |
+| 15 |        46: |
+| 16 |        3>8 |
+| 17 |        37> |
+| 18 |        31: |
+| 19 |        2>< |
+| 20 |        2:0 |
+
+**** Lilypond
+Ferner kann direkt Sourcecode von Lilypond verwendet werden. Somit
+können musikwissenschaftliche oder -pädagogische Bücher mit gemischtem
+Anteil an Noten und Text ohne Probleme erstellt werden. Ferner aus den
+gleichen Quellen Html-Seiten exportiert werden.
+
+Kombiniert mit den programmatischen Möglichkeiten, die sich durch die
+verschiedenen Sourcecodeblöcken ergeben -- das Ergebnis des einen
+Sourcecodeblocks kann direkt für die Verwendung eines anderen
+Sourcecodeblocks verwendet werden -- lassen sich viele Dinge
+automatisieren, oder als Variable verwenden. So bietet es sich an, den
+Header und das Layout von Lilypond als Variable zu speichern, welche
+dann stets, bei gleichem Layout, verwendet werden kann.
+
+***** Moderne Notation
+#+begin_src lilypond :file images/ly-einfach.png :noweb yes :exports both
+<<paper>>
+
+\relative c' {
+    r2 e |
+    e f2. e8 d c2 |
+    c4 e f g2 f4 d e4. d8 d2 c4 |
+    d2
+}
+
+\addlyrics {
+    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum.
+}
+#+end_src
+
+#+RESULTS:
+[[file:images/ly-einfach.png]]
+
+***** Historische Notation
+#+begin_src lilypond :file images/lily-beispiel.png :noweb yes :exports both
+<<paper>>
+
+\language "deutsch"
+
+\score {
+    <<
+        \new Voice = mel \relative c' {
+            \set Score.defaultBarType = "-"
+            \clef "petrucci-c3"
+            \autoBeamOff
+            \override NoteHead #'style = #'petrucci
+            \override Staff.TimeSignature #'style = #'neomensural
+
+            \time 2/2
+
+            r2 e |
+            e f2. e8 d c2 |
+            c4 e f g2 f4 d e4. d8 d2 c4 |
+            d2
+        }
+
+        \addlyrics {
+            Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum.
+        }
+    >>
+
+    \layout {
+        \context {
+            \Staff
+            \consists "Custos_engraver"
+            \override Custos #'style = #'mensural
+        }
+    }
+}
+
+#+end_src
+
+#+RESULTS:
+[[file:images/lily-beispiel.png]]
+
+* [2013-10-21 Mon] Neo Layout
+** Einleitung
+Vor zwei Jahren bin ich mehr oder minder über das alternative
+Tastaturlayout Neo gestolpert und mich seither intensiv mit Ergonomie
+und der Geschichte des konventionellen QWERTY-Layouts
+auseinandergesetzt.
+
+** Konventionelles Tastaturlayout
+Die heutige übliche Tastaturbelegung geht auf das 19. Jahrhundert
+zurück. Ziel war, häufige Buchstabenfolgen auf der vormaligen
+alphabetischen Anordnung der Schreibmaschinentasten möglichst weit
+auseinanderzulegen, um ein Verkanten der Hämmer zu vermeiden.
+
+Somit wurde auf Grund einer technischen Einschränkung die Tasten
+explizit so angeordnet, dass sie für den Menschen möglichst schlecht
+liegen. Diesen technischen Einschränkungen unterliegen wir heutzutage
+natürlich nicht mehr, jedoch hat sich auf Grund von der bereits
+etablierten Konvention das bestehende Layout (bis auf regionale
+Varianten) nicht mehr geändert.
+
+Eine weitere Besonderheit ist, dass man auf der englischen Variante
+"Typewriter" komplett auf der obersten Reihe schreiben kann, was wohl
+ein Easteregg ist.
+
+Der horizontale Tastenversatz liegt auch an den Hämmern, die Platz für
+ihre Traktur benötigten. Jedoch ist dieser Versatz nicht
+tippfreundlich, da man um höhere oder niedrigere Tasten zu erreichen
+man seinen Finger nicht nur strecken oder einziehen, sonder auch
+verdrehen muss.
+
+** Alternative Tastaturlayouts
+Mit der Zeit bildeten sich Alternativen heraus, die aber allesamt
+nicht sehr populär sind, was daran liegen mag, da:
+1. Viele kein Zehnfingersystem benutzen
+2. QWERTY der ubiquitäre Standard ist
+3. Die Nachteile nicht bekannt sind
+4. Die alternativen Layouts unbekannt sind
+
+*** Dvorak
+Das bekannteste und auch älteste Reformlayout ist das Dvorak-Layout,
+welches 1930 entwickelt wurde.
+
+**** Ergebnisse
+Hierfür wurden verschiedene Studien bezüglich Ergonomie und Effizienz
+durchgeführt. Wichtige, auch in aktuelleren Reformbelegungen präsente,
+Ergebnisse waren, dass:
+- Die Finger möglichst kurze Bewegungen durchführen sollten
+- Dementsprechend sollten möglichst häufige Buchstaben in der
+  Ruheposition der Finger sich befinden
+- Der gleiche Finger nicht wiederholt werden sollte
+- Im besonderen Maße sollten Sprünge des gleichen Fingers von der
+  obern auf die untere Reihe, oder andersrum vermieden werden
+- Dass sich die Hände im optimalfall abwechseln
+- Bigramme, also häufige Buchstabenkombinationen, sollten weit
+  entfernt liegen
+- Die Hände sollten ungefähr gleich viel zu tun haben
+- Die starken Finger sollten häufiger verwendet werden als die
+  schwachen, um Ermüdungserscheinungen zu vermeiden
+
+**** Umsetzung
+Diese Ergebnisse konnten jedoch nur händisch umgesetzt werden, da
+entsprechende Computer zur Berechnung und Optimierung nicht zur
+Verfügung standen.
+
+Nichts desto trotz wurde eine auch heute noch beliebte und
+ergonomische Tastaturbelegung erstellt, die in modernen
+Betriebssystemen als Standard einstellbar ist.
+
+*** Ristome
+*** Neo
+Diese Layout wurde 2004 entwickelt und speziell auf die deutsche
+Sprache optimiert. Die Ergebnisse Dvoraks wurden hier verwendet, um
+computergestützt das Layout zu optimieren. Jedoch waren die
+Optimierungsmöglichkeiten selbst noch nicht ausgereift, was zu der
+Entstehung von Neo2 führte.
+
+**** Neo2
+Hier wurde das gesamte Layout nochmals computergestützt deutlich
+verbessert, so werden die Finger viel weniger bewegt. Beispielsweise
+kann man 60% eines normalen deutschen Textes auf der Grundreihe
+tippen.
+
+Eine phantastische Besonderheit des Neolayouts, welche mich damals
+dazu bewog, es zu lernen, ist, dass es noch zusätzliche Ebenen
+besitzt. Dies bedeutet, dass man über Spezialtasten die Belegung des
+Layouts ändern kann (wie z.B. bei Shift, welches für Großbuchstaben
+sorgt). So gibt es eine Ebene mit einem Zahlen- und Navigationsblock,
+welche unglaublich praktisch ist. So kann ich, während ich diesen Text
+hier schreibe, in der Grundposition ohne Probleme Zahlen eingeben, zum
+letzten Wortanfang springen, zum Zeilenanfang springen, in beide
+Richtungen Zeichen-, Wort-, Absatz- oder sogar Dokumentenweise
+löschen. Eine andere Ebene beinhaltet typische Programmierzeichen,
+eine weitere enthält griechische Buchstaben (für Formeln) und die
+letzte enthält mathematisch Spezialzeichen (Summationszeichen etc.).
+
+**** AdNW
+Dieses Layout steht für „Aus der Neo-Welt“ und sieht sich selbst als
+Nachfolger des Neo-Layoutes. Hier wurde das Layout noch weiter
+verfeinert und nicht nur an deutschen, sondern auch an englischen
+Texten ausgerichtet. Somit ist dieses Layout weit internationaler und
+trotzdem auch in der deutschen Sprache dem Neo-Layout deutlich
+überlegen.
+
+Meines Wissens nach ist dies derzeit das beste und vielseitigste
+Tastaturlayout. Es wurde von vielen auch schon unter dem Namen Neo3
+vorgeschlagen, jedoch gibt es manch eine Unstimmigkeit zwischen den
+Projekten. Parallel dazu wird an einem anderen Neo3 gearbeitet, was
+sehr gut ist, da Neo bereits einen beachtlichen Bekanntheitsgrad
+erlangt hat, so ist das Neo-Layout in jeder Linuxdistro als
+Belegungsvariante des Deutschen auswählbar.
 
 * [2013-10-28 Mon] Adaptives Testen
 ** Einleitung
@@ -1597,984 +2279,313 @@ legend(length(test)/4, length(test), c(names(summe), round(benchmark[length(benc
 #+RESULTS: grafik
 [[file:images/entropie2.png]]
 
-* [2013-10-21 Mon] Neo Layout
+* [2014-01-24 Fri] Magit!
 ** Einleitung
-Vor zwei Jahren bin ich mehr oder minder über das alternative
-Tastaturlayout Neo gestolpert und mich seither intensiv mit Ergonomie
-und der Geschichte des konventionellen QWERTY-Layouts
-auseinandergesetzt.
-
-** Konventionelles Tastaturlayout
-Die heutige übliche Tastaturbelegung geht auf das 19. Jahrhundert
-zurück. Ziel war, häufige Buchstabenfolgen auf der vormaligen
-alphabetischen Anordnung der Schreibmaschinentasten möglichst weit
-auseinanderzulegen, um ein Verkanten der Hämmer zu vermeiden.
-
-Somit wurde auf Grund einer technischen Einschränkung die Tasten
-explizit so angeordnet, dass sie für den Menschen möglichst schlecht
-liegen. Diesen technischen Einschränkungen unterliegen wir heutzutage
-natürlich nicht mehr, jedoch hat sich auf Grund von der bereits
-etablierten Konvention das bestehende Layout (bis auf regionale
-Varianten) nicht mehr geändert.
-
-Eine weitere Besonderheit ist, dass man auf der englischen Variante
-"Typewriter" komplett auf der obersten Reihe schreiben kann, was wohl
-ein Easteregg ist.
-
-Der horizontale Tastenversatz liegt auch an den Hämmern, die Platz für
-ihre Traktur benötigten. Jedoch ist dieser Versatz nicht
-tippfreundlich, da man um höhere oder niedrigere Tasten zu erreichen
-man seinen Finger nicht nur strecken oder einziehen, sonder auch
-verdrehen muss.
-
-** Alternative Tastaturlayouts
-Mit der Zeit bildeten sich Alternativen heraus, die aber allesamt
-nicht sehr populär sind, was daran liegen mag, da:
-1. Viele kein Zehnfingersystem benutzen
-2. QWERTY der ubiquitäre Standard ist
-3. Die Nachteile nicht bekannt sind
-4. Die alternativen Layouts unbekannt sind
-
-*** Dvorak
-Das bekannteste und auch älteste Reformlayout ist das Dvorak-Layout,
-welches 1930 entwickelt wurde.
-
-**** Ergebnisse
-Hierfür wurden verschiedene Studien bezüglich Ergonomie und Effizienz
-durchgeführt. Wichtige, auch in aktuelleren Reformbelegungen präsente,
-Ergebnisse waren, dass:
-- Die Finger möglichst kurze Bewegungen durchführen sollten
-- Dementsprechend sollten möglichst häufige Buchstaben in der
-  Ruheposition der Finger sich befinden
-- Der gleiche Finger nicht wiederholt werden sollte
-- Im besonderen Maße sollten Sprünge des gleichen Fingers von der
-  obern auf die untere Reihe, oder andersrum vermieden werden
-- Dass sich die Hände im optimalfall abwechseln
-- Bigramme, also häufige Buchstabenkombinationen, sollten weit
-  entfernt liegen
-- Die Hände sollten ungefähr gleich viel zu tun haben
-- Die starken Finger sollten häufiger verwendet werden als die
-  schwachen, um Ermüdungserscheinungen zu vermeiden
-
-**** Umsetzung
-Diese Ergebnisse konnten jedoch nur händisch umgesetzt werden, da
-entsprechende Computer zur Berechnung und Optimierung nicht zur
-Verfügung standen.
-
-Nichts desto trotz wurde eine auch heute noch beliebte und
-ergonomische Tastaturbelegung erstellt, die in modernen
-Betriebssystemen als Standard einstellbar ist.
-
-*** Ristome
-*** Neo
-Diese Layout wurde 2004 entwickelt und speziell auf die deutsche
-Sprache optimiert. Die Ergebnisse Dvoraks wurden hier verwendet, um
-computergestützt das Layout zu optimieren. Jedoch waren die
-Optimierungsmöglichkeiten selbst noch nicht ausgereift, was zu der
-Entstehung von Neo2 führte.
-
-**** Neo2
-Hier wurde das gesamte Layout nochmals computergestützt deutlich
-verbessert, so werden die Finger viel weniger bewegt. Beispielsweise
-kann man 60% eines normalen deutschen Textes auf der Grundreihe
-tippen.
-
-Eine phantastische Besonderheit des Neolayouts, welche mich damals
-dazu bewog, es zu lernen, ist, dass es noch zusätzliche Ebenen
-besitzt. Dies bedeutet, dass man über Spezialtasten die Belegung des
-Layouts ändern kann (wie z.B. bei Shift, welches für Großbuchstaben
-sorgt). So gibt es eine Ebene mit einem Zahlen- und Navigationsblock,
-welche unglaublich praktisch ist. So kann ich, während ich diesen Text
-hier schreibe, in der Grundposition ohne Probleme Zahlen eingeben, zum
-letzten Wortanfang springen, zum Zeilenanfang springen, in beide
-Richtungen Zeichen-, Wort-, Absatz- oder sogar Dokumentenweise
-löschen. Eine andere Ebene beinhaltet typische Programmierzeichen,
-eine weitere enthält griechische Buchstaben (für Formeln) und die
-letzte enthält mathematisch Spezialzeichen (Summationszeichen etc.).
-
-**** AdNW
-Dieses Layout steht für „Aus der Neo-Welt“ und sieht sich selbst als
-Nachfolger des Neo-Layoutes. Hier wurde das Layout noch weiter
-verfeinert und nicht nur an deutschen, sondern auch an englischen
-Texten ausgerichtet. Somit ist dieses Layout weit internationaler und
-trotzdem auch in der deutschen Sprache dem Neo-Layout deutlich
-überlegen.
-
-Meines Wissens nach ist dies derzeit das beste und vielseitigste
-Tastaturlayout. Es wurde von vielen auch schon unter dem Namen Neo3
-vorgeschlagen, jedoch gibt es manch eine Unstimmigkeit zwischen den
-Projekten. Parallel dazu wird an einem anderen Neo3 gearbeitet, was
-sehr gut ist, da Neo bereits einen beachtlichen Bekanntheitsgrad
-erlangt hat, so ist das Neo-Layout in jeder Linuxdistro als
-Belegungsvariante des Deutschen auswählbar.
-
-* [2013-10-13 Sun] Emacs Org-Mode
-** Einleitung
-#+name: paper
-#+begin_src lilypond :exports none
-\version "2.16.0"
-#(ly:set-option 'resolution 140)
-
-\paper{
-    indent=0\mm
-    line-width=90\mm
-    oddFooterMarkup=##f
-    oddHeaderMarkup=##f
-    bookTitleMarkup=##f
-    scoreTitleMarkup=##f
-}
-#+end_src
-
-Org-Mode stellt eine der interessantesten Entdeckungen dar, die ich
-die letzten Monate gemacht habe. Org-Mode ist ein Modus, also eine
-Erweiterung, für den Texteditor Emacs. Org-Mode dient, wie der Name
-bereits impliziert, der Organisation.
-
-** Outliner
-Org-Mode bietet sehr elaborierte Outlinefähigkeiten. Hierarchien
-werden mit einer unterschiedlichen Anzahl an Sternen gezeigt.
-
-#+BEGIN_SRC org
- * Erste Überschrift
- Text
-
- ** Unterüberschrift
- Text
-
- *** Unterunterüberschrift
- Text
-
- * Zweite Überschrift
-#+END_SRC
-
-Jede Unterüberschrift kann nur genau ein Elternteil (Überschrift)
-haben, jedoch kann jede Überschrift beliebig viele Kinder
-(Unterüberschriften) haben. Dies verhält sich also genau so, wie man
-es in einer geschriebenen Arbeit erwarten würde.
-
-Um sich einen Überblick zu verschaffen und in seinem Dokument
-effizient zu navigieren, kann man einzelne Überschriften mit Hilfe der
-Tabulatortaste falten (ausblenden). Das obige Beispiel sieht gefaltet
-wie folgt aus:
-
-#+BEGIN_SRC org
- * Erste Überschrift...
- * Zweite Überschrift
-#+END_SRC
-
-Zudem kann man ganze Hierarchiebäume verschieben und auch befördern
-bzw. degradieren.
-
-** Todo-Listen
-Es können Todo-Listen einfach erstellt werden und mit Tastenkürzel
-verändert werden, beispielsweise als erledigt markiert werden und
-automatisch einen Zeitstempel hinzufügen.
-
-**** TODO offener Punkt
-**** DONE abgeschlossener Punkt.
-   CLOSED: [2013-10-13 Sun 12:31]
-
-Und folgendermaßen sehen die beiden Punkte im Quelltext aus:
-
-#+BEGIN_SRC org
- *** TODO offener Punkt
- *** DONE abgeschlossener Punkt.
-    CLOSED: [2013-10-13 Sun 12:31]
-#+END_SRC
-
-*** Agendas
-Mit Hilfe dieser Todo-Listen können sich Projektpläne erstellen
-lassen, ferner können die Todos mit einer Frist versehen werden und
-die ganze Liste an Fristen dann in einen Terminkalender
-exportieren. Erledigte Punkte können per Tastenkürzel in eine andere
-Datei archiviert werden.
-
-Ferner lassen sich per Befehl auch alle Todos eines Projektes, welches
-aus mehreren .org Dateien bestehen kann anzeigen und exportieren.
-
-** Export
-Da Org-Mode alles in simplen Textdateien speichert ist zwar einerseits
-die Kompatibilität und die Portabilität sehr hoch (man könnte
-Org-Mode-Dateien sogar mit Notepad erstellen), aber das Aussehen doch
-sehr limitiert.
-
-Dementsprechend kann man in gängige, ästhetischere Formate
-exportieren:
-1. LaTeX
-   1. Entweder nur in die .tex Datei
-   2. Oder direkt in ein pdf, wobei die Datei mehrfach prozessiert wird und alle anderen dabei entstehenden Dateien automatisch gelöscht werden
-2. Odt
-3. Html
-   1. Mit Head
-   2. Ohne Head
-
-Der Export ist so hervorragend, dass die resultierenden Pdfs direkt
-gedruckt werden können. Nach bedarf können einzelne Exportoptionen
-über Variablen verändert werden.
-
-*** LaTeX
-LaTeX-Formeln können direkt in das Html exportiert werden. Hierfür
-muss keine besondere Notation bedacht werden, es ist die gleiche. Nur
-die $-Zeichen der LaTeX-Formelumgebung müssen mit der Formel anliegend
-notiert werden, um Verwechslungen mit dem Währungssymbol zu
-vermeiden. Als Beispiel der Laplace-Operator für multidimensionale
-Differentialrechnung: $$ \Delta=\sum_{k=1}^n \frac{\partial^2}{\partial x_k^2} $$
-
-Im Quelltext sieht dies folgendermaßen aus:
-
-#+BEGIN_SRC latex -r
-$\Delta=\sum_{k=1}^n \frac{\partial^2} (ref:formel)
-                          {\partial x_k^2}$
-#+END_SRC
-
-Diese komplette Homepage ist mit Org-Modes Html-Export gemacht. Ich
-exportiere nur den Body und lass das resultierende Html durch Jekyll
-automatisch prozessieren, danach ein push nach GitHub, und fertig!
-
-*** Sourceblöcke
-Man kann jedoch nicht nur LaTeX-Code exportieren oder verwenden,
-sondern auch nahezu jede Programmier- und Markupsprache. So gab es
-weiter oben bereits mehrfach Codebeispiele in Org-Mode. Diese gibt man
-einfach folgendermaßen an:
-
-#+BEGIN_SRC org
-,#+BEGIN_SRC org
-,* Testüberschrift
-,#+END_SRC
-#+END_SRC
-
-**** Python
-***** Fibonacci
-Hier nun ein Beispiel eines Programmcodes in Python, welcher beim
-Export direkt ausgeführt wird und das Ergebnis automatisch in eine
-Tabelle überführt wird. Es wurde keine Zahl händisch in die Tabelle
-eingetragen.
-
-#+BEGIN_SRC python :exports both
-    # Fibonacci-Reihe
-    x = 5
-    y = 5
-    fib = [[0] * x for i in range(y)]
-    fib[0][0] = 1
-    for i in range(x * y):
-        for j in range (1, 3):
-            fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
-    return fib
-#+END_SRC
-
-#+RESULTS:
-
-Ferner ist es möglich, die Ergebnisse eines Sourceblocks für den Input
-eines anderen Sourceblocks zu verwenden. Dementsprechend können,
-ähnlich zu Shellscripten, Pipes zwischen verschiedenen
-Programmiersprachen gebaut werden. Das Ergebnis kann an jeder
-beliebigen Stelle im Dokument durch einen Platzhalter eingefügt
-werden, wodurch es möglich ist, Tabellen und Grafiken automatisch
-immer auf den aktuellen Datenstand darzustellen.
-
-Man kann sich auch vorstellen, dass backupscripte die Datei
-automatisch bei jedem Export sichert, oder aber für eine Website
-nachbereitet. Es ist vor allem Erfreulich, dass man sich dadurch das
-mühselige übertragen von Daten in Tabellen (beispielsweise in LaTeX)
-ersparen kann.
-
-***** Zahlensystemkonverter
-#+BEGIN_SRC python :exports both
-
-# Zahlensystemkonverter
-Konvertierungszahl = 1000
-Zahlenraum = 20
-Zahlensystem = [[0] for i in range(Zahlenraum - 1)]
-Resultat = [[''] * 2 for i in range(Zahlenraum - 1)]
-
-for i in range(2, Zahlenraum + 1):
-    Stelle = 0
-    Zahlensystem[i-2][0] = Konvertierungszahl
-    while Zahlensystem[i-2][0] > 0:
-        Stelle += 1
-        Zahlensystem[i-2].insert(1,chr(ord('0')
-                + (Zahlensystem[i - 2][0] % i)))
-        Zahlensystem[i-2][0] //= i
-    Zahlensystem[i - 2][0] = i
-
-for i in range(Zahlenraum - 1):
-    Resultat[i][0] = Zahlensystem[i][0]
-    for j in range(1, len(Zahlensystem[i])):
-        Resultat[i][1] += str(Zahlensystem[i][j])
-
-return Resultat
-
-#+END_SRC
-
-#+RESULTS:
-|  2 | 1111101000 |
-|  3 |    1101001 |
-|  4 |      33220 |
-|  5 |      13000 |
-|  6 |       4344 |
-|  7 |       2626 |
-|  8 |       1750 |
-|  9 |       1331 |
-| 10 |       1000 |
-| 11 |        82: |
-| 12 |        6;4 |
-| 13 |        5;< |
-| 14 |        516 |
-| 15 |        46: |
-| 16 |        3>8 |
-| 17 |        37> |
-| 18 |        31: |
-| 19 |        2>< |
-| 20 |        2:0 |
-
-**** Lilypond
-Ferner kann direkt Sourcecode von Lilypond verwendet werden. Somit
-können musikwissenschaftliche oder -pädagogische Bücher mit gemischtem
-Anteil an Noten und Text ohne Probleme erstellt werden. Ferner aus den
-gleichen Quellen Html-Seiten exportiert werden.
-
-Kombiniert mit den programmatischen Möglichkeiten, die sich durch die
-verschiedenen Sourcecodeblöcken ergeben -- das Ergebnis des einen
-Sourcecodeblocks kann direkt für die Verwendung eines anderen
-Sourcecodeblocks verwendet werden -- lassen sich viele Dinge
-automatisieren, oder als Variable verwenden. So bietet es sich an, den
-Header und das Layout von Lilypond als Variable zu speichern, welche
-dann stets, bei gleichem Layout, verwendet werden kann.
-
-***** Moderne Notation
-#+begin_src lilypond :file images/ly-einfach.png :noweb yes :exports both
-<<paper>>
-
-\relative c' {
-    r2 e |
-    e f2. e8 d c2 |
-    c4 e f g2 f4 d e4. d8 d2 c4 |
-    d2
-}
-
-\addlyrics {
-    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum.
-}
-#+end_src
-
-#+RESULTS:
-[[file:images/ly-einfach.png]]
-
-***** Historische Notation
-#+begin_src lilypond :file images/lily-beispiel.png :noweb yes :exports both
-<<paper>>
-
-\language "deutsch"
-
-\score {
-    <<
-        \new Voice = mel \relative c' {
-            \set Score.defaultBarType = "-"
-            \clef "petrucci-c3"
-            \autoBeamOff
-            \override NoteHead #'style = #'petrucci
-            \override Staff.TimeSignature #'style = #'neomensural
-
-            \time 2/2
-
-            r2 e |
-            e f2. e8 d c2 |
-            c4 e f g2 f4 d e4. d8 d2 c4 |
-            d2
-        }
-
-        \addlyrics {
-            Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum.
-        }
-    >>
-
-    \layout {
-        \context {
-            \Staff
-            \consists "Custos_engraver"
-            \override Custos #'style = #'mensural
-        }
-    }
-}
-
-#+end_src
-
-#+RESULTS:
-[[file:images/lily-beispiel.png]]
-
-* [2013-10-09 Wed] Linuxdistributionen
-** Einleitung
-Als ich vor ungefähr 2 Jahren auf Linux umgestiegen bin, stellte ich
-mir die Frage welche Distribution ich nehmen sollte. Überwältigt von
-der Vielfalt und zunächst nicht im Stande Desktopumgebungen (Xcfe,
-Lxde, Gnome …) von Distributionen zu unterscheiden entschied ich mich
-für Ubuntu.
-
-Nach einer Eingewöhnungszeit wurde mir klar, dass Cannonical (die
-Firma hinter Ubuntu) Interessen hatte, die mit den meinigen
-unvereinbar waren. So wechselte ich zu Debian und stellte nach kurzer
-Zeit die Repository auf Testing. Hier hatte ich mich nun auch an
-verschiedene Desktopumgebungen rangemacht.
-
-** Distributionen
-Distributionen kann man durch mehrere Elemente charakterisieren:
-
-- Packetmanager :: Sie sind für Update- und Installationsprozesse
-                   verantwortlich.
-- Desktopumgebung :: Diese stellt eine grafische Oberfläche und
-     verschiedene Standardprogramme bereit, da diese besonders wichtig
-     für die Usability sind, wird hier auch noch detailiert darauf
-     eingegangen.
-- Free vs. Nonfree :: Manche Distributionen enthalten (fast) nur freie
-     Software (z.B. Debian) was zur Konsequenz hat, dass diese von
-     Haus aus die meisten Videocodecs nicht unterstützen. Andere
-     Distribution sind komfortabler (z.B. Mint), da sie alles
-     Notwendige enthalten, um beispielsweise eine DVD oder
-     Youtube-Videos zu sehen.
-- Zielgruppe :: Hier gibt es große Unterschiede, vor allem Ubuntu wird
-                immer Anfängern empfohlen, da vieles ohne
-                Konfiguration funktioniert und technisches unter
-                grafischen Elementen versteckt wird. Arch hingegen hat
-                vor allem erfahrene Nutzer im Blick. Auf ein
-                grafisches Verstecken wird bewusst verzichtet, um
-                maximal präzise Konfiguartionen zu
-                ermöglichen. Erfahrene Nutzer können terminalbasiert
-                schneller arbeiten, ferner wird die CPU durch die
-                fehlenden Extravaganzen geschont.
-- Entwicklungsstrategie :: Hier wird zwischen Rolling- und
-     Nonrolling-release unterschieden. Da dieses Thema für mich
-     besonders interessant ist, wird im Folgenden darauf genauer
-     eingegangen.
-
-*** Nonrolling-release
-Die meiste Software hat eine Nonrolling-release-Entwicklung. Sprich es
-werden stabile Versionen eines Programmes publiziert, von denen man
-dann Updates zur nächsten stabilen Version machen kann. Bei mancher
-Software, wie z.B. bei vielen Distributionen ist hierfür eine
-Neuinstallation notwendig.
-
-**** Debian
-Debian ist eine sehr alte Distribution mit sehr vielen
-Entwicklern. Der Entwicklungsprozess ist sehr konservativ; es werden
-ungefähr alle zwei Jahre neue Versionen publiziert, welche in der
-gesamten Zwischenzeit keinen neuen Features, sondern nur
-Sicherheitsupdates bekommen. Da diese Versionen außerordentlich stabil
-sind werden diese meist für Server verwendet.
-
-***** Repositorys
-Die Repositorys von Debian sind weiterhin in Experimental, Unstable
-und Testing unterteilt.
-
-****** Experimental
-Hier befinden sich Programme, die große Systemveränderungen benötigen
-oder noch sehr unstabil laufen. Experimental ist kein vollständiges
-Repository, sondern kann nur zusammen mit Unstable verwendet
-werden. Generell sollte man dieses Repository meiden, außer man möchte
-explizit bei der Debianentwicklung mitarbeiten.
-
-****** Unstable
-Unstable ist ein vollständiges Repository, welches verwendet werden
-kann um sehr aktuelle Software zu installieren. Unstable ist ein
-Rolling-release, Neuinstallationen sind also nurnoch notwendig, falls
-einem die unstabile Software zu viele Probleme bereitet. Auch von
-diesem Repository wird i.d.R. abgeraten.
-
-****** Testing
-Dieses Repository hat schon eine gewisse Stabilität erreicht, da hier
-nur Software gelagert wird, die eine Zeit lang ohne Probleme in
-Unstable war. Jedoch benutzt Testing kein volles
-Rolling-release-Modell mehr, da immer ein halbes Jahr vor einer neuen
-stabilen Debianversion es einen Featuerfreeze gibt, in dem die
-Entwickler sich auf Fehlerbehandlung fokussieren.
-
-***** Derivate
-Wegen des Alters und der Größe von Debian entstanden Derivate, also
-Modifikationen, welche sich vor allem im Bezug zur freien Software
-unterscheiden.
-
-****** Ubuntu
-Die bekannteste Linuxdistro nennt sich Ubuntu, was so viel wie
-Menschlichkeit bedeutet. Sie ist auf einfache Benutzung und somit auf
-unerfahrene Benutzer hin optimiert.
-
-******* Kritik
-******** Kommerz
-In der letzten Zeit wurde Ubuntu immer mehr kommerzialisiert. Auch
-wenn die Benutzung weiterhin kostenlos ist, so werden nun Verhalten
-der Benutzer protokolliert und an Amazon verkauft. Ferner strebt die
-Distribution gewisse Inkompatibilitäten an, welche zu einer
-Monopolstellung (vor allem auf dem Smartphone-Markt) führen sollen.
-
-******** Stabilität
-Weiterhin baut Ubuntu auf dem Unstable-release von Debian auf, ohne
-jedoch selbst ein Rolling-release zu sein. Dies hat zur Konsequenz,
-dass zwar aktuelle Software verwendet wird, jedoch diese aber nicht
-neu gehalten wird, was aber gerade bei unstabiler Software besonders
-wichtig ist.
-
-****** Mint
-Diese Distro ist ein Fork von Ubuntu. Sie hat auch eher unerfahrene
-Benutzer im Blick, lässt jedoch mehr Freiheiten und
-Konfigurierbarkeiten. Zudem setzt mint auf einen klassischen Desktop,
-im Gegensatz zu Ubuntu.
-
-******* Kritik
-******** Codebase
-Problematisch dürfte die Basis Ubuntu sein, da dieses immer
-inkompatibler wird. Somit dürften die Modifikationen, die Mint
-vornimmt immer schwieriger und monolithischer werden, was den
-UNIX-Prinzipien widerspricht. Um dem entgegenzutreten wurde eine
-Version von Mint erstellt, welche direkt auf Debian aufbaut ([[Mint LMDE][LMDE]]).
-
-******** Unfrei
-Ferner wird kritisiert, dass Mint standardmäßig eine Vielzahl an
-unfreier Software installiert (was andererseits zu einer komfortablen
-Nutzungserfahrung führt).
-
-**** Fedora
-Diese Distribution unterscheidet sich in mancherlei Hinsicht von
-Debian. Sie hat einen anderen Packetmanager, ist (immer) modern und
-hat eine große Firma im Rücken (Red Hat).
-
-**** OpenSuse
-Eine deutsche, weitverbreitete Distro, welche das freie Pendant zu
-Suse darstellt. Sie hat also auch eine Firma im Rücken (welche
-unliebsamen Einfluss nehmen kann).
-
-*** Rolling-release
-Bei Rolling-release-software hat der Anwender stets eine aktuelle
-Version der Software und kann jederzeit auf den derzeitigen
-Entwicklungsstand updaten. In aller Regel geschieht dies ohne
-Neuinstallation. Da es hier aber keine klar definierten Versionen
-gibt, sondern nur Snapshots, sind evtl. auch mehr Fehler oder Probleme
-zu finden. Dementsprechend sind die meisten
-Rolling-release-distributionen für erfahrene Nutzer konzipiert.
-
-**** Arch
-[[http://archlinux.org][Arch]] ist eine sehr berühmte Rolling-releas-distro, welche sich vor
-allem an sehr erfahrene Nutzer wendet. Beispielsweise installiert der
-Installer (welcher rein Terminalbasiert ist) nur ein minimales
-System. Eine Desktopumgebung, Videocodecs und Büroprogramme etc. muss
-selbst installiert werden. Dies hat den unschlagbaren Vorteil, dass
-nur das installiert wird, was man auch wirklich möchte. Andererseits
-werden unerfahrene Benutzer mit einem nicht funktionsfähigen System
-konfrontiert. Um im selbstversuch zu lernen, werde ich vermutlich als
-nächstes Arch installieren.
-
-***** Aktualität
-Eines der Hauptziele von Arch ist es, möglichst nahe der bleeding Edge
-zu sein. Dies hat den Vorzug stets aktuelle Software zu besitzen und
-nie wieder das System neu installieren zu müssen, jedoch auch den
-Nachteil, dass das ganze System hin und wieder unstabil oder gar
-defekt sein kann. Da die Community sehr aktiv ist, werden Fehler
-schnell behoben; dennoch empfiehlt sich diese Distro nicht für Server
-oder sensible Daten.
-
-***** Manjaro
-Hier werden versucht, die Vorzüge von Arch mit denen von Mint zu
-kombinieren, dementsprechend nutzt auch Manjaro standardmäßig die von
-Mint entwickelte klassische Desktopumgebung Cinnamon. Ferner sind
-Videocodecs etc. bereits installiert. Leider büßt diese Distro an
-Aktualität ein, da sie trotz der Codebase Updatepackages verteilt und
-somit kein volles Rolling-release mehr ist.
-
-**** Debian
-Da Debian zwei Repositories hat, die ständig entwickelt werden, kann
-Debian unter Verwendung dieser auch als Rolling-release-distribution
-betrachtet werden. Da dies aber nicht der eigentlich konservativen
-Philosophie Debians entspricht gibt es einige Forks, die auf diesen
-Repositories aufbauen, nicht aber auf dieser Philosophie.
-
-***** Derivate
-****** Aptosid
-Eine auf dem Unstable-repository aufbauende Distro.
-
-****** Crunchbang
-Ebenso auf Unstable bauend.
-
-****** Mint LMDE
-Auf Testing aufbauend, mit der Behauptung (oder Traum), ein
-Rolling-release zu sein. Da aber das DE viele Probleme bereitet,
-vertreibt Mint Updatepackages. Trotz dass die Idee eines
-debianbasierten hervorragend ist, so ist doch die Umsetzung viel
-schlechter als bei dem originalen Mint.
-
-** Desktopumgebungen
-Ein Betriebssystem besteht auf den ersten Blick vor allem aus
-Programmen und einer grafischen Oberfläche (GUI). Diese Elemente sind
-aber nicht eigentlicher Teil eines Linuxbetriebssystemes, sondern Teil
-von Desktopumgebungen. Hier sieht man einen grundlegenden Unterschied
-zwischen Linux und Windows besonders deutlich: Linux ist modular, und
-nicht monolithisch.
-
-*** LXde
-Eine besonders ressourcenschonende Desktopumgebung, die vor allem für
-ältere Rechner gedacht ist. Kritikpunkte sind die alte Software und
-das sehr kleine Entwicklerteam, was ein verwaisen der Software
-ermöglicht.
-
-*** Xfce
-Auch ressourcenschonend, jedoch weiter verbreitet, moderner und mit
-größerem Entwicklungsteam.
-
-*** Kde
-Sehr verbreitet, großes Entwicklerteam, grafisch aufwendig und
-dementsprechend langsam.
-
-*** Gnome
-Diese DE hat eine lange Entwicklungsgeschichte hinter sich und ist bei
-vielen Distros der Standard. Jedoch löste das Gnome-Projekt auch eine
-sehr große Kontroverse mit Gnome3 aus, welches sich vom damaligen
-klassischen Desktopparadigma (und somit von vielen Nutzern) abwandte.
-
-**** Mate
-Ein Fork von Gnome2, welcher versucht, den alten Desktop zu pflegen
-und mit Sicherheitsaktualisierungen zu versorgen.
-
-**** Cinnamon
-Ein Fork von Gnome3, welcher versucht, trotz Integration neuster
-Softwaretechnologie immernoch eine klassische DE
-bereitzustellen. Cinnamon ist die Standard-DE von Mint und von Manjaro
-und erfreut sich großer Beliebtheit.
-
-**** Unity
-Ebenso ein Gnome-fork, welcher aber mit dem Original nurnoch sehr
-wenig zu tun hat. Unity ist mit nahezu allen Distros außer Ubuntu
-inkompatibel. Es strebt einen primitiven (leicht benutzbaren) Desktop
-an, der gut auch auf Touch-screens und Tablets verwendet werden kann.
-
-* [2013-10-06 Sun] Hello World!
-** Einleitung
-Hallo, dies ist mein erster Post hier. Ich bin gespannt, ob ich mich
-für das Bloggen begeistern kann. Gleichzeitig dient diese Homepage
-dazu, gemeinschaftlich über Probleme nachzudenken. Diese können aus
-ganz verschiedenen Bereichen kommen. Hier im Speziellen wird es sich
-um Themen der Musikpädagogik, der Empirie, des Computers und der
-Typography drehen.
-
-*** Zu meiner Person
-Ich bin derzeit Student der Schul- und Kirchenmusik und der
-Physik. Ich plane nach dem Studium einen Doktor in empirischer
-Musikpädagogik zu machen und beschäftige mich deswegen nun seit ein
-paar Wochen mit dem Programmieren.  Angefangen habe ich mit Python;
-als pädagogische Programmiersprache erschien mir dies besonders
-Sinnvoll in anbetracht meiner mangelnden Erfahrung. Nach ein paar
-ersten Progrämmchen verlor ich ein wenig die Motivation aufgrund von
-fehlenden Problemstellungen.
-
-Dann bin ich auf die Lernplattform [[http://www.edx.org][EdX]] gestoßen. Diese bietet
-kostenlose MOOCs an, also Vorlesungen (meist vom MIT oder Harvard),
-die den regulären Studenten auch angeboten werden. Dort bin ich nun in
-CS50 eingeschrieben und besuche regelmäßig Vorlesungen zum
-Programmieren und bearbeite auch die dortigen Aufgaben. So bin ich
-erst zu C und dann zu PHP gekommen.
-
-** Programmierung der Homepage
-Die Grundlagen dieser durch [[http://www.jekyllrb.com][Jekyll]] compilierten Homepage haben mich
-einige Tage gekostet, da ich noch kaum Erfahrung mit Markup-Sprachen
-hatte. Ferner wollte ich einige Prozesse automatisieren und
-verbessern, was mir manch einen Nerv geraubt hat.
-
-*** Jekyll
-Jekyll ist ein statischer Homepage generierer der vor allem bei
-Programmieren sehr beliebt ist. Dies liegt an Verschiedenem.
-
-**** Statische Homepages
-Der große Vorteil an statischen Homepages ist, dass diese keine
-Datenbank wie MySQL benötigen. Zudem benötigen sie kein PHP und sind
-somit nicht nur sehr sicher, sondern auch auf jedem Web-Server
-funktionsfähig. Weiterhin sind statische Homepages sehr performant.
-
-**** GitHub
-Ein weiterer fantastischer Vorteil 0ist, dass die
-Open-Soure-Entwicklungsplattform [[http://www.github.com][GitHub]] Jekyll-Seiten kostenlos ohne
-Werbung publizieren lässt. So ist diese Seite kostenfrei unter
-[[http://knupfer.github.io]] gehostet. Dieser Service ist aber nicht
-alles, GitHub kompiliert für einen sogar den Sourcecode der
-Homepage. Jedoch gibt es hier auch kleine Einschränkungen, so werden
-zusätzliche Plugins beispielsweise aus Sicherheitsgründen nicht
-unterstützt.
-
-*** Emacs
-Emacs ist wohl einer der ältesten und umfangreichesten
-Texteditoren. Dass ein Texteditor umfangreich oder gar komplex sein
-kann, mag zunächst überraschen, jedoch kann Emacs äußerst erstaunlich
-Dinge:
-- Programmcode kann im Editor kompiliert werden
-- Syntaxhighlighting
-- Verschiedene Themes
-- Sehr starke und umfangreiche Navigationswerkzeuge, z. B.:
-  - Cursorbewegung durch Shortcuts
-  - Löschen von Buchstaben, Wörtern oder ganzen Absätzen
-  - Wechseln von verschiedenen Fenstern per Shortcut
-  - Fenstersplitting usw.
-- Durch seine Programmierbarkeit starke Erweiterbarkeit:
-  - kann der Editor direkt als Taschenrechner verwendet werden
-  - gibt viele IDE, die für Emacs von der Community programmiert
-    wurden
-
-**** Org Mode
-[[http://www.orgmode.org][Org Mode]] ist eine von vielen möglichen Erweiterungen von Emacs, die
-selbst so umfangreich ist, dass die Dokumentation ein sehr dickes Buch
-füllt. Mit Org Mode kann man, wie der Name bereits sugeriert, sich
-organisieren. Dies fängt von ganz simplen Aufgaben wie Todo-Listen an,
-geht weiter zu einem sehr guten Outliner und auch zu mehrsprachigem
-(Computersprachen) literateprogramming.
-
-***** Exportfunktionen
-Eine große Stärke von Org Mode sind die Exportfunktionen. Es
-kann u. a. nach LaTeX, Html, Docbook und Ascii exportiert
-werden. Dieses Feature ist so sehr ausgereift, dass die resultierenden
-Dokumente oft sehr gut aussehen. Automatisch wird ein
-Inhaltsverzeichnis generiert, ausgezeichnet, ggf. code compiliert
-uvm. Aller Text dieser Homepage ist ausschließlich in Org Mode
-verfasst, in ein Html exportiert und danach mit einem Shellscript den
-Anforderungen von Jekyll angepasst.
-
-***** Syntaxhighlighting
-Der Export von Syntaxhighlighting von Html ist ein wenig aufwendig.
-Man könnte zwar auf das Syntaxhighlighting von Jekyll zurückgreifen,
-dies ist aber für helle Codeboxen optimiert, was nicht meiner
-Designvorstellung entsprach.  Eine Änderung dieses Highlightings würde
-mit mühevollem ändern und testen jedes einzelnen Codeschlüsselwortes
-in einer css-Datei einhergehen, worauf ich keine Lust habe, da es auch
-möglich ist, dass diese Homepage ihr Äußeres noch mehrfach verändert
-etc.
-
-Mithilfe des Zusatzpakete htmlize.el für Emacs ist es mir gelungen,
-Emacs so einzurichten, dass er automatisch das gleiche
-Syntaxhighlighting, welches derzeit im Editor aktiv ist, in den
-Html-export übernimmt.  Über ein in Org Mode implementiertes
-Javascript ist es sogar möglich, über links Referenzcodezeilen zu
-manipulieren.  Die Standardeinstellung war, die ganze Zeile gelb zu
-färben, was sehr direkt war.  Ich habe mich für eine dezente Version
-entschieden und habe den Sourcecode so geändert, dass wenn der Cursor
-über dem link ist, die entsprechende Codezeile fett dargestellt wird.
-
-*** Das Shellscript
-Da Jekyll einen speziellen Head einer Html-Datei benötigt, blieb mir
-nichts anderes übrig, diesen Anfang über ein Shellscript in das durch
-Emacs exportierte Html einzufügen. Ich habe Emacs so konfiguriert,
-dass es nur den Body der Html exportiert und habe das Javascript für
-das Syntaxhighlighting seperat abgespeichert. In dem Shellscript wird
-der [[(head)][Head]] aus der .org-Datei flexibel extrahiert und in einer neuen
-Datei abgespeichert, daraufhin das [[(java)][Javascript]] eingefügt und dann der
-Html-Body. Zum Schluss wird noch die Datei umbenannt und in den von
-Jekyll verabeiteten _posts-Ordner [[(move)][verschoben]]. Das Skript macht diese
-Prozedur automatisch, [[(for)][mit allen .org-Dateien]], die exportiert wurden,
-sprich die verändert wurden. Bereits aktuelle Posts werden nicht
-modifiziert, so bleibt das Datum des Posts erhalten.
-
-Hier zum nachlesen und nachdenken das Shellscript, natürlich mit
-Syntaxhighlighting usw. Es wurden Gruppen von drei Bindestrichen durch
-zwei Bindestriche eresetzt, um keine Probleme mit Jekyll zu bereiten.
-
+Da ich nun schon seit ein paar Monaten mit Hilfe von Git meine
+Homepage versioniere und auf Github publiziere, befand ich die Zeit
+reif dafür, mich genauer mit Git auseinanderzusetzen.
+
+** Git
+Git wurde von Linus Torvalds für die Versionierung des Linuxkernels
+programmiert.  Da die Funktionalität sehr umfangreich ist, erfreute
+sich Git schnell großer Beliebtheit.
+
+*** Funktionsweise
+Es wird in dem Repository, also in dem Verzeichnis, in dem man seine
+Dateien aufbewahrt werden, welche versioniert werden sollen
+(i.d.R. Quellcode) ein .git Verzeichnis erstellt, welches zunächst
+einer Kopie aller Dateien entspricht.  Daraufhin werden Änderungen in
+den Staging-Bereich gebracht:
 #+BEGIN_SRC sh :exports code
-#!/bin/sh
-
-cd ~/git/knupfer.github.io/_org
-rm ~/git/knupfer.github.io/_posts/*
-
-TEMP='../_processing';
-TOC='totalindex';
-
-echo '--
-layout: default
-title: Index
---
-<div id="table-of-contents2">
-<h3>Index</h3>
-<div id="text-table-of-contents2">
-<ul>' > $TEMP/$TOC;
-
-for DIRECTORY in */
-do
-    cd $DIRECTORY
-    for FILE in *.org
-    do
-        DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
-        URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
-        TITLE=$(sed -n '3,/--/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
-        FATHER=$(echo $DIRECTORY | sed 's:/::')
-
-        test -e ../$TEMP/$DIRECTORY/$DATEI.html &&
-        echo '<li><a href="'$URL'">'$TITLE'</a>' >> ../categorie.$FATHER &&
-        sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' ../$TEMP/$DIRECTORY/$DATEI.html |
-        tail -n +2 |
-        head -n -1 |
-        sed 's:\(href="\)#:\1'$URL'#:g' >> ../categorie.$FATHER &&
-        sed -n '3,/--/ p' $DATEI.org | head --lines=-1 > ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
-        echo 'father: '$DIRECTORY | sed 's:/::' >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
-        echo '--' >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
-        sed 'N;
-            s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
-            P;
-            s_file:///_/_;
-            s_<h2>Table of Contents</h2>_<h3>Inhaltsverzeichnis</h3>_;
-            D' ../$TEMP/$DIRECTORY/$DATEI.html >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
-        cat ../$TEMP/$DIRECTORY/$DATEI.org.publish > ../../_posts/$DATEI.html;
-    done
-    cd ..
-done
-
-for FILE in *.org
-do
-    DATEI=$(echo $FILE | sed 's_\(.*\).org_\1_');
-    URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
-    TITLE=$(sed -n '3,/--/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
-    FATHER=$(sed -n '3,/--/ s_father: *"*\([^"]*\)"*_\1_p' $DATEI.org);
-
-    test -e $TEMP/$DATEI.html &&
-    echo '<li><a href="'$URL'">'$TITLE'</a>' >> categorie.$FATHER &&
-    sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' $TEMP/$DATEI.html |
-    tail -n +2 |
-    head -n -1 |
-    sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
-    sed -n '3,/--/ p' $DATEI.org > $TEMP/$DATEI.org.publish &&
-    sed 'N;
-        s_[(</ul>)(</dl>)]\n</div>_&<p></p>_;
-        P;
-        s_file:///_/_;
-        s_<h2>Table of Contents</h2>_<h3>Inhaltsverzeichnis</h3>_;
-        D' $TEMP/$DATEI.html >> $TEMP/$DATEI.org.publish &&
-    cat $TEMP/$DATEI.org.publish > ../_posts/$DATEI.html;
-done
-
-
-
-mv categorie. categorie.zzz
-
-for INDEX in categorie.*
-do
-    if [ "$(echo $INDEX | sed 's_categorie\.\(.*\)_\1_')" != 'zzz' ]
-    then
-        echo '<li><a href="">' $(echo $INDEX |
-            sed 's_categorie\.\(.*\)_\1_') '</a>' '<ul>' >> $TEMP/$TOC;
-    else
-        echo '<li><a href="">' Verschiedenes '</a>' '<ul>' >> $TEMP/$TOC
-    fi
-    cat $INDEX >> $TEMP/$TOC;
-    echo '</ul>' >> $TEMP/$TOC;
-done
-
-echo '</ul></div></div>' >> $TEMP/$TOC;
-cp $TEMP/$TOC  ../$TOC.html;
-mv categorie.* $TEMP;
-mv ../_posts/about.html ../about.html;
-test -e *.org~ && rm *.org~ ;
+git add -A
+#+END_SRC
+Sobald man dort alle Änderungen hinzugefügt hat, welche man
+versionieren möchte, macht man einen Commit, welcher einen Text
+enthält, welcher beschreibt, welche Änderungen vorgenommen werden:
+#+BEGIN_SRC sh :exports code
+git commit -m 'bugfix'
+#+END_SRC
+Somit ist nun die Änderung gespeichert und kann mit dem vorherigen
+Stand verglichen werden, neue Änderungen gemacht werden, oder die
+Änderungen zu einem Remote-Repository übertragen werden:
+#+BEGIN_SRC sh :exports code
+git push origin master
 #+END_SRC
 
-* [2013-10-05 Sat] About
+#+BEGIN_SRC ditaa :file images/git.png :exports results
+ +------------------+
+ |Arbeitsverzeichnis+<-------+
+ +----------------+-+        |
+                  |          |
+ +---git add------+          |
+ |                           |
+ |  +-----+                  |
+ +->|Stage|-----+            |
+    +-----+     |            |
+                |            |
+ +---git commit-+            |
+ |                           |
+ |  +----------+             |
+ +->|Repository+-+           |
+    +----------+ |           |
+                 |           |
+ +---git push----+           |
+ |                           |
+ |  +------+                 |
+ +->|Remote+--git pull-------+
+    +------+
+#+END_SRC
+
+#+RESULTS:
+[[file:images/git.png]]
+
+** Magit
+Mit Magit kann man auf komfortable Weise diffs, also Vergleiche
+zwischen zwei Versionen ansehen.  Ferner hat man den Staging-Bereich,
+und den Bereich der Änderungen, die noch nicht im Staging-Bereich sind
+im Blick, was den großen Vorteil bietet, dass nur die Änderungen, die
+eine logische Einheit bilden, in den Staging-Bereich aufgenommen
+werden können, um die diese zu commiten.  Andere Änderungen werden
+erst in darauffolgenden Commits mit entsprechender Beschreibung
+publiziert.
+
+Dies sieht dann Beispielsweise folgendermaßen aus:
+#+BEGIN_SRC html :exports results
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!-- Created by htmlize-1.47 in css mode. -->
+<html>
+  <head>
+    <title>*magit: knupfer.github.io*</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #ffffff;
+        background-color: #000000;
+      }
+      .ATTRLIST {
+        /* (:weight ultra-bold :foreground "#05ffff") */
+        color: #05ffff;
+      }
+      .ATTRLIST-1 {
+        /* (:weight ultra-bold :foreground "#e07fef") */
+        color: #e07fef;
+      }
+      .ATTRLIST-2 {
+        /* (:weight ultra-bold :foreground "#f0cf05") */
+        color: #f0cf05;
+      }
+      .ATTRLIST-3 {
+        /* (:weight ultra-bold :foreground "#ee5555") */
+        color: #ee5555;
+      }
+      .ATTRLIST-4 {
+        /* (:weight ultra-bold :foreground "#ffffff") */
+        color: #ffffff;
+      }
+      .ATTRLIST-5 {
+        /* (:weight ultra-bold :foreground "#00ff00") */
+        color: #00ff00;
+      }
+      .magit-branch {
+        /* magit-branch */
+        color: #e5e5e5;
+        background-color: #333333;
+      }
+      .magit-item-highlight {
+        /* magit-item-highlight */
+        background-color: #4a708b;
+      }
+      .magit-log-message {
+      }
+      .magit-log-sha1 {
+        /* magit-log-sha1 */
+        color: #ff6347;
+      }
+      .magit-section-title {
+        /* magit-section-title */
+        color: #e5e5e5;
+        background-color: #333333;
+      }
+
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+Local:    <span class="magit-branch">master</span> ~/git/knupfer.github.io/
+Remote:   <span class="magit-branch">master</span> @ origin (https://github.com/knupfer/knupfer.github.io.git)
+Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
+
+<span class="magit-section-title">Untracked files:</span>
+    _org/Computer/.#2014-01-24-magit.org
+
+<span class="magit-section-title">Unpushed commits:</span>
+<span class="magit-log-sha1">1f236ae</span> <span class="magit-log-message">Bugfix in Ditaa graphic</span>
+<span class="magit-log-sha1"><span class="magit-item-highlight">da99ab0</span></span><span class="magit-item-highlight"> </span><span class="magit-log-message"><span class="magit-item-highlight">Correct connections in Ditaa graphic</span></span><span class="magit-item-highlight">
+</span><span class="magit-log-sha1">9943f8e</span> <span class="magit-log-message">Clean files with *~</span>
+
+</pre>
+  </body>
+</html>
+#+END_SRC
+
+* [2014-01-26 Sun] Emacs whitespace.el
 ** Einleitung
-Lieber Leser,
+Als Anfänger im Programmieren habe ich mir die Frage gestellt, wie ich
+mir das Programmierenlernen so effektiv und komfortabel wie möglich
+gestalten kann.
 
-hier findet sich nun also mein CV zur Einsicht.  Zu den in CVs
-üblichen Inhalten gibt es hier noch Raum für Informelleres, meine
-Hobbies sind die folgenden:
+Es stellte sich zunächst die Frage, ob man nun mit Spaces oder Tabs
+indenten sollte.  Nachdem ich einige Artikel im Internet gelesen habe
+und auch über unkonventionelle Lösungen wie elastic tabs nachgedacht
+habe, habe ich mich für Leerzeichen entschieden.
 
-1. Kochen (vor allem exotische Küche)
+** Vergleich mit anderen Methoden
+*** farbige Pipes und kein farbiger Hintergrund
+** Vorteile
+*** In aktuellen Emacs-Versionen inbegriffen
+*** verschiedene Farben für verschiedene Indentation-Tiefe
+** Nachteile
+*** Bugs
+**** langsam für restlichen Whitespace, wenn der Point darübergeht...
+**** in Teilen inkompatibel mit org-mode indentation-mode
 
-2. Sprachen
-     1. Englisch
-     2. Spanisch
-     3. Französisch
-     4. Russisch
-     5. Nächste anvisierte Sprachen:
-          1. Arabisch
-          2. Chinesisch
-          3. Koreanisch
+* [2014-07-30 Wed] Exportskript
+#+BEGIN_SRC emacs-lisp :exports both
+(defun knu-split-org-articles (file-name)
+  "Take the base of a .org file and extract all headings with timestamps in
+different html files for jekyll."
+  (with-temp-buffer
+    (insert-file-contents file-name)
+    (delete-file file-name)
+    (delete-directory (concat (file-name-directory file-name) "_posts/") t)
+    (mkdir (concat (file-name-directory file-name) "_posts/"))
+    (let ((articles (split-string (buffer-string) ".*\n<h2 [^/]*</span>")))
+      (while articles
+        (with-temp-buffer
+          (insert (concat "---\nlayout: post\ntitle:" (pop articles)))
+          (goto-char (point-min))
+          (when (re-search-forward
+                 "<div id=\"postamble\" class=\"status\">" nil t)
+            (goto-char (match-beginning 0))
+            (forward-line -1)
+            (delete-region (point) (point-max)))
+          (goto-char (point-max))
+          (re-search-backward "</div>" nil t)
+          (replace-match "" nil nil)
+          (goto-char (point-min))
+          (while (re-search-forward
+                  "<span class=\"section-number[^/]*</span>" nil t)
+            (replace-match ""))
+          (goto-char (point-min))
+          (while (re-search-forward "<img src=\"images/" nil t)
+            (replace-match "<img src=\"/images/"))
+          (goto-char (point-min))
+          (when (re-search-forward
+                 "<span class=\"timestamp-wrapper\"><span class=\"timestamp\">\\[\\([0-9-]*\\).*</span></span>" nil t)
+            (let ((date (match-string 1)))
+              (replace-match "")
+              (goto-char (point-min))
+              (when (re-search-forward "title: *\\(.*\\)\\(</h2>\\)" nil t)
+                (replace-match "\n---" nil nil nil 2)
+                (let ((title (match-string 1)))
+                  (write-file (concat (file-name-directory file-name) "_posts/"
+                                      date
+                                      "-" (md5 title) ".html")))))))))))
 
-3. Reisen
-4. Typographie
-5. Technik
-     1. Tablets
-     2. Elektroautos
-     3. Energieproduktion
-          1. Wasserkraft
-          2. Windkraft
-          3. Kernenergie
-               1. Fussionsreaktoren
-               2. Fissionsreaktoren
-6. Musik
-     1. Orgel
-          1. Literatur
-               1. Durufle
-               2. Couperin
-               3. Reger
-          2. Improvisation
-               1. Impressionismus
-               2. Romantik
-     2. Gesang
-          1. Bass
-               1. Monteverdi
-               2. Bach
-               3. Schubert
-          3. Altus
-               1. Monteverdi
-               2. Viadana
-               3. Xenakis
+(progn (run-with-idle-timer 0.5 nil 'knu-split-org-articles
+                            (concat (file-name-sans-extension
+                                     (buffer-file-name)) ".html")) nil)
+#+END_SRC
 
-** Curriculum Vitae
-*** Ausbildung
-|---+-----------+------------------------------------------------------|
-|   |       <r> | <52>                                                 |
-|   |  Aug 2013 | Staatsexamensarbeit: »Abgrenzung von Musikalität und musikalischer Kompetenz – Eine empirische Untersuchung von Over- und Underachievement bei Sechstklässlern«; Note 1,0 |
-|   | seit 2010 | Physikstudium an der Universität Vaihingen           |
-|   | seit 2008 | Doppelstudium Schulmusik und Kirchenmusik an der Hochschule für Musik und Darstellende Kunst Stuttgart |
-|   | 2007–2008 | C-Kurs Rottenburg am Neckar                          |
-| / | 1994–1998 | Grundschule Parkschule Essingen                      |
-|---+-----------+------------------------------------------------------|
+* [2014-08-22 Fri] lilypond-pretty-beat-mode
+I've written a pretty nice mode for lilypond, which tries to make
+lilypond coding less error prone.  It uses functions of LilyPond-mode
+(yes, it uses CamelCase) to display the notes in a distance which
+correlates with their duration.  Therefor, the bar sign | will be all
+in one row if all is correct (the music and the parser), if the bar is
+overfull or underfull it shows +- signs alla git.
 
-*** Preise und Stipendien
-|---+-----------+------------------------------------------------------|
-|   |       <r> | <52>                                                 |
-|   |  Feb 2013 | Stipendiat der Karin Abt-Straubinger-Stiftung für eine Sprachschule an der technischen Staatsuniversität in Irkutsk, Sibirien |
-|   |      2012 | Träger des Deutschlandstipendiums                    |
-|   |      2012 | Stipendiat des DAAD go east! Programms an der Staatlichen Landesuniversität Russlands in Moskau |
-|   |      2010 | Stipendiat des »Europäischen Chorforums für junge Komponisten« Ochsenhausen, in diesem Rahmen Aufführung eigener Werke durch das Orpheus Vokalensemble |
-|   | 1998–2007 | Theodor-Heuss-Gymnasium Aalen, Preis der Schule und Preis der DPG (Deutsche Physikalische Gesellschaft) |
-|---+-----------+------------------------------------------------------|
+That is already quite nice, but it gets even more interesting.  If you
+put after a barline the barnumber, e. g. %7, it will enumerate all
+consecutive lines which end in barlines.  If you put another barnumber
+in one of the following lines, it adjusts accordingly.  If there is a
+gap, for example by ending a voice and beginning another, it will stop
+enumerating unless it finds new numbers.  The result is a much more
+comfortable bug squashing after looking at the pdf.
 
-*** Musikalisches Schaffen
-|---+-----------+------------------------------------------------------|
-|   |       <r> | <52>                                                 |
-|   |  Aug 2013 | Konzert im Dom zu Schweidnitz (Polen)                |
-|   |  Jan 2013 | Leiter der Musikschule Obertürkheim Stuttgart www.musikschule-obertuerkheim.de |
-|   |      2010 | Mehrere Uraufführungen eigener Kompositionen durch den Aalener Oratorienchor |
-|   | 2008–2012 | Kirchenchorleiter und Organist der Marienwallfahrtskirche alen-Unterkochen |
-|---+-----------+------------------------------------------------------|
+The last feature is a interpreter for music.  The minor mode will
+parse the entire file and count which beats are frequently used and
+marks this beats with lines colord according to the frequency.  This
+provides a robust way to determine the correct length of a bar for
+good layouting (for example 72 columns) and to aide writing music.
+You see imediatly if the notes are on heavy beats or light beats.  You
+don't even have to hear or see the music and it provides a quite
+useful impression of the measure of the piece.  If you've got piece in
+5/4, you'll see whether it is a (2+3)/4 or a (3+2)/4.  You see even
+different dances like sarabande.
 
-*** Sonstige Tätigkeiten
-|---+-----------+------------------------------------------------------|
-|   |       <r> | <52>                                                 |
-|   |  Feb 2013 | Mitglied im Doktorandennetzwerk des AMPF (Arbeitskreis Musikpädagogische Forschung) |
-|   | seit 2012 | Mitglied im MinD-Hochschulnetzwerk www.mhn.mensa.de  |
-|   |      2011 | Praktikum beim Landesgymnasium für Hochbegabte Schwäbisch Gmünd |
-|   |      2011 | Abschlussprüfung in Chorleitung, Orchesterleitung und in Musiktheorie |
-|   |      2010 | Studienreise nach Toulouse, Dolmetscher für die Studenten um sich in die frz. Kultur integrieren zu können |
-|   |      2008 | Studienreise nach Italien um die dortige Orgellandschaft kennenzulernen |
-|---+-----------+------------------------------------------------------|
+There are some shortcomings of this mode.  Sometimes the get-beat
+function from LilyPond-mode fails to count the beat at point.  This
+happens for more complex music, with voice splits in one voice, and in
+the first bar of every voice (it's quite possible that this bug will
+be fixed).  Another major flaw is that it can't handle changes in
+meter or changes in the emphasize pattern (for example hemiola).
+Performance was a big problem which is now resolved, by parsing the
+file line by line only when idle, aborting on user input and resuming
+after the input at the last position.  Will writing the music it keeps
+analysing it and tracking changes of the priority of beats with
+accordingly changing colors.  Depending on speed of the computer and
+size of the piece, this might take some seconds (which never block the
+user).
 
-*** Sprachen
-|---+----------+------------------------------------------------------|
-|   |          | <52>                                                 |
-|   | English  | Sehr gut in Wort und Schrift                         |
-|   | Español  | Sehr gut in Wort und Schrift                         |
-|   | Français | Sehr gut in Wort, gut in Schrift                     |
-|   | Русский  | Grundlegende Kenntnisse (A2)                         |
-|---+----------+------------------------------------------------------|
+[[file:images/Screenshot_2014-08-22-17-59-55.png]]
 
-*** Computer
-|---+----------+------------------------------------------------------|
-|   |          | <52>                                                 |
-|   | R, SPSS  | Erfahrung in quantitativer Forschung                 |
-|   | Python   | Grundlegende Programmierkenntnisse                   |
-|   | C        | Einführung an Harvard (über edx.org)                 |
-|   | Elisp    | Emacs                                                |
-|   | ILIAS    | Serverinstallation und -benutzung                    |
-|   | Org-mode | Projektplanungs- und Protokollierungserfahrung       |
-|   | LaTeX    | Textpublikationserfahrungen                          |
-|   | Lilypond | Auszeichnungssprache für professionellen Notensatz   |
-|---+----------+------------------------------------------------------|
+At the left side you see "An den Mond" from Schumann and on the right
+side you see the Ricercare a 6 from Bach.  You see how the minor-mode
+realised that the first is in 3/4 and the third quarter is more
+important than the second.  The Ricercare is more complictated and
+uses a 4/2 meter but is as well good identified and uses about the
+same space and shows a preference of the piece for the middle of the
+meter.
 
+If you want to test it your self, feel free:
+[[https://github.com/knupfer/lilypond-pretty-print/]]
 
+* [2014-08-22 Fri] Migration
+In the last days, I changed the publish procedure for my homepage.
+The goals hereby were:
+- article storage :: Before I maintained a tree structure for every
+     topic and every article was in a separate file with the name
+     consisting of the date and the article title.  Now all articles
+     reside in the same file.  This is not scalable, but scalability
+     is normally not the goal of a personal blog.
+- emacs centric :: Before, the files were modifyed by a shell script
+                   and some emacs scripts, which were dependent on my
+                   .emacs file.  Now it works just with emacs
+                   org-mode, all that is needed is a html export which
+                   executes a elisp sourceblock in the org-file which
+                   splits up the resulting html into individual files.
+- simpler naming :: I use Jekyll and github for my blog, therefor the
+                    files are required to have a certain format etc.
+                    Now this is extracted automatically via
+                    org-time-stamp and a md5 hash of the title.  This
+                    results in very collision robust file names which
+                    keep the same unless the title changes, which is
+                    very nice for permalinks etc.
+This is the first article which I'm writing with the new setup, and
+it's a lot simpler and better to maintain.  I simply use org and
+haven't to worry about changes in the directory structure etc or
+renaming files and titles within files and finding files.  I just
+write in one file and thats all.  If I don't use a time stamp, it
+won't get exported.  Alternatively I can use common org-tags
+like :noexport:.

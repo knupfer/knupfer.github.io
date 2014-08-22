@@ -1,0 +1,43 @@
+---
+layout: post
+title:  Migration
+---
+<div class="outline-text-2" id="text-11">
+<p>
+In the last days, I changed the publish procedure for my homepage.
+The goals hereby were:
+</p>
+<dl class="org-dl">
+<dt> article storage </dt><dd>Before I maintained a tree structure for every
+topic and every article was in a separate file with the name
+consisting of the date and the article title.  Now all articles
+reside in the same file.  This is not scalable, but scalability
+is normally not the goal of a personal blog.
+</dd>
+<dt> emacs centric </dt><dd>Before, the files were modifyed by a shell script
+and some emacs scripts, which were dependent on my
+.emacs file.  Now it works just with emacs
+org-mode, all that is needed is a html export which
+executes a elisp sourceblock in the org-file which
+splits up the resulting html into individual files.
+</dd>
+<dt> simpler naming </dt><dd>I use Jekyll and github for my blog, therefor the
+files are required to have a certain format etc.
+Now this is extracted automatically via
+org-time-stamp and a md5 hash of the title.  This
+results in very collision robust file names which
+keep the same unless the title changes, which is
+very nice for permalinks etc.
+</dd>
+</dl>
+<p>
+This is the first article which I'm writing with the new setup, and
+it's a lot simpler and better to maintain.  I simply use org and
+haven't to worry about changes in the directory structure etc or
+renaming files and titles within files and finding files.  I just
+write in one file and thats all.  If I don't use a time stamp, it
+won't get exported.  Alternatively I can use common org-tags
+like :noexport:.
+</p>
+</div>
+

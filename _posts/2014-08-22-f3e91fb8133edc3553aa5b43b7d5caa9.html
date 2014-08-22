@@ -1,0 +1,76 @@
+---
+layout: post
+title:  lilypond-pretty-beat-mode
+---
+<div class="outline-text-2" id="text-10">
+<p>
+I've written a pretty nice mode for lilypond, which tries to make
+lilypond coding less error prone.  It uses functions of LilyPond-mode
+(yes, it uses CamelCase) to display the notes in a distance which
+correlates with their duration.  Therefor, the bar sign | will be all
+in one row if all is correct (the music and the parser), if the bar is
+overfull or underfull it shows +- signs alla git.
+</p>
+
+<p>
+That is already quite nice, but it gets even more interesting.  If you
+put after a barline the barnumber, e. g. %7, it will enumerate all
+consecutive lines which end in barlines.  If you put another barnumber
+in one of the following lines, it adjusts accordingly.  If there is a
+gap, for example by ending a voice and beginning another, it will stop
+enumerating unless it finds new numbers.  The result is a much more
+comfortable bug squashing after looking at the pdf.
+</p>
+
+<p>
+The last feature is a interpreter for music.  The minor mode will
+parse the entire file and count which beats are frequently used and
+marks this beats with lines colord according to the frequency.  This
+provides a robust way to determine the correct length of a bar for
+good layouting (for example 72 columns) and to aide writing music.
+You see imediatly if the notes are on heavy beats or light beats.  You
+don't even have to hear or see the music and it provides a quite
+useful impression of the measure of the piece.  If you've got piece in
+5/4, you'll see whether it is a (2+3)/4 or a (3+2)/4.  You see even
+different dances like sarabande.
+</p>
+
+<p>
+There are some shortcomings of this mode.  Sometimes the get-beat
+function from LilyPond-mode fails to count the beat at point.  This
+happens for more complex music, with voice splits in one voice, and in
+the first bar of every voice (it's quite possible that this bug will
+be fixed).  Another major flaw is that it can't handle changes in
+meter or changes in the emphasize pattern (for example hemiola).
+Performance was a big problem which is now resolved, by parsing the
+file line by line only when idle, aborting on user input and resuming
+after the input at the last position.  Will writing the music it keeps
+analysing it and tracking changes of the priority of beats with
+accordingly changing colors.  Depending on speed of the computer and
+size of the piece, this might take some seconds (which never block the
+user).
+</p>
+
+
+<div class="figure">
+<p><img src="/images/Screenshot_2014-08-22-17-59-55.png" alt="Screenshot_2014-08-22-17-59-55.png" />
+</p>
+</div>
+
+<p>
+At the left side you see "An den Mond" from Schumann and on the right
+side you see the Ricercare a 6 from Bach.  You see how the minor-mode
+realised that the first is in 3/4 and the third quarter is more
+important than the second.  The Ricercare is more complictated and
+uses a 4/2 meter but is as well good identified and uses about the
+same space and shows a preference of the piece for the middle of the
+meter.
+</p>
+
+<p>
+If you want to test it your self, feel free:
+<a href="https://github.com/knupfer/lilypond-pretty-print/">https://github.com/knupfer/lilypond-pretty-print/</a>
+</p>
+</div>
+
+

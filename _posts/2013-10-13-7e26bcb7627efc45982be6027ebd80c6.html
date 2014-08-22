@@ -326,7 +326,7 @@ ersparen kann.
         Zahlensystem[i-2].insert(1,<span style="color: #f08080;">chr</span>(<span style="color: #f08080;">ord</span>(<span style="color: #deb887;">'0'</span>)
                 + (Zahlensystem[i - 2][0] % i)))
         Zahlensystem[i-2][0] //= i
-    Zahlensystem[i - 2][0] = i<span style="color: #ffff00; background-color: #ff0000; font-weight: bold;">    </span>
+    Zahlensystem[i - 2][0] = i
 
 <span style="color: #00bfff;">for</span> i <span style="color: #00bfff;">in</span> <span style="color: #f08080;">range</span>(Zahlenraum - 1):
     Resultat[i][0] = Zahlensystem[i][0]
@@ -484,13 +484,13 @@ dann stets, bei gleichem Layout, verwendet werden kann.
 
 <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span>
     <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
-    <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> | 
-    <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> | 
-    <span style="color: #98f5ff;">d2</span> 
+    <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
+    <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
+    <span style="color: #98f5ff;">d2</span>
 <span style="color: #a2cd5a;">}</span>
 
 <span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span>
-    Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
+    Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum.
 <span style="color: #a2cd5a;">}</span>
 </pre>
 </div>
@@ -522,7 +522,7 @@ dann stets, bei gleichem Layout, verwendet werden kann.
 
 <span style="color: #00bfff;">\score</span> <span style="color: #a2cd5a;">{</span>
     <span style="color: #daa520;">&lt;&lt;</span>
-        <span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Voice</span> = <span style="color: #4eee94;">mel</span> <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span> 
+        <span style="color: #00bfff;">\new</span> <span style="color: #4eee94;">Voice</span> = <span style="color: #4eee94;">mel</span> <span style="color: #00bfff;">\relative</span> <span style="color: #98f5ff;">c'</span> <span style="color: #a2cd5a;">{</span>
             <span style="color: #00bfff;">\set</span> <span style="color: #4eee94;">Score.defaultBarType</span> = <span style="color: #deb887;">"-"</span>
             <span style="color: #00bfff;">\clef</span> <span style="color: #deb887;">"petrucci-c3"</span>
             <span style="color: #daa520;">\autoBeamOff</span>
@@ -534,11 +534,11 @@ dann stets, bei gleichem Layout, verwendet werden kann.
             <span style="color: #98f5ff;">r2</span> <span style="color: #98f5ff;">e</span> |
             <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f2.</span> <span style="color: #98f5ff;">e8</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">c2</span> |
             <span style="color: #98f5ff;">c4</span> <span style="color: #98f5ff;">e</span> <span style="color: #98f5ff;">f</span> <span style="color: #98f5ff;">g2</span> <span style="color: #98f5ff;">f4</span> <span style="color: #98f5ff;">d</span> <span style="color: #98f5ff;">e4.</span> <span style="color: #98f5ff;">d8</span> <span style="color: #98f5ff;">d2</span> <span style="color: #98f5ff;">c4</span> |
-            <span style="color: #98f5ff;">d2</span> 
+            <span style="color: #98f5ff;">d2</span>
         <span style="color: #a2cd5a;">}</span>
 
-        <span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span> 
-            Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum. 
+        <span style="color: #00bfff;">\addlyrics</span> <span style="color: #a2cd5a;">{</span>
+            Et <span style="color: #98f5ff;">a</span> -- <span style="color: #98f5ff;">s</span>cen -- _ _ _ <span style="color: #98f5ff;">d</span>it in <span style="color: #98f5ff;">c</span>oe -- _ _ _ _ _ _ _ lum.
         <span style="color: #a2cd5a;">}</span>
     <span style="color: #daa520;">&gt;&gt;</span>
 
