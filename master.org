@@ -1432,14 +1432,22 @@ Es wird in dem Repository, also in dem Verzeichnis, in dem man seine
 Dateien aufbewahrt werden, welche versioniert werden sollen
 (i.d.R. Quellcode) ein .git Verzeichnis erstellt, welches zunächst
 einer Kopie aller Dateien entspricht.  Daraufhin werden Änderungen in
-den Staging-Bereich gebracht: src_shell{git add -A}.  Sobald man dort
-alle Änderungen hinzugefügt hat, welche man versionieren möchte, macht
-man einen Commit, welcher einen Text enthält, welcher beschreibt,
-welche Änderungen vorgenommen werden: src_shell{git commit -m
-'bugfix'}.  Somit ist nun die Änderung gespeichert und kann mit dem
-vorherigen Stand verglichen werden, neue Änderungen gemacht werden,
-oder die Änderungen zu einem Remote-Repository übertragen werden:
-src_shell{git push origin master}.
+den Staging-Bereich gebracht:
+#+BEGIN_SRC sh :exports code
+git add -A
+#+END_SRC
+Sobald man dort alle Änderungen hinzugefügt hat, welche man
+versionieren möchte, macht man einen Commit, welcher einen Text
+enthält, welcher beschreibt, welche Änderungen vorgenommen werden:
+#+BEGIN_SRC sh :exports code
+git commit -m 'bugfix'
+#+END_SRC
+Somit ist nun die Änderung gespeichert und kann mit dem vorherigen
+Stand verglichen werden, neue Änderungen gemacht werden, oder die
+Änderungen zu einem Remote-Repository übertragen werden:
+#+BEGIN_SRC sh :exports code
+git push origin master
+#+END_SRC
 
 #+BEGIN_SRC ditaa :file images/git.png :exports result
  +------------------+ 
@@ -2497,11 +2505,14 @@ different html files for jekyll."
           (when (re-search-forward "title: \\(.*\\)\\(</h2>\\)" nil t)
             (replace-match "\n---" nil nil nil 2)
             (let ((title (match-string 1)))
+
               (when (re-search-forward
-                     "<span class=\"timestamp\">\\[\\([0-9-]*\\)" nil t)
-                (write-file (concat (file-name-directory file-name) "_posts/"
-                                    (match-string 1)
-                                    "-" (md5 title) ".html"))))))))))
+                     ".*<span class=\"timestamp\">\\[\\([0-9-]*\\).*" nil t)
+                (let ((date (match-string 1)))
+                  (replace-match "")
+                  (write-file (concat (file-name-directory file-name) "_posts/"
+                                      date
+                                      "-" (md5 title) ".html")))))))))))
 (run-with-idle-timer
  0.5 nil 'knu-split-org-articles
  (concat (file-name-sans-extension (buffer-file-name)) ".html"))

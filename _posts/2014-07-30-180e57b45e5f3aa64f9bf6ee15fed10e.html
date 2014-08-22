@@ -4,7 +4,7 @@ title: Exportskript
 ---
 <div class="outline-text-2" id="text-9">
 <p>
-<span class="timestamp-wrapper"><span class="timestamp">[2014-07-30 Wed]</span></span>
+
 </p>
 <div class="org-src-container">
 
@@ -13,7 +13,6 @@ title: Exportskript
 <span style="color: #ffe4b5;">different html files for jekyll."</span>
   (<span style="color: #00bfff;">with-temp-buffer</span>
     (<span style="color: #00006DE06DE0;">insert-file-contents</span> file-name)
-    (<span style="color: #00006DE06DE0;">delete-file</span> file-name)
     (<span style="color: #00006DE06DE0;">delete-directory</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>) t)
     (<span style="color: #00006DE06DE0;">mkdir</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>))
     (<span style="color: #00bfff;">let</span> ((articles (<span style="color: #00006DE06DE0;">split-string</span> (<span style="color: #00006DE06DE0;">buffer-string</span>) <span style="color: #deb887;">".*\n&lt;h2 .*&lt;/span&gt;"</span>)))
@@ -40,11 +39,14 @@ title: Exportskript
           (<span style="color: #00bfff;">when</span> (<span style="color: #00006DE06DE0;">re-search-forward</span> <span style="color: #deb887;">"title: </span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">.*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">&lt;/h2&gt;</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">"</span> nil t)
             (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">"\n---"</span> nil nil nil 2)
             (<span style="color: #00bfff;">let</span> ((title (<span style="color: #00006DE06DE0;">match-string</span> 1)))
+
               (<span style="color: #00bfff;">when</span> (<span style="color: #00006DE06DE0;">re-search-forward</span>
-                     <span style="color: #deb887;">"&lt;span class=\"timestamp\"&gt;\\[</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">[0-9-]*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">"</span> nil t)
-                (<span style="color: #00006DE06DE0;">write-file</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>
-                                    (<span style="color: #00006DE06DE0;">match-string</span> 1)
-                                    <span style="color: #deb887;">"-"</span> (<span style="color: #00006DE06DE0;">md5</span> title) <span style="color: #deb887;">".html"</span>))))))))))
+                     <span style="color: #deb887;">".*&lt;span class=\"timestamp\"&gt;\\[</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">(</span><span style="color: #deb887;">[0-9-]*</span><span style="color: #deb887; font-weight: bold;">\\</span><span style="color: #deb887; font-weight: bold;">)</span><span style="color: #deb887;">.*"</span> nil t)
+                (<span style="color: #00bfff;">let</span> ((date (<span style="color: #00006DE06DE0;">match-string</span> 1)))
+                  (<span style="color: #00006DE06DE0;">replace-match</span> <span style="color: #deb887;">""</span>)
+                  (<span style="color: #00006DE06DE0;">write-file</span> (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-directory</span> file-name) <span style="color: #deb887;">"_posts/"</span>
+                                      date
+                                      <span style="color: #deb887;">"-"</span> (<span style="color: #00006DE06DE0;">md5</span> title) <span style="color: #deb887;">".html"</span>)))))))))))
 (<span style="color: #00006DE06DE0;">run-with-idle-timer</span>
  0.5 nil '<span style="color: #00006DE06DE0;">knu-split-org-articles</span>
  (<span style="color: #00006DE06DE0;">concat</span> (<span style="color: #00006DE06DE0;">file-name-sans-extension</span> (<span style="color: #00006DE06DE0;">buffer-file-name</span>)) <span style="color: #deb887;">".html"</span>))
