@@ -265,9 +265,10 @@ ul.posts {
     transition: color 5s linear;
 }
 ul.posts:hover {
-    color: #000;
+    color: #fff;
 }
 ul.posts li:hover {
+    color: #aaa;
 }
 ul.posts li {
     line-height: 1.75em;
