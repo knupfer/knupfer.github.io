@@ -257,14 +257,22 @@ a:hover {
     color: #5DD;
 }
 ul.posts {
+    color: #aaa;
     list-style-type: none;
     margin-bottom: 2em;
+    -webkit-transition: color 5s linear;   
+    -moz-transition: color 5s linear; 
+    transition: color 5s linear;
+}
+ul.posts:hover {
+    color: #000;
+}
+ul.posts li:hover {
 }
 ul.posts li {
     line-height: 1.75em;
 }
 ul.posts span {
-    color: #aaa;
     font-family: serif;
     font-size: 80%;
 }
