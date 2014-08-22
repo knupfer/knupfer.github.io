@@ -80,7 +80,8 @@ body {
     text-align: center; 
 }
 .todo { 
-    color: #800; 
+    color: #800;
+    font-size: 50%
 }
 .done { 
     color: #080; 
