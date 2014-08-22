@@ -210,8 +210,7 @@ h2 {
     font-family: serif;
     margin-top: 70px;
     margin-bottom: -10px;
-    margin-left: auto;
-    margin-right: 0
+    text-align: right
 }
 h3 {
     font-size: 150%; 
@@ -277,8 +276,8 @@ ul.posts span {
     overflow: hidden;
 }
 .meta {
-    margin-left: auto;
-    margin-right: 0;
+    margin-left: 0;
+    margin-right: auto;
     color: #bbb
 }
 .site .footer .contact {
