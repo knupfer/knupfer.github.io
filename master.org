@@ -2438,7 +2438,7 @@ Head:     <span class="magit-log-sha1">1f236ae</span> Bugfix in Ditaa graphic
 </html>
 #+END_SRC
 
-* [2014-01-26 Sun] Emacs whitespace.el
+* TODO [2014-01-26 Sun] Emacs whitespace.el
 ** Einleitung
 Als Anfänger im Programmieren habe ich mir die Frage gestellt, wie ich
 mir das Programmierenlernen so effektiv und komfortabel wie möglich
