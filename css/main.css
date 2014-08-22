@@ -276,9 +276,9 @@ ul.posts span {
     overflow: hidden;
 }
 .meta {
-    margin-left: 0;
-    margin-right: auto;
-    color: #bbb
+    text-align: right;
+    color: #bbb;
+    margin-bottom: 10px
 }
 .site .footer .contact {
     float: left;
