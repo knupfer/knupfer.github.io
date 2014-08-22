@@ -81,6 +81,8 @@ body {
 }
 .todo { 
     color: #800;
+}
+h2.todo {
     font-size: 1ex
 }
 .done { 
@@ -258,8 +260,8 @@ ul.posts span {
     font-family: serif;
     font-size: 80%;
 }
-ul.posts span.todo:hover {
-    color: #F00
+ul.posts a:hover span.todo {
+    color: #D44
 }
 .site {
     font-size: 115%;
