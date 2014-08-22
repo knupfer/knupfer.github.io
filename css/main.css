@@ -81,7 +81,7 @@ body {
 }
 .todo { 
     color: #800;
-    font-size: 50%
+    font-size: 1em
 }
 .done { 
     color: #080; 
@@ -242,6 +242,9 @@ a {
     -webkit-transition: color .3s linear;   
     -moz-transition: color .3s linear; 
     transition: color .3s linear;  
+}
+a.todo {
+    color: #0F0
 }
 a:hover {  
     color: #5DD;
