@@ -81,7 +81,7 @@ body {
 }
 .todo { 
     color: #800;
-    font-size: 1ex
+    font-size: 1en
 }
 .done { 
     color: #080; 
@@ -243,7 +243,7 @@ a {
     -moz-transition: color .3s linear; 
     transition: color .3s linear;  
 }
-a.todo {
+a span {
     color: #0F0;
     font-size: 200%
 }
