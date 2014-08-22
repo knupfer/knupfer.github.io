@@ -101,7 +101,7 @@ git push origin master
 #+END_SRC
 
 #+BEGIN_SRC ditaa :file images/git.png :exports results
- +------------------+ 
+ +------------------+
  |Arbeitsverzeichnis+<-------+
  +----------------+-+        |
                   |          |
@@ -236,7 +236,7 @@ diesen reflektiert.
 
 #+BEGIN_SRC ditaa :file images/adaptiveditaa.png :exports results
 +---------+   +--------+   +---------------+
-|  Item-  |-->| Modell |-->|   Schätzung   | 
+|  Item-  |-->| Modell |-->|   Schätzung   |
 | antwort |   +--------+   | nächstes Item |
 +---------+                +-------+-------+
     ^                              |
@@ -451,7 +451,7 @@ FUN.info.temp = function(x)
     {
         x[pcitems.temp] = lapply(x[pcitems.temp], FUN.infoMC)
         x[-pcitems.temp] =lapply(x[-pcitems.temp], FUN.info)
-    } else   
+    } else
     {
         x =lapply(x, FUN.info)
     }
@@ -571,7 +571,7 @@ for (i in 1:items)
 {
     info.temp3 = NULL
     fit3 = NULL
-    
+
     if (i == length(test))
     {
         rest.temp[[i]] = rest.temp[[1]]*0
@@ -579,7 +579,7 @@ for (i in 1:items)
     {
         query = 1:i
         pcitems.temp = which(names(test[-query]) %in% names(test[pcitems]))
-        
+
         for (j in 1:length(test[-query]))
         {
             if (j %in% pcitems.temp)
@@ -590,7 +590,7 @@ for (i in 1:items)
                 fit3[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
             }
         }
-        
+
         <<fit>>
         odds3 = FUN.Odds(fit3)
         info.temp3 = FUN.info.temp(odds3)
@@ -733,7 +733,7 @@ for (i in 2:items) {
     info.temp = NULL
     fit = NULL
     pcitems.temp = which(names(test[-query]) %in% names(test[pcitems]))
-    
+
     for (j in 1:length(test[-query]))
     {
         if (j %in% pcitems.temp)
@@ -759,7 +759,7 @@ if (length(test) == items)
 {
     fit = NULL
     pcitems.temp = which(names(test[-query]) %in% names(test[pcitems]))
-    
+
     for (j in 1:length(test[-query]))
     {
         if (j %in% pcitems.temp)
@@ -843,14 +843,14 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
 {
     query = queryinit
     entropie.rest = NULL
-    
+
     for (i in 2:items)
     {
         odds = NULL
         info.temp = NULL
         fit = NULL
         pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
-        
+
         for (j in 1:length(test[-query]))
         {
             if (j %in% pcitems.temp)
@@ -861,7 +861,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
                 fit[[j]] = glm(reformulate(names(test[query]), names(test[-query][j])), data = test, family = "binomial"(link=logit))
             }
         }
-        
+
         <<fit>>
         odds = fit
         info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
@@ -869,7 +869,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         query = c(query, which(names(test[-query][which(info.temp == max(info.temp))[1]]) == names(test))[1])
         modell[[i]] = fit[[which(info.temp == max(info.temp))[1]]]
     }
-    
+
     ## calculation of last rest entropie
     if (length(test) == items)
     {
@@ -879,7 +879,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         fit = NULL
         pcitems.temp = 0
         pcitems.temp = c(0,which(names(test[-query]) %in% names(test[pcitems])))
-        
+
         for (j in 1:length(test[-query]))
         {
             if (j %in% pcitems.temp)
@@ -894,7 +894,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         info.temp = FUN.EntroMC(pcitems.temp,test[k,], fit)
         rest.temp[items] = sum(info.temp)
     }
-    
+
     ## calculation of the choosen modell
     pcitems.temp = c(0,which(query %in% pcitems))
     info.temp = FUN.EntroMC(pcitems.temp,test[k,], modell)
@@ -966,33 +966,33 @@ modell[[1]] = fit[[which((info.temp) == max((info.temp)))[1]]]
 infoall = simplify2array(foreach(k=1:persons) %dopar%
 {
     query = queryinit
-    
+
     for (i in 2:items)
     {
         info.temp = NULL
         fit = NULL
-        
+
         for (j in 1:length(komus[-query]))
         {
             fit[[j]] = glm(reformulate(names(komus[query]), names(komus[-query][j])), data = komus, family = "binomial"(link=logit))
         }
-        
+
         <<fit>>
         ## TODO stimmt das so?
         odds = simplify2array(lapply(fit, predict, komus[k,], type="response"))
-        rest.temp[i-1] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2)) 
+        rest.temp[i-1] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2))
         info.temp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2)) + (information[-query]*(1 - (length(query)+1)/items))
         query = c(query, which(names(komus[-query][which((info.temp) == max((info.temp)))[1]]) == names(komus))[1])
         modell[[i]] = fit[[which((info.temp) == max((info.temp)))[1]]]
     }
-    
+
     if (length(komus) == items)
     {
         rest.temp[items] = 0
     } else
     {
         fit = NULL
-        
+
         for (j in 1:length(komus[-query]))
         {
             fit[[j]] = glm(reformulate(names(komus[query]), names(komus[-query][j])), data = komus, family = "binomial"(link=logit))
@@ -1001,7 +1001,7 @@ infoall = simplify2array(foreach(k=1:persons) %dopar%
         odds = simplify2array(lapply(fit, predict, komus[k,], type="response"))
         rest.temp[length(query)] = sum(-odds*log(odds,2)-(1-odds)*log(1-odds,2))
     }
-    
+
     odds = simplify2array(lapply(modell, predict, komus[k,], type="response"))
     info.temp = (-odds*log(odds,2)-(1-odds)*log(1-odds,2))
     return(c(info.temp, rest.temp))
@@ -1067,7 +1067,7 @@ Vorinformation über die Schüler vorhanden ist.
 #  Return a database (database.dat) of proposed items for each individual.
 #  Draw a curve of the linear and adaptive test.
 #  Afterwards, search.sh should be run to update the database.
-# 
+#
 #####
 
 pcitems.temp = pcitems
@@ -1095,15 +1095,15 @@ FUN.binarysearch = function(query)
     {
         return(0)
     }
-    
+
     lower = 1
     upper = length(database[, 1])
     current = upper
-    
+
     while (upper >= lower)
     {
         current = round((lower+upper) / 2)
-        
+
         for (u in 1:length(query))
         {
             if (answers.sorted[u] > database[current, u])
@@ -1127,7 +1127,7 @@ FUN.binarysearch = function(query)
             }
         }
     }
-    
+
     return(0)
 }
 
@@ -1145,7 +1145,7 @@ FUN.unsortedsearch = function(query)
                 {
                     break
                 }
-                
+
                 if (!newdata[m,(length(query)+3)] && u == length(query))
                 {
                     return(m)
@@ -1157,7 +1157,7 @@ FUN.unsortedsearch = function(query)
 }
 
 # Return the modell for the first item.
-for (i in 1:length(test)) 
+for (i in 1:length(test))
 {
     fit.formula = reformulate('1', names(test[i]))
     fit[[i]] = FUN.modelliteration(fit.formula, pcitems, i)
@@ -1178,23 +1178,23 @@ for (k in 1:persons)
     entropie.rest = NULL
     rest.temp = NULL
     rest.temp2 = NULL
-    
+
     calcu = 0
     calcutime = proc.time()
     answers = vector(length = (length(test)+2))
     answers[1] = query[1] + as.numeric(as.character(test[k, query[1]]))/100
-    
+
     # Check existing databases.
     if (file.exists('_data/komus/sorted-database.dat'))
     {
         database = read.table('_data/komus/sorted-database.dat')
     }
-    
+
     if (file.exists('_data/komus/newdata.dat'))
     {
         newdata = read.table('_data/komus/newdata.dat')
     }
-    
+
     # Calculate next item.
     for (i in 2:items)
     {
@@ -1205,10 +1205,10 @@ for (k in 1:persons)
         fit2 = NULL
         pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
         answers.sorted = sort(answers[1:length(query)])
-        
+
         # Search in database if pattern of answers already exists.
         found = FUN.binarysearch(query)
-        
+
         if (found)
         {
             lq = length(query)
@@ -1226,24 +1226,24 @@ for (k in 1:persons)
                 query = c(query, found)
             }
         }
-        
+
         # If pattern isn't found, calculate the new one.
         if (!found)
         {
             calcu = calcu+1
             isgood = NULL
-            
+
             # Create a modell for each remaining item with all answers as predictors.
             for (q in 1:length(test[-query]))
             {
                 fit.formula = reformulate(names(test[query]), names(test[-query][q]))
                 fit[[q]] = FUN.modelliteration(fit.formula, pcitems.temp, q)
             }
-            
+
             # Calculate the entropie of these items and choose good ones.
             info.temp = FUN.EntroMC(pcitems.temp, test[k, ], fit)
             isgood = info.temp >= (max(info.temp)[1] * 0.8)
-            
+
             # Multicore calculation.
             Liste = foreach(j=1:length(test[-query])) %dopar%
             {
@@ -1256,24 +1256,24 @@ for (k in 1:persons)
                     chance = predict(fit[[j]], test[k,], type="response")
                     chance[2] = 1-chance[1]
                 }
-                
+
                 rest.temp2 = NULL
-                
+
                 # Predict the entropie with simulated answers of good items.
                 if (length(test[-query]) > 1 && isgood[j])
                 {
                     pcitems.temp2 = c(0, which(names(test[-query][-j]) %in% names(test[pcitems])))
-                    
+
                     # Calculate the fitted modell of each item.
                     for (n in 1:length(test[-query][-j]))
                     {
                         fit2.formula = reformulate(names(c(test[query], test[-query][j])), names(test[-query][-j][n]))
                         fit2[[n]] = FUN.modelliteration(fit2.formula, pcitems.temp2, n)
                     }
-                    
+
                     # Calculate the reduction of entropie multiplied by the chance of these answers.
                     tempdata = test[k, ]
-                    
+
                     if (j %in% pcitems.temp)
                     {
                         for (s in 1:length(chance))
@@ -1293,7 +1293,7 @@ for (k in 1:persons)
                         rest.temp2[2] = sum(info.temp)
                         rest.temp2 = sum(rest.temp2)
                     }
-                    
+
                     fit2 = NULL
                 } else
                 {
@@ -1302,16 +1302,16 @@ for (k in 1:persons)
                     if (isgood[j])
                     {
                         rest.temp2 = 0
-                        
-                    } else 
+
+                    } else
                     {
                         rest.temp2 = 55555555
                     }
                 }
-                
+
                 return(rest.temp2)
             }
-            
+
             # Save the best modell, add the proposed item to the list of questions.
             rest.temp2 = simplify2array(Liste)
             query = c(query, which(names(test[-query][which(rest.temp2 == min(rest.temp2))[1]]) == names(test))[1])
@@ -1321,11 +1321,11 @@ for (k in 1:persons)
             info.temp = FUN.EntroMC(pcitems.temp, test[k,], fit)
             rest.temp[i-1] = sum(info.temp)
         }
-        
+
         answers[i] = query[i] + as.numeric(as.character(test[k, query[i]]))/100
-        
+
         # Save the new calculated pattern to the database.
-        if (!found) 
+        if (!found)
         {
             temp = answers
             temp[1:(i-1)] = sort(answers[1:(i-1)])
@@ -1333,10 +1333,10 @@ for (k in 1:persons)
             temp[i+1] = query[i]
             write(temp, file='_data/komus/newdata.dat', append=TRUE, ncolumns=length(answers))
         }
-        
+
         plot(rest.temp, type='l', col=rgb(0, 0.7, 0.7))
     }
-    
+
     # Calculate the last remaining entropie (which may be non-nil if not all items are answered).
     if (length(test) == items)
     {
@@ -1345,21 +1345,21 @@ for (k in 1:persons)
     {
         fit = NULL
         pcitems.temp = c(0, which(names(test[-query]) %in% names(test[pcitems])))
-        
+
         for (j in 1:length(test[-query]))
         {
             fit.formula = reformulate(names(test[query]), names(test[-query][j]))
             fit[[j]] = FUN.modelliteration(fit.formula, pcitems.temp, j)
         }
-        
+
         <<fit>>
         info.temp = FUN.EntroMC(pcitems.temp, test[k, ], fit)
         rest.temp[items] = sum(info.temp)
     }
-    
+
     # Save the number of new patterns and seconds for this person.
     pcitems.temp = c(0, which(query %in% pcitems))
-    
+
     if (calcu)
     {
         temp = vector(length=(length(test)+2))
@@ -1368,19 +1368,19 @@ for (k in 1:persons)
         temp[4] = calcu
         write(temp, file='_data/komus/newdata.dat', append=TRUE, ncolumns=length(answers))
     }
-    
+
     infoall[k,] = rest.temp
 }
 
 # Clean-up.
 ## restt = (infoall[(items+1):(items*2)ü,])
 ## infoall = infoall[1:items,]
-## 
+##
 ## entropie.SD.temp = sd(infoall[1,])
 ## for (i in 2:length(infoall[,1])) {
 ##     entropie.SD.temp[i] = sd(colSums(infoall[1:i,]))
 ## }
-## 
+##
 ## entropie.SD$indivbedsortpred = c(0, entropie.SD.temp)
 ## entropie$indivbedsortpred = c(0, rowMeans(infoall))
 info.rest$indivbedsortpred = c(0, colMeans(infoall))
@@ -1505,13 +1505,13 @@ plot(0:(length(test)), type="l", col=rgb(0,0,0), ann=F)
 for (i in 1:(length(summe[1,])))
 {
     lines(summe[,i], col=farbe[i])
-    
+
     if (dim(entropie.SD[names(entropie.SD) == names(summe[i])])[2] != 0)
     {
         lines(summe[,i]+entropie.SD[names(summe[i])],lty = 4, col=farbeSD[i])
         lines(summe[,i]-entropie.SD[names(summe[i])],lty = 4, col=farbeSD[i])
     }
-    
+
     if (dim(info.rest[names(info.rest) == names(summe[i])])[2] != 0)
     {
         lines(info.rest[names(summe[i])], col=farbe[i])
@@ -1668,10 +1668,10 @@ werden mit einer unterschiedlichen Anzahl an Sternen gezeigt.
 #+BEGIN_SRC org
  * Erste Überschrift
  Text
- 
+
  ** Unterüberschrift
  Text
- 
+
  *** Unterunterüberschrift
  Text
 
@@ -1790,7 +1790,7 @@ eingetragen.
     for i in range(x * y):
         for j in range (1, 3):
             fib[i % y][i // y] += fib[(i - j) % y][(i - j) // y]
-    return fib   
+    return fib
 #+END_SRC
 
 #+RESULTS:
@@ -1826,7 +1826,7 @@ for i in range(2, Zahlenraum + 1):
         Zahlensystem[i-2].insert(1,chr(ord('0')
                 + (Zahlensystem[i - 2][0] % i)))
         Zahlensystem[i-2][0] //= i
-    Zahlensystem[i - 2][0] = i    
+    Zahlensystem[i - 2][0] = i
 
 for i in range(Zahlenraum - 1):
     Resultat[i][0] = Zahlensystem[i][0]
@@ -1875,16 +1875,16 @@ dann stets, bei gleichem Layout, verwendet werden kann.
 ***** Moderne Notation
 #+begin_src lilypond :file images/ly-einfach.png :noweb yes :exports both
 <<paper>>
-  
+
 \relative c' {
     r2 e |
-    e f2. e8 d c2 | 
-    c4 e f g2 f4 d e4. d8 d2 c4 | 
-    d2 
+    e f2. e8 d c2 |
+    c4 e f g2 f4 d e4. d8 d2 c4 |
+    d2
 }
 
 \addlyrics {
-    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum. 
+    Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum.
 }
 #+end_src
 
@@ -1894,31 +1894,31 @@ dann stets, bei gleichem Layout, verwendet werden kann.
 ***** Historische Notation
 #+begin_src lilypond :file images/lily-beispiel.png :noweb yes :exports both
 <<paper>>
- 
+
 \language "deutsch"
 
 \score {
     <<
-        \new Voice = mel \relative c' { 
+        \new Voice = mel \relative c' {
             \set Score.defaultBarType = "-"
             \clef "petrucci-c3"
             \autoBeamOff
             \override NoteHead #'style = #'petrucci
             \override Staff.TimeSignature #'style = #'neomensural
-            
+
             \time 2/2
-            
+
             r2 e |
             e f2. e8 d c2 |
             c4 e f g2 f4 d e4. d8 d2 c4 |
-            d2 
+            d2
         }
-        
-        \addlyrics { 
-            Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum. 
+
+        \addlyrics {
+            Et a -- scen -- _ _ _ dit in coe -- _ _ _ _ _ _ _ lum.
         }
     >>
-    
+
     \layout {
         \context {
             \Staff
@@ -2327,12 +2327,12 @@ do
         URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
         TITLE=$(sed -n '3,/--/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
         FATHER=$(echo $DIRECTORY | sed 's:/::')
-        
+
         test -e ../$TEMP/$DIRECTORY/$DATEI.html &&
         echo '<li><a href="'$URL'">'$TITLE'</a>' >> ../categorie.$FATHER &&
-        sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' ../$TEMP/$DIRECTORY/$DATEI.html | 
-        tail -n +2 | 
-        head -n -1 | 
+        sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' ../$TEMP/$DIRECTORY/$DATEI.html |
+        tail -n +2 |
+        head -n -1 |
         sed 's:\(href="\)#:\1'$URL'#:g' >> ../categorie.$FATHER &&
         sed -n '3,/--/ p' $DATEI.org | head --lines=-1 > ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
         echo 'father: '$DIRECTORY | sed 's:/::' >> ../$TEMP/$DIRECTORY/$DATEI.org.publish &&
@@ -2354,12 +2354,12 @@ do
     URL=$(echo /$DATEI | sed 's_-_/_; s_-_/_; s_-_/_; s_$_.html_')
     TITLE=$(sed -n '3,/--/ s_title: *"*\([^"]*\)"*_\1_p' $DATEI.org);
     FATHER=$(sed -n '3,/--/ s_father: *"*\([^"]*\)"*_\1_p' $DATEI.org);
-    
+
     test -e $TEMP/$DATEI.html &&
     echo '<li><a href="'$URL'">'$TITLE'</a>' >> categorie.$FATHER &&
-    sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' $TEMP/$DATEI.html | 
-    tail -n +2 | 
-    head -n -1 | 
+    sed -n '/<div id="text-table-of-contents">/,/<\/div>/p' $TEMP/$DATEI.html |
+    tail -n +2 |
+    head -n -1 |
     sed 's:\(href="\)#:\1'$URL'#:g' >> categorie.$FATHER &&
     sed -n '3,/--/ p' $DATEI.org > $TEMP/$DATEI.org.publish &&
     sed 'N;
@@ -2379,7 +2379,7 @@ for INDEX in categorie.*
 do
     if [ "$(echo $INDEX | sed 's_categorie\.\(.*\)_\1_')" != 'zzz' ]
     then
-        echo '<li><a href="">' $(echo $INDEX | 
+        echo '<li><a href="">' $(echo $INDEX |
             sed 's_categorie\.\(.*\)_\1_') '</a>' '<ul>' >> $TEMP/$TOC;
     else
         echo '<li><a href="">' Verschiedenes '</a>' '<ul>' >> $TEMP/$TOC
