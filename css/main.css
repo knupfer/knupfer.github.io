@@ -60,7 +60,9 @@ html, body {
     border-top: 5px #0bb solid
 }
 img {
-    max-width: 100%
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto
 }
 img.random {
     max-width: 750px;
@@ -120,7 +122,9 @@ pre.src {
 table {
     border-collapse: collapse;  
     margin-top: 15px;
-    margin-bottom: 15px
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto
 }
 tr {
     border: 1px solid #eee;
