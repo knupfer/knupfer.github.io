@@ -1,0 +1,119 @@
+---
+layout: post
+title:  org-panes.el
+---
+<div class="outline-text-2" id="text-12">
+<p>
+In the last few days, I came accros the pretty nice wikipedia article
+about <i>outliner</i>.  Inspired from some presented solutions I came up with
+the idea, to implement parts of them in my favorite editor emacs.
+</p>
+</div>
+
+<div id="outline-container-sec-12-1" class="outline-3">
+<h3 id="sec-12-1"> org-mode</h3>
+<div class="outline-text-3" id="text-12-1">
+<p>
+As the title suggests I use org-mode for all my wrintings and
+organisation so it was quite obvious to write my extension for
+org-mode which in it self is already a very good outliner.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-12-2" class="outline-3">
+<h3 id="sec-12-2"> Features</h3>
+<div class="outline-text-3" id="text-12-2">
+<p>
+The main idea was to implement multiple panes, one pane which always
+displays only top headings, one pane which displays all headings and
+one pane displaying the actual content.
+</p>
+
+<p>
+But the idea evolved a bit, by tracking the movement made in any of
+theese panes and reflecting it in the other panes making navigating
+very effective and uniform.
+</p>
+
+<p>
+For example it is possible to jump in the overview called top headings
+pane from top heading to top heading and afterwards jump with the
+contents pane to the subheading.
+</p>
+
+<p>
+Automatically the contents pane tries to center and show the entire
+heading tree, if that is not possible for space reasons, it centers
+the position of the cursor with a slight offset depending on the
+relative position in the tree to ensure that at the beginning it is
+shown a bit of context in the antecedent tree and at the end a bit of
+the following tree.  Additionally, this indicates in an unobstrusive
+way the remaining size of the tree.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-12-3" class="outline-3">
+<h3 id="sec-12-3"> Performance</h3>
+<div class="outline-text-3" id="text-12-3">
+<p>
+At first, the extension was so resource consuming that it wasn't
+possible to actively maintain position etc. with each command (a so
+called post-command-hook in emacs terms), so I implemented it in a
+way, that would calculate the new position of the panes and their
+highlighting only when the user was for some time idle (0.1s).  On my
+slow tablet this was not enough, so I used a catch throw construct to
+be able to abort imediately a calculation when the user interacts with
+the editor.  The advantage is, that it does never get in the way with
+typing, the disadvantage is, that while navigating or typing fast, the
+other panes would get async.
+</p>
+
+<p>
+The next steps were to heavy optimize ressource consumption.  Here I
+used various means:
+</p>
+<ul class="org-ul">
+<li>make a string of all visible headings in the show all pane and
+consider updates in the other panes only when this string changes.
+This is especially useful, because it ignores cursor movements
+without scrolling
+</li>
+<li>remember in which major heading tree the cursor is to prevent
+updating the overview pane when this doesn't change
+</li>
+<li>profiling the functions with following enhancements:
+<ul class="org-ul">
+<li>in elisp regexp searches are much faster than line-movements, so
+prefer more complicated regexps to reduce foreward-line commands
+</li>
+<li>avoid when possible recentering the panes, this is especially
+costly: compute the amount of change and recenter only when a
+certain threshold passes.
+</li>
+<li>when in the same heading tree, do certain updates, like overlays
+for hidden trees, only when there was an editing command, not when
+there is only a movement command.
+</li>
+</ul>
+</li>
+</ul>
+
+<p>
+These steps achieved a more than 100-times reduction of cpu
+consumption which enables to instantly update the panes (when
+necessary) after each command of the user even on my slow tablet.
+</p>
+
+<p>
+For the curious, it can be downloaded from github: <a href="https://github.com/knupfer/org-panes">org-panes</a>
+</p>
+
+<p>
+And here is how it looks:
+<img src="http://i.imgur.com/IHpX57b.png" alt="IHpX57b.png" />
+</p>
+</div>
+</div>
+
