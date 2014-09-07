@@ -2664,3 +2664,42 @@ For the curious, it can be downloaded from github: [[https://github.com/knupfer/
 And here is how it looks:
 [[http://i.imgur.com/IHpX57b.png]]
 
+* [2014-09-07 Sun] learning python and haskell
+In the last days I've been reading a lot about python and haskell.
+They are both very different on many aspects, but both very
+interesting for me.
+
+** python
+Python was born as a language for teaching, it is dynamically typed
+and is very readable.  The readability comes from the missing type
+declarations and the omission of block delimiters, or more precise:
+the omissing of block closing delimiters.  The open delimiters are
+semicolon.
+
+** haskell
+Haskell was born as a research language.  It's purely
+functional, i. e. nearly every functions result is determined only by
+the input.  The fascinating consequence is, that functions can be
+called in parallel as long they do not depend on the other funcitons
+output and results of function calls can be saved to omit the
+calculation if the function is later called with the same arguments.
+
+The determinism provides, that the correctness of a program can be
+proven, because every function can be fed with all possible inputs, or
+at least can be shown, that with all possible input the output is
+sane.
+
+These properties allow for very sophisticated tests (quicktests) which
+do not feed the function with predefined input (like classic unit
+tests) but try to falsify the function (with infinite garbage, limited
+only by time and cpu power).
+
+** conclusion
+I think I'll learn both languages.  The pureness of haskell is
+enormously fascinating and the ease of coding in python is a
+pleasure.  So propabably I'll mix the two and write emacs extensions
+in these languages (elisp is great, but I want to learn sth new and
+emacs extensions are a great motivation).
+
+
+
