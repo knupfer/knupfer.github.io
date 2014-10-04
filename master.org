@@ -2701,8 +2701,7 @@ pleasure.  So propabably I'll mix the two and write emacs extensions
 in these languages (elisp is great, but I want to learn sth new and
 emacs extensions are a great motivation).
 
-
-* [2014-09-07 Sun]flychecker
+* [2014-09-07 Sun] flychecker
 Hey, it's emacs time!
 
 I got these days totaly baffeld by the glory of emacs.  I coded nearly
@@ -2733,3 +2732,30 @@ takes 4 minutes to start and crashes after some minutes my tablet by
 overheating it (most interesting that this is possible)).
 
 
+* [2014-10-05 Sun] Alas! Haskell
+I've barely begun to learn haskell and I already fell in love with
+it.  It is pure, it is functional, it is a *very* high level
+language.  I've read nearly all of /learn you a haskell for great
+good/ and I can whole heartedly recommend this book.
+
+Haskell is the first language in which I don't have to unlearn math
+(e. g. the equation sign signifies in a lot of language assignment etc)
+but to learn math!  I already learned about monoids, functors, monads
+and type theory.  It's not only fun but also usefull in day to day
+math situations in the university.
+
+My next plan is to learn a bit of agda, which is compareable to
+haskell, but uses dependant types and is much younger and more extreme
+in power and even less practical.  To my knowledge there doesn't exist
+any significant software written in agda.  This may sound like good to
+avoid such a language, but I think different.  For me, learning a
+language is pure intellectual diversion, probably I'll not earn mony
+with programming anything (my profession is physics and music).  So
+for me it's more valuable if somthing is interesting.
+
+Beeing a fan of unicode I noticed one annoyance with haskell:  it is
+perfectly possible and fine to use unicode symbols in haskell code
+when you enable some extensions.  But hlint, which is the work of a
+genius, doesn't play well with it, if I use ∈ instead of `elem` it
+does no longer suggest improvements, thats so sad!  Perhaps this is
+going to be my first haskell related patch...
