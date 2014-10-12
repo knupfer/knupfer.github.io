@@ -2759,3 +2759,30 @@ when you enable some extensions.  But hlint, which is the work of a
 genius, doesn't play well with it, if I use ∈ instead of `elem` it
 does no longer suggest improvements, thats so sad!  Perhaps this is
 going to be my first haskell related patch...
+* [2014-10-12 So] Reproducible Research
+Today I had a very interesting discussion about methological clearness
+in empirical research.  The assumption of a researcher was, that the
+goal of a thesis which focuses the creation of a new theory by using
+qualitativ techniques is only the theory and not the reproducibility
+of the method with the given population used in this thesis.
+
+He said, that the point is the theory and that it can be proven with
+any population and therefor puplcation of the entire raw data is not
+important.  I would like to argue, that this is inresponsible to the
+scientific community, because empiric studies are extremely expensive
+to reproduce, so it is an obligation to make this reproduction more
+feasible by providing the own data to avoid another sampling of data.
+
+Obviously, he understood my point, but said, that this are two
+different aspects and this can't be the indicator of a good thesis.  I
+disagree.  What is the quality of a thesis, or how is it defined?  I
+would argue, that the quality is the contribution to the wisdom of the
+society and the contribution of the scientific community.  If this is
+true, the avoidance of work for the community is an improvement in the
+critical reproducibility which allows the community to easily verify
+or falsify the result of the thesis and afterwards build on it or
+reject it.
+
+So should we be theoretic and pursue soley the quality of a theorie,
+or should we be more pragmatic and aid the community?  I'm clearly for
+the second solution.
